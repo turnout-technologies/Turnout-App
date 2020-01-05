@@ -1,79 +1,80 @@
 import React from 'react';
-import { Platform } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 
 import TabBarIcon from '../components/TabBarIcon';
-import HomeScreen from '../screens/HomeScreen';
-import LinksScreen from '../screens/LinksScreen';
-import SettingsScreen from '../screens/SettingsScreen';
+import LeftScreen from '../screens/LeftScreen';
+import MiddleScreen from '../screens/MiddleScreen';
+import RightScreen from '../screens/RightScreen';
 
 const config = Platform.select({
   web: { headerMode: 'screen' },
   default: {},
 });
 
-const HomeStack = createStackNavigator(
+const LeftStack = createStackNavigator(
   {
-    Home: HomeScreen,
+    Left: LeftScreen,
   },
   config
 );
 
-HomeStack.navigationOptions = {
-  tabBarLabel: 'Home',
+LeftStack.navigationOptions = {
+  tabBarLabel: 'Rewards',
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={
-        Platform.OS === 'ios'
-          ? `ios-information-circle${focused ? '' : '-outline'}`
-          : 'md-information-circle'
-      }
-    />
+    <TabBarIcon focused={focused} name={'store'} />
   ),
 };
 
-HomeStack.path = '';
+LeftStack.path = '';
 
-const LinksStack = createStackNavigator(
+const MiddleStack = createStackNavigator(
   {
-    Links: LinksScreen,
+    Middle: MiddleScreen,
   },
   config
 );
 
-LinksStack.navigationOptions = {
-  tabBarLabel: 'Links',
+MiddleStack.navigationOptions = {
+  tabBarLabel: 'Turnout',
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-link' : 'md-link'} />
+    <TabBarIcon focused={focused} name={'check-box'} />
   ),
 };
 
-LinksStack.path = '';
+MiddleStack.path = '';
 
-const SettingsStack = createStackNavigator(
+const RightStack = createStackNavigator(
   {
-    Settings: SettingsScreen,
+    Right: RightScreen,
   },
   config
 );
 
-SettingsStack.navigationOptions = {
-  tabBarLabel: 'Settings',
+RightStack.navigationOptions = {
+  tabBarLabel: 'Profile',
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-options' : 'md-options'} />
+    <TabBarIcon focused={focused} name={'account-circle'} />
   ),
 };
 
-SettingsStack.path = '';
+RightStack.path = '';
 
-const tabNavigator = createBottomTabNavigator({
-  HomeStack,
-  LinksStack,
-  SettingsStack,
-});
+const tabNavigator = createBottomTabNavigator(
+  {
+    LeftStack,
+    MiddleStack,
+    RightStack,
+  },
+  {
+    initialRouteName: "MiddleStack"
+  }
+);
 
 tabNavigator.path = '';
+
+const styles = StyleSheet.create({
+});
 
 export default tabNavigator;
