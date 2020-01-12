@@ -9,7 +9,7 @@ export default class QuestionScreen extends Component {
   static navigationOptions = {
     title: 'Ballot',
     headerStyle: GlobalStyles.headerStyle,
-    headerTintColor: GlobalStyles.headerTintColor,
+    headerTintColor: global.CURRENT_THEME.colors.accent,
   };
 
   constructor (props) {

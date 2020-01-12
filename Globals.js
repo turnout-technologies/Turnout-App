@@ -24,8 +24,6 @@ const GlobalStyles = StyleSheet.create({
 		elevation: 0
 	},
 
-	headerTintColor: global.CURRENT_THEME.colors.accent,
-
 	backLayerContainer: {
     	flex: 1,
     	backgroundColor: global.CURRENT_THEME.colors.primary

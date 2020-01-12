@@ -36,8 +36,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
       backgroundColor: global.CURRENT_THEME.colors.primary,
       borderRadius: global.CURRENT_THEME.roundness,
-      borderColor: global.CURRENT_THEME.colors.text,
-      borderWidth: 1
   },
 
   answerButtonTextSelected: {

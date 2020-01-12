@@ -6,6 +6,7 @@ import { MaterialIcons, Octicons } from '@expo/vector-icons';
 
 import Item, { LIST_ITEM_HEIGHT, ListItem } from "./ListItem";
 
+const LIST_PADDING_BOTTOM=25;
 const { interpolate } = Animated;
 const styles = StyleSheet.create({
   container: {
@@ -47,11 +48,11 @@ interface ListProps {
 
 export default ({ list, questionId, openQuestion, questionAnswers, onAnswerPressed, onQuestionPressed }: ListProps) => {
   var isOpen = openQuestion == questionId;
-  const transition = useTimingTransition(isOpen, { duration: 100 });
+  const transition = useTimingTransition(isOpen, { duration: 150 });
   const height = bInterpolate(
     transition,
     0,
-    LIST_ITEM_HEIGHT * list.items.length+30
+    LIST_ITEM_HEIGHT * list.items.length+LIST_PADDING_BOTTOM
   );
   const bottomRadius = interpolate(transition, {
     inputRange: [0, 16 / 400],
