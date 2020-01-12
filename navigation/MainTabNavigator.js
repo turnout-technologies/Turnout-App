@@ -7,6 +7,7 @@ import TabBarIcon from '../components/TabBarIcon';
 import LeftScreen from '../screens/LeftScreen';
 import MiddleScreen from '../screens/MiddleScreen';
 import RightScreen from '../screens/RightScreen';
+import QuestionScreen from '../screens/QuestionScreen';
 
 const config = Platform.select({
   web: { headerMode: 'screen' },
@@ -32,6 +33,7 @@ LeftStack.path = '';
 const MiddleStack = createStackNavigator(
   {
     Middle: MiddleScreen,
+    Question: QuestionScreen
   },
   config
 );
