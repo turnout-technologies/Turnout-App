@@ -14,7 +14,7 @@ export default class AnnouncementCard extends Component {
 	render() {
     	const { titleText, bodyText, buttonText, buttonOnPress } = this.props;
     	return (
-    		<Card elevation={5} style={{marginHorizontal: 10, borderRadius: 20}}>
+    		<Card elevation={5} style={styles.announcementCard}>
 	        	<Card.Content>
 	            	<View style={styles.announcementTitleContainer}>
 	              		<Text style={styles.announcementTitleText}>{titleText}</Text>
@@ -32,6 +32,12 @@ export default class AnnouncementCard extends Component {
 }
 
 const styles = StyleSheet.create({
+	announcementCard: {
+		backgroundColor: global.CURRENT_THEME.colors.background,
+		marginHorizontal: 10,
+		borderRadius: 20
+	},
+
 	announcementTitleContainer: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',

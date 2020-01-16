@@ -1,18 +1,17 @@
 import React, {Component} from "react";
 import { StyleSheet, Text, ScrollView } from "react-native";
+import PropTypes from 'prop-types';
 
 import List, { List as ListModel } from "./List";
 
-const list: ListModel = {
-  items: [
-    { id: 0, text: "This is the first answer to the question" },
-    { id: 1, text: "This is the second answer to the question" },
-    { id: 2, text: "This is the third answer to the question" },
-    { id: 3, text: "This is the fourth answer to the question" }
-  ]
-};
-
 export default class Accordion extends Component {
+
+  static propTypes = {
+    questions: PropTypes.array,
+    onSubmitResponses: PropTypes.func
+  }
+
+  questionResponses = [-1, -1, -1, -1];
 
   constructor (props) {
      super(props)
@@ -23,23 +22,33 @@ export default class Accordion extends Component {
      this.ballotHandleQuestionPressed = this.ballotHandleQuestionPressed.bind(this);
   }
 
-  questionAnswers= [-1, -1, -1, -1];
-
   ballotHandleAnswerPressed(questionId, answerId) {
-    this.setState({openQuestion: questionId+1});
-    this.questionAnswers[questionId] = answerId;
+    this.questionResponses[questionId] = answerId;
+    var nextOpenQuestion = questionId+1;
+    var allQuestionsAnswered = true;
+    for (var i = 0; i < this.questionResponses.length && allQuestionsAnswered; i++) {
+      if (this.questionResponses[i] == -1) {
+        allQuestionsAnswered = false;
+      }
+    }
+    if (allQuestionsAnswered) {
+      nextOpenQuestion = 5;
+      this.props.onSubmitResponses(this.questionResponses);
+    }
+    this.setState({openQuestion: nextOpenQuestion});
   }
   ballotHandleQuestionPressed(questionId) {
     this.setState({openQuestion: questionId});
   }
 
   render() {
+    const { questions } = this.props;
     return (
       <ScrollView style={styles.container}>
-        <List {...{ list }} questionId={0} openQuestion={this.state.openQuestion} questionAnswers={this.questionAnswers} onAnswerPressed={this.ballotHandleAnswerPressed} onQuestionPressed={this.ballotHandleQuestionPressed} />
-        <List {...{ list }} questionId={1} openQuestion={this.state.openQuestion} questionAnswers={this.questionAnswers} onAnswerPressed={this.ballotHandleAnswerPressed} onQuestionPressed={this.ballotHandleQuestionPressed}  />
-        <List {...{ list }} questionId={2} openQuestion={this.state.openQuestion} questionAnswers={this.questionAnswers} onAnswerPressed={this.ballotHandleAnswerPressed} onQuestionPressed={this.ballotHandleQuestionPressed} />
-        <List {...{ list }} questionId={3} openQuestion={this.state.openQuestion} questionAnswers={this.questionAnswers} onAnswerPressed={this.ballotHandleAnswerPressed} onQuestionPressed={this.ballotHandleQuestionPressed} />
+        <List question={questions[0]} openQuestion={this.state.openQuestion} questionResponseId={this.questionResponses[0]} onAnswerPressed={this.ballotHandleAnswerPressed} onQuestionPressed={this.ballotHandleQuestionPressed} />
+        <List question={questions[1]} openQuestion={this.state.openQuestion} questionResponseId={this.questionResponses[1]} onAnswerPressed={this.ballotHandleAnswerPressed} onQuestionPressed={this.ballotHandleQuestionPressed} />
+        <List question={questions[2]} openQuestion={this.state.openQuestion} questionResponseId={this.questionResponses[2]} onAnswerPressed={this.ballotHandleAnswerPressed} onQuestionPressed={this.ballotHandleQuestionPressed} />
+        <List question={questions[3]} openQuestion={this.state.openQuestion} questionResponseId={this.questionResponses[3]} onAnswerPressed={this.ballotHandleAnswerPressed} onQuestionPressed={this.ballotHandleQuestionPressed} />
       </ScrollView>
     );
   };

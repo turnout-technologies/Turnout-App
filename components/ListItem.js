@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, View, TouchableOpacity, Alert } from "react-native";
+import { MaterialIcons } from '@expo/vector-icons';
 
 export const LIST_ITEM_HEIGHT = 64;
 const styles = StyleSheet.create({
@@ -19,54 +20,56 @@ const styles = StyleSheet.create({
   answerButton: {
     flex: 1,
     justifyContent: "center",
-      backgroundColor: 'rgba(0, 0, 0, 0)',
-      borderRadius: global.CURRENT_THEME.roundness,
-      borderColor: global.CURRENT_THEME.colors.text,
-      borderWidth: 1
+    backgroundColor: 'rgba(0, 0, 0, 0)',
+    borderRadius: global.CURRENT_THEME.roundness,
+    borderColor: global.CURRENT_THEME.colors.text_opacity3,
+    borderWidth: 1
+  },
+
+  answerContentContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginHorizontal: 15
   },
 
   answerButtonText: {
-      color: global.CURRENT_THEME.colors.text,
-      textAlign: "center",
-      fontSize: 16
+    flex:1,
+    color: global.CURRENT_THEME.colors.text,
+    textAlign: "left",
+    fontSize: 16
   },
 
   answerButtonSelected: {
     flex: 1,
     justifyContent: "center",
-      backgroundColor: global.CURRENT_THEME.colors.primary,
-      borderRadius: global.CURRENT_THEME.roundness,
+    backgroundColor: global.CURRENT_THEME.colors.primary,
+    borderRadius: global.CURRENT_THEME.roundness,
+    borderColor: global.CURRENT_THEME.colors.primary,
+    borderWidth: 1
   },
 
   answerButtonTextSelected: {
-      color: global.CURRENT_THEME.colors.accent,
-      textAlign: "center",
-      fontSize: 16
+    flex:1,
+    color: global.CURRENT_THEME.colors.accent,
+    textAlign: "left",
+    fontSize: 16
   }
 });
 
-interface ListItemProps {
-  item: ListItem;
-  isLast: boolean;
-}
-
-export default ({ item, isLast, answerSelected, onAnswerPressed }: ListItemProps) => {
-  const bottomRadius = isLast ? global.CURRENT_THEME.roundness : 0;
+export default ({ item, answerSelected, onAnswerPressed }: ListItemProps) => {
   var answerButtonStyle = answerSelected ? styles.answerButtonSelected : styles.answerButton;
   var answerButtonTextStyle = answerSelected ? styles.answerButtonTextSelected : styles.answerButtonText;
   return (
     <View
-      style={[
-        styles.container,
-        {
-          borderBottomLeftRadius: bottomRadius,
-          borderBottomRightRadius: bottomRadius
-        }
-      ]}
+      style={styles.container}
     >
       <View style={styles.answerButtonContainer}>
-        <TouchableOpacity style={answerButtonStyle} onPress={ () => onAnswerPressed(item.id)}>
-          <Text style={answerButtonTextStyle}>{item.text}</Text>
+        <TouchableOpacity style={answerButtonStyle} onPress={ () => onAnswerPressed(item.answerId)}>
+          <View style={styles.answerContentContainer}>
+            <Text style={answerButtonTextStyle}>{item.answerText}</Text>
+            {answerSelected && <MaterialIcons style={{marginLeft: 10}} name="check" size={25} color={global.CURRENT_THEME.colors.accent} />}
+          </View>
         </TouchableOpacity>
       </View>
     </View>

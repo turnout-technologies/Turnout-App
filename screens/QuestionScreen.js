@@ -9,7 +9,7 @@ export default class QuestionScreen extends Component {
   static navigationOptions = {
     title: 'Ballot',
     headerStyle: GlobalStyles.headerStyle,
-    headerTintColor: global.CURRENT_THEME.colors.accent,
+    headerTintColor: global.CURRENT_THEME.colors.accent
   };
 
   constructor (props) {
@@ -18,10 +18,15 @@ export default class QuestionScreen extends Component {
      }
   }
 
+  submitResponsesHandler(questionResponses) {
+    console.log("Received responses submission");
+    console.log(questionResponses);
+  }
+
   render() {
     return (
       <View style={GlobalStyles.backLayerContainer}>
-      <Accordion/>
+      <Accordion questions={global.SAMPLE_QUESTIONS} onSubmitResponses={this.submitResponsesHandler}/>
       </View>
     );
   }

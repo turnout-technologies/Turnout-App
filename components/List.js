@@ -10,7 +10,7 @@ const LIST_PADDING_BOTTOM=25;
 const { interpolate } = Animated;
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "white",
+    backgroundColor: global.CURRENT_THEME.colors.background,
     padding: 16,
     borderTopLeftRadius: global.CURRENT_THEME.roundness,
     borderTopRightRadius: global.CURRENT_THEME.roundness,
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
   },
   items: {
     overflow: "hidden",
-    backgroundColor: "white",
+    backgroundColor: global.CURRENT_THEME.colors.background,
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
     marginBottom: 5
@@ -42,17 +42,14 @@ export interface List {
   items: ListItem[];
 }
 
-interface ListProps {
-  list: List;
-}
-
-export default ({ list, questionId, openQuestion, questionAnswers, onAnswerPressed, onQuestionPressed }: ListProps) => {
+export default ({ question, openQuestion, questionResponseId, onAnswerPressed, onQuestionPressed }: ListProps) => {
+  var questionId = question.questionId;
   var isOpen = openQuestion == questionId;
   const transition = useTimingTransition(isOpen, { duration: 150 });
   const height = bInterpolate(
     transition,
     0,
-    LIST_ITEM_HEIGHT * list.items.length+LIST_PADDING_BOTTOM
+    LIST_ITEM_HEIGHT * question.questionAnswers.length+LIST_PADDING_BOTTOM
   );
   const bottomRadius = interpolate(transition, {
     inputRange: [0, 16 / 400],
@@ -75,15 +72,15 @@ export default ({ list, questionId, openQuestion, questionAnswers, onAnswerPress
         >
           <Text>
           	<Text style={styles.questionHeader}>Q{questionId+1} </Text>
-          	{isOpen && <Text style={styles.questionTitle}>This is the text of the first question?</Text>}
+          	{isOpen && <Text style={styles.questionTitle}>{question.questionText}</Text>}
           </Text>
-          {!isOpen && questionAnswers[questionId] > -1 && <MaterialIcons name="check-circle" size={30} color="#3EB93E" />}
-          {!isOpen && questionAnswers[questionId] == -1 && <Octicons name="dash" size={30} color={global.CURRENT_THEME.colors.text} />}
+          {!isOpen && questionResponseId > -1 && <MaterialIcons name="check-circle" size={30} color="#3EB93E" />}
+          {!isOpen && questionResponseId == -1 && <Octicons name="dash" size={30} color={global.CURRENT_THEME.colors.text} />}
         </Animated.View>
       </TouchableWithoutFeedback>
       <Animated.View style={[styles.items, { height }]}>
-        {list.items.map((item, key) => (
-          <Item {...{key, item}} isLast={key === list.items.length - 1} answerSelected={questionAnswers[questionId] == item.id} onAnswerPressed={questionHandleAnswerPressed} />
+        {question.questionAnswers.map((item, key) => (
+          <Item {...{key, item}} answerSelected={questionResponseId == item.answerId} onAnswerPressed={questionHandleAnswerPressed} />
         ))}
       </Animated.View>
     </>
