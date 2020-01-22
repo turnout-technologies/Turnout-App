@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, TouchableWithoutFeedback } from "react-native";
+import { View, StyleSheet, Text, TouchableWithoutFeedback } from "react-native";
 import Animated from "react-native-reanimated";
 import { bInterpolate, useTimingTransition } from "react-native-redash";
 import { MaterialIcons, Octicons } from '@expo/vector-icons';
@@ -42,21 +42,30 @@ export interface List {
   items: ListItem[];
 }
 
-export default ({ question, openQuestion, questionResponseId, onAnswerPressed, onQuestionPressed }: ListProps) => {
+export default ({ question, openQuestion, questionResponseId, onAnswerPressed, onQuestionPressed, onContentReady }: ListProps) => {
   var questionId = question.questionId;
   var isOpen = openQuestion == questionId;
   const transition = useTimingTransition(isOpen, { duration: 150 });
-  const height = bInterpolate(
-    transition,
-    0,
-    LIST_ITEM_HEIGHT * question.questionAnswers.length+LIST_PADDING_BOTTOM
-  );
+  const [contentHeight, setContentHeight] = useState(0);
+  const [height, setHeight] = useState(bInterpolate(transition, 0, 1));
+  const [contentReady, setContentReady] = useState(false);
   const bottomRadius = interpolate(transition, {
     inputRange: [0, 16 / 400],
     outputRange: [global.CURRENT_THEME.roundness, 0]
   });
   const questionHandleAnswerPressed = (answerId) => {
     onAnswerPressed(questionId, answerId);
+  };
+  const _getLayoutChange = (event) => {
+    var curHeight = event.nativeEvent.layout.height;
+    if (curHeight > contentHeight) {
+      setContentHeight(curHeight);
+      setHeight(bInterpolate(transition, 0, curHeight+LIST_PADDING_BOTTOM));
+    }
+    if (!contentReady) {
+      setContentReady(true);
+      onContentReady(questionId);
+    }
   };
   return (
     <>
@@ -71,17 +80,19 @@ export default ({ question, openQuestion, questionResponseId, onAnswerPressed, o
           ]}
         >
           <Text>
-          	<Text style={styles.questionHeader}>Q{questionId+1} </Text>
-          	{isOpen && <Text style={styles.questionTitle}>{question.questionText}</Text>}
+            <Text style={styles.questionHeader}>Q{questionId+1} </Text>
+            {isOpen && <Text style={styles.questionTitle}>{question.questionText}</Text>}
           </Text>
           {!isOpen && questionResponseId > -1 && <MaterialIcons name="check-circle" size={30} color="#3EB93E" />}
           {!isOpen && questionResponseId == -1 && <Octicons name="dash" size={30} color={global.CURRENT_THEME.colors.text} />}
         </Animated.View>
       </TouchableWithoutFeedback>
       <Animated.View style={[styles.items, { height }]}>
-        {question.questionAnswers.map((item, key) => (
-          <Item {...{key, item}} answerSelected={questionResponseId == item.answerId} onAnswerPressed={questionHandleAnswerPressed} />
-        ))}
+        <View onLayout={_getLayoutChange}>
+          {question.questionAnswers.map((item, key) => (
+            <Item {...{key, item}} answerSelected={questionResponseId == item.answerId} onAnswerPressed={questionHandleAnswerPressed} />
+          ))}
+        </View>
       </Animated.View>
     </>
   );

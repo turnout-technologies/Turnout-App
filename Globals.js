@@ -59,7 +59,7 @@ global.SAMPLE_QUESTIONS = [
 		questionText: "This is the text for question 1?",
 		questionAnswers: [
 			{ answerId: 0, answerText: "This is the first answer to the first question" },
-			{ answerId: 1, answerText: "This is the second answer to the first question. It's longer than the rest." },
+			{ answerId: 1, answerText: "This is the second answer to the first question. It's really a lot longer than the rest and tests that the question views scale properly. It would be a shame if they didn't.It's really a lot longer than the rest and tests that the question views scale properly. It would be a shame if they didn't.It's really a lot longer than the rest and tests that the question views scale properly. It would be a shame if they didn't." },
 			{ answerId: 2, answerText: "This is the third answer to the first question" },
 			{ answerId: 3, answerText: "This is the fourth answer to the first question" },
 
@@ -81,7 +81,7 @@ global.SAMPLE_QUESTIONS = [
 		questionText: "This is the text for question 3?",
 		questionAnswers: [
 			{ answerId: 0, answerText: "This is the first answer to the third question" },
-			{ answerId: 1, answerText: "This is the second answer to the third question. It's longer than the rest." },
+			{ answerId: 1, answerText: "This is the second answer to the third question" },
 			{ answerId: 2, answerText: "This is the third answer to the third question" },
 			{ answerId: 3, answerText: "This is the fourth answer to the third question" },
 

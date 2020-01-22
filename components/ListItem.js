@@ -2,14 +2,13 @@ import React from "react";
 import { StyleSheet, Text, View, TouchableOpacity, Alert } from "react-native";
 import { MaterialIcons } from '@expo/vector-icons';
 
-export const LIST_ITEM_HEIGHT = 64;
+export const LIST_ITEM_HEIGHT = 60;
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 5,
     paddingHorizontal: 10,
-    height: LIST_ITEM_HEIGHT
   },
 
   answerButtonContainer: {
@@ -18,12 +17,14 @@ const styles = StyleSheet.create({
   },
 
   answerButton: {
-    flex: 1,
+    flex: 0,
+    minHeight: LIST_ITEM_HEIGHT,
     justifyContent: "center",
     backgroundColor: 'rgba(0, 0, 0, 0)',
     borderRadius: global.CURRENT_THEME.roundness,
     borderColor: global.CURRENT_THEME.colors.text_opacity3,
-    borderWidth: 1
+    borderWidth: 1,
+    paddingVertical: 10
   },
 
   answerContentContainer: {
@@ -41,12 +42,14 @@ const styles = StyleSheet.create({
   },
 
   answerButtonSelected: {
-    flex: 1,
+    flex: 0,
+    minHeight: LIST_ITEM_HEIGHT,
     justifyContent: "center",
     backgroundColor: global.CURRENT_THEME.colors.primary,
     borderRadius: global.CURRENT_THEME.roundness,
     borderColor: global.CURRENT_THEME.colors.primary,
-    borderWidth: 1
+    borderWidth: 1,
+    paddingVertical: 10
   },
 
   answerButtonTextSelected: {

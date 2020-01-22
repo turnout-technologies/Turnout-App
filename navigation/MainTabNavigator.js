@@ -38,11 +38,16 @@ const MiddleStack = createStackNavigator(
   config
 );
 
-MiddleStack.navigationOptions = {
-  tabBarLabel: 'Turnout',
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon focused={focused} name={'check-box'} />
-  ),
+MiddleStack.navigationOptions = ({ navigation }) => {
+  let tabBarVisible = navigation.state.index == 0;
+  return ({
+    tabBarLabel: 'Turnout',
+    tabBarIcon: ({ focused }) => (
+      <TabBarIcon focused={focused} name={'check-box'} />
+    ),
+    tabBarVisible
+  });
+
 };
 
 MiddleStack.path = '';
