@@ -18,13 +18,15 @@ const LeftStack = createStackNavigator(
   {
     Left: LeftScreen,
   },
-  config
+  {
+    headerMode: 'none',
+  }
 );
 
 LeftStack.navigationOptions = {
-  tabBarLabel: 'Rewards',
+  tabBarLabel: 'Leaderboard',
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon focused={focused} name={'store'} />
+    <TabBarIcon focused={focused} name={'md-trophy'} />
   ),
 };
 
@@ -43,7 +45,7 @@ MiddleStack.navigationOptions = ({ navigation }) => {
   return ({
     tabBarLabel: 'Turnout',
     tabBarIcon: ({ focused }) => (
-      <TabBarIcon focused={focused} name={'check-box'} />
+      <TabBarIcon focused={focused} name={'md-checkbox'} />
     ),
     tabBarVisible
   });
@@ -62,7 +64,7 @@ const RightStack = createStackNavigator(
 RightStack.navigationOptions = {
   tabBarLabel: 'Profile',
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon focused={focused} name={'account-circle'} />
+    <TabBarIcon focused={focused} name={'md-contact'} />
   ),
 };
 

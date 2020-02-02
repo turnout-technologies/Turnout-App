@@ -43,7 +43,7 @@ export default class Accordion extends Component {
       })
     ]).start();
     if (open) {
-      setTimeout(() => {this.questionScrollView.scrollToEnd({animated: true, duration: 150});}, 300);
+      setTimeout(() => {this.questionScrollView.scrollToEnd({animated: true, duration: 150});}, 200);
     }
   }
 

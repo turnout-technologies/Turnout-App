@@ -1,5 +1,8 @@
-import {StyleSheet} from 'react-native';
+import {StyleSheet, Platform} from 'react-native';
 import { DefaultTheme } from 'react-native-paper';
+
+//constants
+global.IOS = Platform.OS === 'ios';
 
 //THEMES
 const MainTheme = {
@@ -98,4 +101,50 @@ global.SAMPLE_QUESTIONS = [
 
 		]
 	}
+]
+
+//Dummy Leaderboard
+global.LEADERBOARD_DATA = [
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
+	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 }
 ]
