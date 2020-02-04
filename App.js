@@ -7,6 +7,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { Provider as PaperProvider } from 'react-native-paper';
 import AppNavigator from './navigation/AppNavigator';
 import './Globals.js';
+import * as firebase from 'firebase';
+
+import getEnvVars from './auth/environment';
+
+firebase.initializeApp(getEnvVars().firebaseConfig);
 
 
 export default function App(props) {
