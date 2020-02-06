@@ -42,9 +42,9 @@ export interface List {
   items: ListItem[];
 }
 
-export default ({ question, openQuestion, questionResponseId, onAnswerPressed, onQuestionPressed, onContentReady }: ListProps) => {
-  var questionId = question.questionId;
-  var isOpen = openQuestion == questionId;
+export default ({ question, questionIndex, openQuestion, questionResponseId, onAnswerPressed, onQuestionPressed, onContentReady }: ListProps) => {
+  var questionId = question.id;
+  var isOpen = openQuestion == questionIndex;
   const transition = useTimingTransition(isOpen, { duration: 150 });
   const [contentHeight, setContentHeight] = useState(0);
   const [height, setHeight] = useState(bInterpolate(transition, 0, 1));
@@ -54,7 +54,7 @@ export default ({ question, openQuestion, questionResponseId, onAnswerPressed, o
     outputRange: [global.CURRENT_THEME.roundness, 0]
   });
   const questionHandleAnswerPressed = (answerId) => {
-    onAnswerPressed(questionId, answerId);
+    onAnswerPressed(questionId, questionIndex, answerId);
   };
   const _getLayoutChange = (event) => {
     var curHeight = event.nativeEvent.layout.height;
@@ -64,12 +64,12 @@ export default ({ question, openQuestion, questionResponseId, onAnswerPressed, o
     }
     if (!contentReady) {
       setContentReady(true);
-      onContentReady(questionId);
+      onContentReady(questionIndex);
     }
   };
   return (
     <>
-      <TouchableWithoutFeedback onPress={() => onQuestionPressed(questionId)}>
+      <TouchableWithoutFeedback onPress={() => onQuestionPressed(questionIndex)}>
         <Animated.View
           style={[
             styles.container,
@@ -80,17 +80,17 @@ export default ({ question, openQuestion, questionResponseId, onAnswerPressed, o
           ]}
         >
           <Text>
-            <Text style={styles.questionHeader}>Q{questionId+1} </Text>
-            {isOpen && <Text style={styles.questionTitle}>{question.questionText}</Text>}
+            <Text style={styles.questionHeader}>Q{questionIndex+1} </Text>
+            {isOpen && <Text style={styles.questionTitle}>{question.title}</Text>}
           </Text>
-          {!isOpen && questionResponseId > -1 && <MaterialIcons name="check-circle" size={30} color="#3EB93E" />}
-          {!isOpen && questionResponseId == -1 && <Octicons name="dash" size={30} color={global.CURRENT_THEME.colors.text} />}
+          {!isOpen && questionResponseId && <MaterialIcons name="check-circle" size={30} color="#3EB93E" />}
+          {!isOpen && !questionResponseId && <Octicons name="dash" size={30} color={global.CURRENT_THEME.colors.text} />}
         </Animated.View>
       </TouchableWithoutFeedback>
       <Animated.View style={[styles.items, { height }]}>
         <View onLayout={_getLayoutChange}>
-          {question.questionAnswers.map((item, key) => (
-            <Item {...{key, item}} answerSelected={questionResponseId == item.answerId} onAnswerPressed={questionHandleAnswerPressed} />
+          {question.answers.map((item, key) => (
+            <Item {...{key, item}} answerSelected={questionResponseId == item.id} onAnswerPressed={questionHandleAnswerPressed} />
           ))}
         </View>
       </Animated.View>

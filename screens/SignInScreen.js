@@ -7,6 +7,7 @@ import * as firebase from 'firebase';
 import { YellowBox } from 'react-native';
 
 import getEnvVars from '../auth/environment';
+import * as API from '../APIClient';
 
 YellowBox.ignoreWarnings(['Setting a timer']);
 const _console = { ...console };
@@ -41,24 +42,12 @@ class SignInScreen extends React.Component {
   };
 
   componentDidMount() {
-    this.checkIfLoggedIn();
     if (!isInClient) {
       this.initAsyncNative();
     }
   }
 
-  checkIfLoggedIn = () => {
-    firebase.auth().onAuthStateChanged(
-      function(user) {
-        if (user) {
-          console.log("LOGGED IN");
-          this.setState({user});
-        } else {
-          console.log("NOT LOGGED IN");
-        }
-      }.bind(this)
-    );
-  };
+
 
   isUserEqual = (googleUser, firebaseUser) => {
     if (firebaseUser) {
@@ -75,7 +64,7 @@ class SignInScreen extends React.Component {
   }
 
   onSignIn = googleUser => {
-    console.log('Google Auth Response', googleUser);
+    //console.log('Google Auth Response', googleUser);
     // We need to register an Observer on Firebase Auth to make sure auth is initialized.
     var unsubscribe = firebase.auth().onAuthStateChanged(
       function(firebaseUser) {
@@ -91,30 +80,21 @@ class SignInScreen extends React.Component {
           firebase
             .auth()
             .signInWithCredential(credential)
-            .then(function(user) {
+            .then(function(result) {
               console.log('user signed in ');
-              /*if (result.additionalUserInfo.isNewUser) {
-                firebase
-                  .database()
-                  .ref('/users/' + result.user.uid)
-                  .set({
-                    gmail: result.user.email,
-                    profile_picture: result.additionalUserInfo.profile.picture,
-                    first_name: result.additionalUserInfo.profile.given_name,
-                    last_name: result.additionalUserInfo.profile.family_name,
-                    created_at: Date.now()
+              if (result.additionalUserInfo.isNewUser) {
+                console.log("NEW USER! Adding to DB...")
+                console.log("NAME: " + result.user.displayName);
+                console.log("Email: " + result.user.email);
+                API.addUser(result.user.displayName, result.user.email, "")
+                  .then(function(response) {
+                    console.log(response.status);
+                    console.log(response.data);
                   })
-                  .then(function(snapshot) {
-                    console.log('Snapshot', snapshot);
+                  .catch(function (error) {
+                    console.log(error);
                   });
-              } else {
-                firebase
-                  .database()
-                  .ref('/users/' + result.user.uid)
-                  .update({
-                    last_logged_in: Date.now()
-                  });
-              }*/
+              }
             })
             .catch(function(error) {
               // Handle Errors here.
@@ -132,25 +112,6 @@ class SignInScreen extends React.Component {
       }.bind(this)
     );
   };
-
-  initFirebase() {
-    // Initialize Firebase
-    const firebaseConfig = {
-      apiKey: "<YOUR-API-KEY>",
-      authDomain: "<YOUR-AUTH-DOMAIN>",
-      databaseURL: "<YOUR-DATABASE-URL>",
-      storageBucket: "<YOUR-STORAGE-BUCKET>"
-    };
-    firebase.initializeApp(firebaseConfig);
-
-    // Listen for authentication state to change.
-    firebase.auth().onAuthStateChanged((result) => {
-      if (result != null) {
-        console.log("We are authenticated now!");
-      }
-      //Do other things
-    });
-  }
 
   initAsyncNative = async () => {
     try {
@@ -248,12 +209,7 @@ class SignInScreen extends React.Component {
     return (
       <View>
         <Button title="Sign in!" onPress={this.onPress}/*onPress={this._signInAsync}*/ />
-        <Text>Email: {this.state.user ? this.state.user.email : "loading"}</Text>
-        <Text>Name: {this.state.user ? this.state.user.displayName : "loading"}</Text>
-        <Image
-          style={{ width: 50, height: 50 }}
-          source={{ uri: this.state.user ? this.state.user.photoURL : "https://www.argentum.org/wp-content/uploads/2018/12/blank-profile-picture-973460_6404.png" }}
-        />
+        <View style={{height: 50}}/>
         <Button title="Skip Auth" onPress={ () => this.props.navigation.navigate('Main')}/*onPress={this._signInAsync}*/ />
       </View>
     );

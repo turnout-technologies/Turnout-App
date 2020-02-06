@@ -11,7 +11,9 @@ import * as firebase from 'firebase';
 
 import getEnvVars from './auth/environment';
 
-firebase.initializeApp(getEnvVars().firebaseConfig);
+if (!firebase.apps.length) {
+    firebase.initializeApp(getEnvVars().firebaseConfig);
+}
 
 
 export default function App(props) {

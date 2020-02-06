@@ -68,9 +68,9 @@ export default ({ item, answerSelected, onAnswerPressed }: ListItemProps) => {
       style={styles.container}
     >
       <View style={styles.answerButtonContainer}>
-        <TouchableOpacity style={answerButtonStyle} onPress={ () => onAnswerPressed(item.answerId)}>
+        <TouchableOpacity style={answerButtonStyle} onPress={ () => onAnswerPressed(item.id)}>
           <View style={styles.answerContentContainer}>
-            <Text style={answerButtonTextStyle}>{item.answerText}</Text>
+            <Text style={answerButtonTextStyle}>{item.text}</Text>
             {answerSelected && <MaterialIcons style={{marginLeft: 10}} name="check" size={25} color={global.CURRENT_THEME.colors.accent} />}
           </View>
         </TouchableOpacity>

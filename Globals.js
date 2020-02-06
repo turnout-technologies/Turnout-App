@@ -56,52 +56,58 @@ const GlobalStyles = StyleSheet.create({
 export {GlobalStyles}
 
 //Sample Questions
-global.SAMPLE_QUESTIONS = [
-	{
-		questionId: 0,
-		questionText: "This is the text for question 1?",
-		questionAnswers: [
-			{ answerId: 0, answerText: "This is the first answer to the first question" },
-			{ answerId: 1, answerText: "This is the second answer to the first question. It's really a lot longer than the rest and tests that the question views scale properly. It would be a shame if they didn't.It's really a lot longer than the rest and tests that the question views scale properly. It would be a shame if they didn't.It's really a lot longer than the rest and tests that the question views scale properly. It would be a shame if they didn't." },
-			{ answerId: 2, answerText: "This is the third answer to the first question" },
-			{ answerId: 3, answerText: "This is the fourth answer to the first question" },
+global.SAMPLE_QUESTIONS =
+{
+	createdAt: 1580917462,
+	date: null,
+	id: "612f5990-482e-11ea-b8f4-f90e5695c36a",
+	questions: [
+		{
+			id: 0,
+			title: "This is the text for question 1?",
+			answers: [
+				{ id: 0, text: "This is the first answer to the first question" },
+				{ id: 1, text: "This is the second answer to the first question. It's really a lot longer than the rest and tests that the question views scale properly. It would be a shame if they didn't.It's really a lot longer than the rest and tests that the question views scale properly. It would be a shame if they didn't.It's really a lot longer than the rest and tests that the question views scale properly. It would be a shame if they didn't." },
+				{ id: 2, text: "This is the third answer to the first question" },
+				{ id: 3, text: "This is the fourth answer to the first question" },
 
-		]
-	},
-	{
-		questionId: 1,
-		questionText: "This is the text for question 2?",
-		questionAnswers: [
-			{ answerId: 0, answerText: "This is the first answer to the second question" },
-			{ answerId: 1, answerText: "This is the second answer to the second question. It's longer than the rest." },
-			{ answerId: 2, answerText: "This is the third answer to the second question" },
-			{ answerId: 3, answerText: "This is the fourth answer to the second question" },
+			]
+		},
+		{
+			id: 1,
+			title: "This is the text for question 2?",
+			answers: [
+				{ id: 0, text: "This is the first answer to the second question" },
+				{ id: 1, text: "This is the second answer to the second question. It's longer than the rest." },
+				{ id: 2, text: "This is the third answer to the second question" },
+				{ id: 3, text: "This is the fourth answer to the second question" },
 
-		]
-	},
-	{
-		questionId: 2,
-		questionText: "This is the text for question 3?",
-		questionAnswers: [
-			{ answerId: 0, answerText: "This is the first answer to the third question" },
-			{ answerId: 1, answerText: "This is the second answer to the third question" },
-			{ answerId: 2, answerText: "This is the third answer to the third question" },
-			{ answerId: 3, answerText: "This is the fourth answer to the third question" },
+			]
+		},
+		{
+			id: 2,
+			title: "This is the text for question 3?",
+			answers: [
+				{ id: 0, text: "This is the first answer to the third question" },
+				{ id: 1, text: "This is the second answer to the third question" },
+				{ id: 2, text: "This is the third answer to the third question" },
+				{ id: 3, text: "This is the fourth answer to the third question" },
 
-		]
-	},
-	{
-		questionId: 3,
-		questionText: "This is the text for question 4?",
-		questionAnswers: [
-			{ answerId: 0, answerText: "This is the first answer to the fourth question" },
-			{ answerId: 1, answerText: "This is the second answer to the fourth question. It's longer than the rest." },
-			{ answerId: 2, answerText: "This is the third answer to the fourth question" },
-			{ answerId: 3, answerText: "This is the fourth answer to the fourth question" },
+			]
+		},
+		{
+			id: 3,
+			title: "This is the text for question 4?",
+			answers: [
+				{ id: 0, text: "This is the first answer to the fourth question" },
+				{ id: 1, text: "This is the second answer to the fourth question. It's longer than the rest." },
+				{ id: 2, text: "This is the third answer to the fourth question" },
+				{ id: 3, text: "This is the fourth answer to the fourth question" },
 
-		]
-	}
-]
+			]
+		}
+	]
+}
 
 //Dummy Leaderboard
 global.LEADERBOARD_DATA = [

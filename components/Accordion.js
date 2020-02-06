@@ -13,7 +13,7 @@ export default class Accordion extends Component {
 
   constructor (props) {
      super(props);
-     this.questionResponses = Array(props.questions.length).fill(-1);
+     this.questionResponses = Array(props.questions.length).fill(null);
      this.state = {
        openQuestion: -1,
      };
@@ -48,32 +48,37 @@ export default class Accordion extends Component {
   }
 
 
-  ballotHandleAnswerPressed(questionId, answerId) {
-    this.questionResponses[questionId] = answerId;
-    var nextOpenQuestion = questionId+1;
+  ballotHandleAnswerPressed(questionId, questionIndex, answerId) {
+    this.questionResponses[questionIndex] = {[questionId]: answerId};
+    var nextOpenQuestion = questionIndex+1;
     var allQuestionsAnswered = true;
     for (var i = 0; i < this.questionResponses.length && allQuestionsAnswered; i++) {
-      if (this.questionResponses[i] == -1) {
+      if (!this.questionResponses[i]) {
         allQuestionsAnswered = false;
       }
     }
     if (allQuestionsAnswered) {
       nextOpenQuestion = this.questionResponses.length;
+    }
+    if (nextOpenQuestion == this.questionResponses.length) {
       this.toggleSubmitCard(true);
     }
     this.setState({openQuestion: nextOpenQuestion});
   }
-  ballotHandleQuestionPressed(questionId) {
+
+  ballotHandleQuestionPressed(questionIndex) {
     if (this.state.openQuestion == this.questionResponses.length) {
       this.toggleSubmitCard(false);
     }
-    this.setState({openQuestion: questionId});
+    this.setState({openQuestion: questionIndex});
   }
-  handleContentReady(questionId) {
-    if (questionId == 0) {
+
+  handleContentReady(questionIndex) {
+    if (questionIndex == 0) {
       this.setState({openQuestion: 0});
     }
   }
+
   handleSubmitPressed() {
     this.props.onSubmitResponses(this.questionResponses);
   }
@@ -83,8 +88,8 @@ export default class Accordion extends Component {
     return (
       <View style={styles.container}>
         <ScrollView style={styles.scrollviewStyle} contentContainerStyle={{flexGrow: 1}} ref={(ref) => this.questionScrollView = ref}>
-          {questions.map((item, key) => (
-              <List {...{key, item}} question={item} openQuestion={this.state.openQuestion} questionResponseId={this.questionResponses[item.questionId]} onAnswerPressed={this.ballotHandleAnswerPressed} onQuestionPressed={this.ballotHandleQuestionPressed} onContentReady={this.handleContentReady} />
+          {questions.map((item, index) => (
+              <List key={item.id} question={item} questionIndex={index} openQuestion={this.state.openQuestion} questionResponseId={this.questionResponses[index]} onAnswerPressed={this.ballotHandleAnswerPressed} onQuestionPressed={this.ballotHandleQuestionPressed} onContentReady={this.handleContentReady} />
           ))}
         <Animated.View style={[styles.submitContainer, {height: this.submitContainerHeightAnimationVal}]}>
           <Animated.View style={[styles.submitButtonContainer, {transform:[{scale: this.submitButtonScaleInterpolation}], backgroundColor: this.submitButtonColorInterpolation}]}>

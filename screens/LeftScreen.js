@@ -11,7 +11,7 @@ const animationExperimental = UIManager.setLayoutAnimationEnabledExperimental;
 class LeftScreen extends Component {
 
   constructor() {
-    super()
+    super();
     if (!IOS && !!animationExperimental) {
       animationExperimental(true)
     }

@@ -5,18 +5,17 @@ import firebase from 'firebase';
 const skipAuthCheck = false;
 
 class AuthLoadingScreen extends Component {
+
   componentDidMount() {
-    this._bootstrapAsync();
+    this.checkIfLoggedIn();
   }
 
-  // Fetch the token from storage then navigate to our appropriate place
-  _bootstrapAsync = async () => {
-    //const userToken = await AsyncStorage.getItem('userToken');
-
-    // This will switch to the App screen or Auth screen and this loading
-    // screen will be unmounted and thrown away.
-    //this.props.navigation.navigate(userToken ? 'App' : 'Auth');
-    this.props.navigation.navigate(skipAuthCheck ? 'Main' : 'Auth');
+  checkIfLoggedIn = () => {
+    firebase.auth().onAuthStateChanged(
+      function(user) {
+        this.props.navigation.navigate(!!user ? 'Main' : 'Auth');
+      }.bind(this)
+    );
   };
 
   // Render any loading content that you like here

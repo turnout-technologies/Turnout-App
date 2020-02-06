@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
 import { View, StyleSheet, Text, Button, Alert, TouchableOpacity } from 'react-native';
-import { ExpoLinksView } from '@expo/samples';
+
 import {GlobalStyles} from '../Globals';
 import Accordion from '../components/Accordion';
+import * as API from '../APIClient';
 
 export default class QuestionScreen extends Component {
 
@@ -14,8 +15,18 @@ export default class QuestionScreen extends Component {
 
   constructor (props) {
      super(props)
-     this.state = {
-     }
+     this.state = {ballot: null}
+  }
+
+  componentDidMount() {
+    var _this = this;
+    API.getBallotToday()
+      .then(function(response) {
+        _this.setState({ballot: response.data});
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   }
 
   submitResponsesHandler(questionResponses) {
@@ -26,7 +37,7 @@ export default class QuestionScreen extends Component {
   render() {
     return (
       <View style={GlobalStyles.backLayerContainer}>
-      <Accordion questions={global.SAMPLE_QUESTIONS} onSubmitResponses={this.submitResponsesHandler}/>
+      {!!this.state.ballot && <Accordion questions={this.state.ballot.questions} onSubmitResponses={this.submitResponsesHandler}/>}
       </View>
     );
   }
