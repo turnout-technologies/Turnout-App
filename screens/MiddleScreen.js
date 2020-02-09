@@ -11,13 +11,11 @@ class MiddleScreen extends Component {
       <View style={GlobalStyles.backLayerContainer}>
         <View style={GlobalStyles.frontLayerContainer}>
           <View style={styles.pollStatusContainer}>
-            <Text style={styles.pollStatusText}>Polls close in</Text>
-            <Text style={styles.pollCountdownText}>01:37:34</Text>
-            <View style={styles.startButtonContainer}>
-              <TouchableOpacity style={styles.startButton} onPress = { () => this.props.navigation.navigate('Question')}>
-                <Text style={styles.startButtonText}>START</Text>
-              </TouchableOpacity>
-            </View>
+            <Text style={[GlobalStyles.bodyText,styles.pollStatusText]}>Polls close in</Text>
+            <Text style={[GlobalStyles.headerText,styles.pollCountdownText]}>01:37:34</Text>
+            <TouchableOpacity style={styles.startButton} onPress = { () => this.props.navigation.navigate('Question')}>
+              <Text style={[GlobalStyles.standardText,styles.startButtonText]}>Start</Text>
+            </TouchableOpacity>
           </View>
           <AnnouncementCard
             titleText="Announcement Title"
@@ -49,26 +47,19 @@ const styles = StyleSheet.create({
   pollStatusText: {
     textAlign: "center",
     fontSize: 20,
-    fontWeight: "normal",
-    color: global.CURRENT_THEME.colors.text
   },
 
   pollCountdownText: {
     textAlign: "center",
     fontSize: 50,
-    fontWeight: "bold",
-    color: global.CURRENT_THEME.colors.text
-  },
-
-  startButtonContainer: {
-    width:270,
-    height: 68,
-    alignSelf:'center',
+    fontWeight: "bold"
   },
 
   startButton: {
-    flex: 1,
+    width:270,
+    height: 68,
     justifyContent: "center",
+    alignSelf: "center",
     backgroundColor: global.CURRENT_THEME.colors.primary,
     borderRadius: global.CURRENT_THEME.roundness
   },

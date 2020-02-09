@@ -6,17 +6,21 @@ import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Provider as PaperProvider } from 'react-native-paper';
 import AppNavigator from './navigation/AppNavigator';
-import './Globals.js';
 import * as firebase from 'firebase';
 
+import './Globals.js';
 import getEnvVars from './auth/environment';
 
 if (!firebase.apps.length) {
     firebase.initializeApp(getEnvVars().firebaseConfig);
 }
 
-
 export default function App(props) {
+  if (!__DEV__) {
+    console.log = () => {};
+  } else {
+    console.log("DEV Mode")
+  }
   const [isLoadingComplete, setLoadingComplete] = useState(false);
 
   if (!isLoadingComplete && !props.skipLoadingScreen) {
@@ -42,15 +46,13 @@ export default function App(props) {
 async function loadResourcesAsync() {
   await Promise.all([
     Asset.loadAsync([
-      require('./assets/images/robot-dev.png'),
-      require('./assets/images/robot-prod.png'),
+      require('./assets/images/logo_text.png'),
+      require('./assets/images/google_logo.png'),
     ]),
     Font.loadAsync({
-      // This is the font that we are using for our tab bar
-      ...Ionicons.font,
-      // We include SpaceMono because we use it in HomeScreen.js. Feel free to
-      // remove this if you are not using it in your app
-      'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),
+      'circularstd-book': require('./assets/fonts/CircularStd-Book.ttf'),
+      'circularstd-medium': require('./assets/fonts/CircularStd-Medium.ttf'),
+      'circularstd-bold': require('./assets/fonts/CircularStd-Bold.ttf'),
     }),
   ]);
 }

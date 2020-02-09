@@ -5,6 +5,13 @@ import { createBottomTabNavigator } from 'react-navigation-tabs';
 
 import SignInScreen from '../screens/SignInScreen';
 
-const AuthStack = createStackNavigator({ SignIn: SignInScreen });
+const AuthStack = createStackNavigator(
+	{
+		SignIn: SignInScreen
+	},
+	{
+    	headerMode: 'none',
+  	}
+);
 
 export default AuthStack;

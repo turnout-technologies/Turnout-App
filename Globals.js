@@ -1,8 +1,23 @@
 import {StyleSheet, Platform} from 'react-native';
 import { DefaultTheme } from 'react-native-paper';
+import * as firebase from 'firebase';
 
 //constants
 global.IOS = Platform.OS === 'ios';
+
+//USER INFO
+var user = null;
+
+export function getUser() {
+	if (user == null) {
+		user = firebase.auth().currentUser;
+	}
+	return user;
+}
+
+export function setUser(curUser) {
+	user = curUser;
+}
 
 //THEMES
 const MainTheme = {
@@ -13,7 +28,8 @@ const MainTheme = {
     	accent: "#FFFFFF",
     	background: "#FFFFFF",
     	text: "#707070",
-    	text_opacity3: 'rgba(112,112, 112, 0.3)'
+    	text_opacity3: 'rgba(112,112, 112, 0.3)',
+    	text_opacity5: 'rgba(112,112, 112, 0.5)'
   	},
   	roundness: 30
 };
@@ -50,6 +66,18 @@ const GlobalStyles = StyleSheet.create({
 	    backgroundColor: global.CURRENT_THEME.colors.background,
 	    borderTopLeftRadius: global.CURRENT_THEME.roundness,
 	    borderTopRightRadius: global.CURRENT_THEME.roundness,
+  	},
+  	bodyText: {
+  		fontFamily: 'circularstd-book',
+  		color: global.CURRENT_THEME.colors.text
+  	},
+  	titleText: {
+  		fontFamily: 'circularstd-medium',
+  		color: global.CURRENT_THEME.colors.text
+  	},
+  	headerText: {
+  		fontFamily: 'circularstd-bold',
+  		color: global.CURRENT_THEME.colors.text
   	}
 
 });

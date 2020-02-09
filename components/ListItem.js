@@ -2,6 +2,8 @@ import React from "react";
 import { StyleSheet, Text, View, TouchableOpacity, Alert } from "react-native";
 import { MaterialIcons } from '@expo/vector-icons';
 
+import {GlobalStyles} from '../Globals';
+
 export const LIST_ITEM_HEIGHT = 60;
 const styles = StyleSheet.create({
   container: {
@@ -36,7 +38,6 @@ const styles = StyleSheet.create({
 
   answerButtonText: {
     flex:1,
-    color: global.CURRENT_THEME.colors.text,
     textAlign: "left",
     fontSize: 16
   },
@@ -70,7 +71,7 @@ export default ({ item, answerSelected, onAnswerPressed }: ListItemProps) => {
       <View style={styles.answerButtonContainer}>
         <TouchableOpacity style={answerButtonStyle} onPress={ () => onAnswerPressed(item.id)}>
           <View style={styles.answerContentContainer}>
-            <Text style={answerButtonTextStyle}>{item.text}</Text>
+            <Text style={[GlobalStyles.bodyText, answerButtonTextStyle]}>{item.text}</Text>
             {answerSelected && <MaterialIcons style={{marginLeft: 10}} name="check" size={25} color={global.CURRENT_THEME.colors.accent} />}
           </View>
         </TouchableOpacity>

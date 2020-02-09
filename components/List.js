@@ -5,6 +5,7 @@ import { bInterpolate, useTimingTransition } from "react-native-redash";
 import { MaterialIcons, Octicons } from '@expo/vector-icons';
 
 import Item, { LIST_ITEM_HEIGHT, ListItem } from "./ListItem";
+import {GlobalStyles} from '../Globals';
 
 const LIST_PADDING_BOTTOM=25;
 const { interpolate } = Animated;
@@ -20,13 +21,9 @@ const styles = StyleSheet.create({
   },
   questionHeader: {
     fontSize: 25,
-    fontWeight: "bold",
-    color: global.CURRENT_THEME.colors.text
   },
   questionTitle: {
     fontSize: 20,
-    fontWeight: "normal",
-    color: global.CURRENT_THEME.colors.text
   },
   items: {
     overflow: "hidden",
@@ -67,6 +64,22 @@ export default ({ question, questionIndex, openQuestion, questionResponseId, onA
       onContentReady(questionIndex);
     }
   };
+
+    /**
+   * Shuffles array in place. Used to shuffle the answer choices for the question.
+   * @param {Array} arr An array containing the items.
+   */
+  function shuffle(arr) {
+      var j, x, i;
+      for (i = arr.length - 1; i > 0; i--) {
+          j = Math.floor(Math.random() * (i + 1));
+          x = arr[i];
+          arr[i] = arr[j];
+          arr[j] = x;
+      }
+      return arr;
+  }
+
   return (
     <>
       <TouchableWithoutFeedback onPress={() => onQuestionPressed(questionIndex)}>
@@ -80,8 +93,8 @@ export default ({ question, questionIndex, openQuestion, questionResponseId, onA
           ]}
         >
           <Text>
-            <Text style={styles.questionHeader}>Q{questionIndex+1} </Text>
-            {isOpen && <Text style={styles.questionTitle}>{question.title}</Text>}
+            <Text style={[GlobalStyles.headerText, styles.questionHeader]}>Q{questionIndex+1} </Text>
+            {isOpen && <Text style={[GlobalStyles.titleText, styles.questionTitle]}>{question.title}</Text>}
           </Text>
           {!isOpen && questionResponseId && <MaterialIcons name="check-circle" size={30} color="#3EB93E" />}
           {!isOpen && !questionResponseId && <Octicons name="dash" size={30} color={global.CURRENT_THEME.colors.text} />}
@@ -89,7 +102,7 @@ export default ({ question, questionIndex, openQuestion, questionResponseId, onA
       </TouchableWithoutFeedback>
       <Animated.View style={[styles.items, { height }]}>
         <View onLayout={_getLayoutChange}>
-          {question.answers.map((item, key) => (
+          {shuffle(question.answers).map((item, key) => (
             <Item {...{key, item}} answerSelected={questionResponseId == item.id} onAnswerPressed={questionHandleAnswerPressed} />
           ))}
         </View>

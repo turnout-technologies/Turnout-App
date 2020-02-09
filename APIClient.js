@@ -31,3 +31,10 @@ export function addUser(name, email, phone) {
 export function getBallotToday() {
 	return axios.get("/ballots/today");
 }
+
+export function submitBallot(ballotId, userId, questionResponse) {
+	return axios.post("/ballots/today/"+ballotId, {
+	    userId: userId,
+	    response: questionResponse
+	 });
+}

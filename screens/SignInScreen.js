@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Button, Text, Image } from 'react-native';
+import { View, TouchableOpacity, Text, Image, StyleSheet } from 'react-native';
 import Constants from 'expo-constants';
 import * as GoogleSignIn from 'expo-google-sign-in';
 import * as Google from 'expo-google-app-auth';
@@ -8,6 +8,8 @@ import { YellowBox } from 'react-native';
 
 import getEnvVars from '../auth/environment';
 import * as API from '../APIClient';
+import {setUser} from '../Globals';
+import StatusBarBackground from '../components/StatusBarBackground';
 
 YellowBox.ignoreWarnings(['Setting a timer']);
 const _console = { ...console };
@@ -81,6 +83,7 @@ class SignInScreen extends React.Component {
             .auth()
             .signInWithCredential(credential)
             .then(function(result) {
+              setUser(result);
               console.log('user signed in ');
               if (result.additionalUserInfo.isNewUser) {
                 console.log("NEW USER! Adding to DB...")
@@ -127,7 +130,6 @@ class SignInScreen extends React.Component {
 
   _syncUserWithStateAsyncNative = async () => {
     const data = await GoogleSignIn.signInSilentlyAsync();
-    console.log('_syncUserWithStateAsync', { user });
     if (data) {
       const photoURL = await GoogleSignIn.getPhotoAsync(256);
       const user = await GoogleSignIn.getCurrentUserAsync();
@@ -207,18 +209,82 @@ class SignInScreen extends React.Component {
 
   render() {
     return (
-      <View>
-        <Button title="Sign in!" onPress={this.onPress}/*onPress={this._signInAsync}*/ />
-        <View style={{height: 50}}/>
-        <Button title="Skip Auth" onPress={ () => this.props.navigation.navigate('Main')}/*onPress={this._signInAsync}*/ />
+      <View style={styles.container}>
+        <StatusBarBackground backgroundColor="white"/>
+        <View style={styles.topContainer}>
+          <Image source={require('../assets/images/logo_text.png')} style={styles.logoText} />
+          <View style={{flex:1, alignItems: 'center', justifyContent: 'center'}}>
+            <Text>Carousel goes here</Text>
+          </View>
+        </View>
+        <View style={styles.bottomContainer}>
+          <Text style={styles.bottomContainerTitle}>Let's get started.</Text>
+          <View style={styles.signInButtonContainer}>
+            <TouchableOpacity style={styles.signInButton} onPress={this.onPress}>
+              <Image source={require('../assets/images/google_logo.png')} style={styles.signInButtonLogo} />
+              <Text style={[styles.signInButtonText]}>Sign in with Google</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
     );
   }
-
-  /*_signInAsync = async () => {
-    await AsyncStorage.setItem('userToken', 'abc');
-    this.props.navigation.navigate('App');
-  };*/
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex:1,
+    backgroundColor: global.CURRENT_THEME.colors.background
+  },
+  logoText: {
+    alignSelf: "center",
+    height: '10%',
+    resizeMode: 'contain',
+    marginTop: 20
+  },
+  topContainer: {
+    flex:1
+  },
+  bottomContainer: {
+    flex:.4,
+    backgroundColor: global.CURRENT_THEME.colors.primary,
+    borderTopLeftRadius: global.CURRENT_THEME.roundness,
+    borderTopRightRadius: global.CURRENT_THEME.roundness
+  },
+  bottomContainerTitle: {
+    fontFamily: 'circularstd-book',
+    color: global.CURRENT_THEME.colors.accent,
+    fontSize: 30,
+    paddingTop: 20,
+    paddingLeft: 20,
+    //position: 'absolute'
+  },
+  signInButtonContainer: {
+    flex:1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    //paddingTop: 30
+  },
+  signInButton: {
+    width:300,
+    height: 68,
+    justifyContent: "space-evenly",
+    backgroundColor: global.CURRENT_THEME.colors.accent,
+    borderRadius: global.CURRENT_THEME.roundness,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal:20,
+  },
+  signInButtonText: {
+    fontFamily: 'circularstd-book',
+    color: global.CURRENT_THEME.colors.text,
+    textAlign: "center",
+    fontSize: 20
+  },
+  signInButtonLogo: {
+    height: '50%',
+    resizeMode: 'contain',
+  },
+});
 
 module.exports= SignInScreen

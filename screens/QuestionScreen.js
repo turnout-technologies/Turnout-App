@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
-import { View, StyleSheet, Text, Button, Alert, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Button, Alert, TouchableOpacity } from 'react-native';
 
 import {GlobalStyles} from '../Globals';
 import Accordion from '../components/Accordion';
 import * as API from '../APIClient';
+import {getUser} from '../Globals';
 
 export default class QuestionScreen extends Component {
 
@@ -14,8 +15,9 @@ export default class QuestionScreen extends Component {
   };
 
   constructor (props) {
-     super(props)
-     this.state = {ballot: null}
+     super(props);
+     this.state = {ballot: null};
+     this.submitResponsesHandler = this.submitResponsesHandler.bind(this);
   }
 
   componentDidMount() {
@@ -29,9 +31,17 @@ export default class QuestionScreen extends Component {
       });
   }
 
-  submitResponsesHandler(questionResponses) {
+  submitResponsesHandler(questionResponseObject) {
     console.log("Received responses submission");
-    console.log(questionResponses);
+    console.log(questionResponseObject);
+    API.submitBallot(this.state.ballot.id, getUser().uid, questionResponseObject)
+      .then(function(response) {
+        console.log(response.status);
+        console.log(response.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });;
   }
 
   render() {

@@ -2,8 +2,10 @@ import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {Card} from 'react-native-paper';
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
+import {GlobalStyles} from '../Globals';
 
 export default class AnnouncementCard extends Component {
+
 	static propTypes = {
 	    titleText: PropTypes.string,
 	    bodyText: PropTypes.string,
@@ -17,14 +19,14 @@ export default class AnnouncementCard extends Component {
     		<Card elevation={5} style={styles.announcementCard}>
 	        	<Card.Content>
 	            	<View style={styles.announcementTitleContainer}>
-	              		<Text style={styles.announcementTitleText}>{titleText}</Text>
+	              		<Text style={[GlobalStyles.titleText,styles.announcementTitleText]}>{titleText}</Text>
 	              		<View style={styles.announcementButtonContainer}>
 	                		<TouchableOpacity style={styles.announcementButton} onPress = {buttonOnPress}>
-	                  			<Text style={styles.announcementButtonText}>{buttonText}</Text>
+	                  			<Text style={[GlobalStyles.bodyText,styles.announcementButtonText]}>{buttonText}</Text>
 	                		</TouchableOpacity>
 	            		</View>
 	            	</View>
-	            	{bodyText && <Text style={styles.announcementBodyText}>{bodyText}</Text>}
+	            	{bodyText && <Text style={[GlobalStyles.bodyText,styles.announcementBodyText]}>{bodyText}</Text>}
 	          	</Card.Content>
 	        </Card>
     	);
@@ -46,7 +48,6 @@ const styles = StyleSheet.create({
 
 	announcementTitleText: {
 		fontSize: 16,
-		color: global.CURRENT_THEME.colors.text,
 		alignSelf: "center"
 	},
 

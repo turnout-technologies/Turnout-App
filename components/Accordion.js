@@ -1,8 +1,9 @@
 import React, {Component} from "react";
-import { Animated, View, StyleSheet, Text, ScrollView, TouchableOpacity } from "react-native";
+import { Animated, View, StyleSheet, Text, ScrollView, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
 import PropTypes from 'prop-types';
 
 import List, { List as ListModel } from "./List";
+import {GlobalStyles} from '../Globals';
 
 export default class Accordion extends Component {
 
@@ -13,7 +14,9 @@ export default class Accordion extends Component {
 
   constructor (props) {
      super(props);
-     this.questionResponses = Array(props.questions.length).fill(null);
+     this.numQuestions = props.questions.length;
+     this.questionResponses = Array(this.numQuestions).fill(false);
+     this.questionResponseObject = {};
      this.state = {
        openQuestion: -1,
      };
@@ -49,28 +52,39 @@ export default class Accordion extends Component {
 
 
   ballotHandleAnswerPressed(questionId, questionIndex, answerId) {
-    this.questionResponses[questionIndex] = {[questionId]: answerId};
+    this.questionResponses[questionIndex] = true;
+    this.questionResponseObject[questionId] = answerId;
+    console.log(this.questionResponseObject);
+    console.log(this.questionResponses);
     var nextOpenQuestion = questionIndex+1;
     var allQuestionsAnswered = true;
-    for (var i = 0; i < this.questionResponses.length && allQuestionsAnswered; i++) {
+    for (var i = 0; i < this.numQuestions && allQuestionsAnswered; i++) {
       if (!this.questionResponses[i]) {
         allQuestionsAnswered = false;
       }
     }
     if (allQuestionsAnswered) {
-      nextOpenQuestion = this.questionResponses.length;
+      nextOpenQuestion = this.numQuestions;
     }
-    if (nextOpenQuestion == this.questionResponses.length) {
+    if (nextOpenQuestion == this.numQuestions) {
       this.toggleSubmitCard(true);
     }
     this.setState({openQuestion: nextOpenQuestion});
   }
 
   ballotHandleQuestionPressed(questionIndex) {
-    if (this.state.openQuestion == this.questionResponses.length) {
+    var isSubmitOpen = this.state.openQuestion == this.numQuestions;
+    // if submit card is open, close it
+    if (isSubmitOpen) {
+      console.log("submitopen");
       this.toggleSubmitCard(false);
     }
+    //set open question to the one pressed
     this.setState({openQuestion: questionIndex});
+    //if the submit card is the one pressed, open it
+    if (questionIndex == this.numQuestions) {
+      this.toggleSubmitCard(true);
+    }
   }
 
   handleContentReady(questionIndex) {
@@ -80,7 +94,7 @@ export default class Accordion extends Component {
   }
 
   handleSubmitPressed() {
-    this.props.onSubmitResponses(this.questionResponses);
+    this.props.onSubmitResponses(this.questionResponseObject);
   }
 
   render() {
@@ -89,17 +103,19 @@ export default class Accordion extends Component {
       <View style={styles.container}>
         <ScrollView style={styles.scrollviewStyle} contentContainerStyle={{flexGrow: 1}} ref={(ref) => this.questionScrollView = ref}>
           {questions.map((item, index) => (
-              <List key={item.id} question={item} questionIndex={index} openQuestion={this.state.openQuestion} questionResponseId={this.questionResponses[index]} onAnswerPressed={this.ballotHandleAnswerPressed} onQuestionPressed={this.ballotHandleQuestionPressed} onContentReady={this.handleContentReady} />
+              <List key={item.id} question={item} questionIndex={index} openQuestion={this.state.openQuestion} questionResponseId={this.questionResponseObject[item.id]} onAnswerPressed={this.ballotHandleAnswerPressed} onQuestionPressed={this.ballotHandleQuestionPressed} onContentReady={this.handleContentReady} />
           ))}
-        <Animated.View style={[styles.submitContainer, {height: this.submitContainerHeightAnimationVal}]}>
-          <Animated.View style={[styles.submitButtonContainer, {transform:[{scale: this.submitButtonScaleInterpolation}], backgroundColor: this.submitButtonColorInterpolation}]}>
-            <TouchableOpacity
-              style={styles.submitButton}
-              onPress = { () => this.handleSubmitPressed()}>
-                <Animated.Text style={[styles.submitButtonText, {fontSize: this.submitButtonFontSizeAnimationVal, color:this.submitButtonFontColorInterpolation}]}>Send It</Animated.Text>
-            </TouchableOpacity>
+        <TouchableWithoutFeedback onPress={() => this.ballotHandleQuestionPressed(this.numQuestions)}>
+          <Animated.View style={[styles.submitContainer, {height: this.submitContainerHeightAnimationVal}]}>
+            <Animated.View style={[styles.submitButtonContainer, {transform:[{scale: this.submitButtonScaleInterpolation}], backgroundColor: this.submitButtonColorInterpolation}]}>
+              <TouchableOpacity
+                style={styles.submitButton}
+                onPress = { () => this.handleSubmitPressed()}>
+                  <Animated.Text style={[GlobalStyles.bodyText, styles.submitButtonText, {fontSize: this.submitButtonFontSizeAnimationVal, color:this.submitButtonFontColorInterpolation}]}>Send It</Animated.Text>
+              </TouchableOpacity>
+            </Animated.View>
           </Animated.View>
-        </Animated.View>
+        </TouchableWithoutFeedback>
         </ScrollView>
       </View>
     );

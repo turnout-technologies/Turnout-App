@@ -45,7 +45,7 @@ class LeftScreen extends Component {
               renderItem={({ item, separators }) => (
                 <View style={styles.listItemContainer} >
                   <View style={styles.listItemsLeftAlignContainer}>
-                    <Text style={styles.listItemTitle}>{item.position}</Text>
+                    <Text style={[GlobalStyles.bodyText, styles.listItemTitle]}>{item.position}</Text>
                     <Ionicons
                       name="md-contact"
                       size={50}
@@ -53,11 +53,11 @@ class LeftScreen extends Component {
                       color={global.CURRENT_THEME.colors.text}
                     />
                     <View style={styles.listItemTitlesContainer}>
-                      <Text style={styles.listItemTitle}>{item.name}</Text>
-                      <Text style={styles.listItemSubtitle}>{item.schoolName}</Text>
+                      <Text style={[GlobalStyles.bodyText, styles.listItemTitle]}>{item.name}</Text>
+                      <Text style={[GlobalStyles.bodyText, styles.listItemSubtitle]}>{item.schoolName}</Text>
                     </View>
                   </View>
-                  <Text style={[styles.listItemTitle, {textAlign: 'right'}]}>{item.points}</Text>
+                  <Text style={[GlobalStyles.bodyText, styles.listItemTitle, {textAlign: 'right'}]}>{item.points}</Text>
                 </View>
               )}
               keyExtractor={(item, index) => index.toString()}
@@ -125,11 +125,10 @@ const styles = StyleSheet.create({
     marginLeft: 10
   },
   listItemTitle: {
-    color: global.CURRENT_THEME.colors.text,
     fontSize: 16
   },
   listItemSubtitle: {
-    color: global.CURRENT_THEME.colors.text_opacity3,
+    color: global.CURRENT_THEME.colors.text_opacity5,
     fontSize: 12
   }
 });

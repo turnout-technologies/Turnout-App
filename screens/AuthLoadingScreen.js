@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-import { ActivityIndicator, AsyncStorage, StatusBar, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, StatusBar, View } from 'react-native';
 import firebase from 'firebase';
 
-const skipAuthCheck = false;
+import {setUser} from '../Globals';
 
 class AuthLoadingScreen extends Component {
 
@@ -13,6 +13,7 @@ class AuthLoadingScreen extends Component {
   checkIfLoggedIn = () => {
     firebase.auth().onAuthStateChanged(
       function(user) {
+        setUser(user);
         this.props.navigation.navigate(!!user ? 'Main' : 'Auth');
       }.bind(this)
     );
