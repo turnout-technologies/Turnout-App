@@ -8,6 +8,7 @@ import LeftScreen from '../screens/LeftScreen';
 import MiddleScreen from '../screens/MiddleScreen';
 import RightScreen from '../screens/RightScreen';
 import QuestionScreen from '../screens/QuestionScreen';
+import DebugOptionsScreen from '../screens/DebugOptionsScreen';
 
 const config = Platform.select({
   web: { headerMode: 'screen' },
@@ -57,6 +58,7 @@ MiddleStack.path = '';
 const RightStack = createStackNavigator(
   {
     Right: RightScreen,
+    DebugOptions: DebugOptionsScreen
   },
   config
 );

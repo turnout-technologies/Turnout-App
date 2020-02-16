@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
-import { View, StyleSheet, Text, Button, Alert, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, Button, Alert, ScrollView, TouchableOpacity } from 'react-native';
 import { ExpoLinksView } from '@expo/samples';
+
 import {GlobalStyles} from '../Globals';
 import AnnouncementCard from '../components/AnnouncementCard';
 
@@ -9,27 +10,29 @@ class MiddleScreen extends Component {
   render() {
     return (
       <View style={GlobalStyles.backLayerContainer}>
-        <View style={GlobalStyles.frontLayerContainer}>
-          <View style={styles.pollStatusContainer}>
-            <Text style={[GlobalStyles.bodyText,styles.pollStatusText]}>Polls close in</Text>
-            <Text style={[GlobalStyles.headerText,styles.pollCountdownText]}>01:37:34</Text>
-            <TouchableOpacity style={styles.startButton} onPress = { () => this.props.navigation.navigate('Question')}>
-              <Text style={[GlobalStyles.standardText,styles.startButtonText]}>Start</Text>
-            </TouchableOpacity>
+        <ScrollView style={GlobalStyles.frontLayerContainer}>
+          <View style={{paddingBottom:20}}>
+            <View style={styles.pollStatusContainer}>
+              <Text style={[GlobalStyles.bodyText,styles.pollStatusText]}>Polls close in</Text>
+              <Text style={[GlobalStyles.headerText,styles.pollCountdownText]}>01:37:34</Text>
+              <TouchableOpacity style={styles.startButton} onPress = { () => this.props.navigation.navigate('Question')}>
+                <Text style={[GlobalStyles.bodyText,styles.startButtonText]}>Start</Text>
+              </TouchableOpacity>
+            </View>
+            <AnnouncementCard
+              titleText="Announcement Title"
+              buttonText="Button"
+              bodyText="These are the details of the announcement. It's a pretty exciting announcement. Like, really exciting."
+              buttonOnPress={ () => Alert.alert('Announcment Button pressed')}
+            />
+            <View style={{marginVertical: 10}}/>
+            <AnnouncementCard
+              titleText="Earn faster by inviting friends"
+              buttonText="Invite"
+              buttonOnPress={ () => Alert.alert('Invite Button pressed')}
+            />
           </View>
-          <AnnouncementCard
-            titleText="Announcement Title"
-            buttonText="Button"
-            bodyText="These are the details of the announcement. It's a pretty exciting announcement. Like, really exciting."
-            buttonOnPress={ () => Alert.alert('Announcment Button pressed')}
-          />
-          <View style={{marginVertical: 10}}/>
-          <AnnouncementCard
-            titleText="Earn faster by inviting friends"
-            buttonText="Invite"
-            buttonOnPress={ () => Alert.alert('Invite Button pressed')}
-          />
-        </View>
+        </ScrollView>
       </View>
     );
   }

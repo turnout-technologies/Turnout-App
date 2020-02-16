@@ -95,7 +95,7 @@ class SignInScreen extends React.Component {
                     console.log(response.data);
                   })
                   .catch(function (error) {
-                    console.log(error);
+                    console.log(error.response);
                   });
               }
             })
@@ -266,8 +266,8 @@ const styles = StyleSheet.create({
     //paddingTop: 30
   },
   signInButton: {
-    width:300,
-    height: 68,
+    width:275,
+    height: 55,
     justifyContent: "space-evenly",
     backgroundColor: global.CURRENT_THEME.colors.accent,
     borderRadius: global.CURRENT_THEME.roundness,
@@ -279,10 +279,10 @@ const styles = StyleSheet.create({
     fontFamily: 'circularstd-book',
     color: global.CURRENT_THEME.colors.text,
     textAlign: "center",
-    fontSize: 20
+    fontSize: 18
   },
   signInButtonLogo: {
-    height: '50%',
+    height: '45%',
     resizeMode: 'contain',
   },
 });

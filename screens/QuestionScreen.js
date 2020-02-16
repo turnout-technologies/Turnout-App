@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View, StyleSheet, Button, Alert, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Button, TouchableOpacity } from 'react-native';
 
 import {GlobalStyles} from '../Globals';
 import Accordion from '../components/Accordion';
@@ -27,7 +27,7 @@ export default class QuestionScreen extends Component {
         _this.setState({ballot: response.data});
       })
       .catch(function (error) {
-        console.log(error);
+        console.log(error.response);
       });
   }
 
@@ -40,7 +40,7 @@ export default class QuestionScreen extends Component {
         console.log(response.data);
       })
       .catch(function (error) {
-        console.log(error);
+        console.log(error.response);
       });;
   }
 
