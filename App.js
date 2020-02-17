@@ -7,13 +7,22 @@ import { Ionicons } from '@expo/vector-icons';
 import { Provider as PaperProvider } from 'react-native-paper';
 import AppNavigator from './navigation/AppNavigator';
 import * as firebase from 'firebase';
+import * as Sentry from 'sentry-expo';
+import Constants from 'expo-constants';
+
+
+if (!firebase.apps.length) {
+    firebase.initializeApp(Constants.manifest.extra.firebaseConfig);
+}
+
+Sentry.init({
+  dsn: Constants.manifest.extra.SentryDSN,
+  //enableInExpoDevelopment: true,
+  //debug: true
+});
 
 import './Globals.js';
 import getEnvVars from './auth/environment';
-
-if (!firebase.apps.length) {
-    firebase.initializeApp(getEnvVars().firebaseConfig);
-}
 
 export default function App(props) {
   if (!__DEV__) {

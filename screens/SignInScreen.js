@@ -97,7 +97,7 @@ class SignInScreen extends React.Component {
                   })
                   .catch(function (error) {
                     console.log(error.response.status);
-                    console.log(error.response._response);
+                    console.log(error.response);
                   });
               }
             })

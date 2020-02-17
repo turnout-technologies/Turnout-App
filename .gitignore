@@ -15,3 +15,4 @@ web-report/
 auth/google-services.json
 auth/google-services.jsonZone.Identifier
 auth/environment.js
+app.json

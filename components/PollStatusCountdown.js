@@ -1,11 +1,16 @@
 import React, {Component} from 'react';
 import { View, StyleSheet, Text, Button, Alert, ScrollView, TouchableOpacity } from 'react-native';
+import PropTypes from 'prop-types';
 import {sprintf} from 'sprintf-js';
 var moment = require('moment-timezone');
 
 import {GlobalStyles} from '../Globals';
 
 export default class PollStatusCountdown extends Component {
+
+  static propTypes = {
+    onPressStart: PropTypes.func
+  }
 
   constructor(props) {
     super(props);
@@ -29,7 +34,7 @@ export default class PollStatusCountdown extends Component {
 
   setPollState() {
     var curTimeEastern = moment.tz("America/New_York");
-    //var curTimeEastern = moment.tz("2020-02-17 16:59:50", "America/New_York");
+    //var curTimeEastern = moment.tz("2020-02-17 18:59:50", "America/New_York");
     var pollsOpenTimeEastern = moment.tz({y:curTimeEastern.year(), M:curTimeEastern.month(), date:curTimeEastern.date(), h:18, m:0}, "America/New_York");
     var pollsCloseTimeEastern = moment.tz({y:curTimeEastern.year(), M:curTimeEastern.month(), date:curTimeEastern.date(), h:22, m:0}, "America/New_York");
     if (curTimeEastern <= pollsOpenTimeEastern) {
@@ -63,6 +68,7 @@ export default class PollStatusCountdown extends Component {
   };
 
   render() {
+    const { onPressStart } = this.props;
     const {days, hours, minutes, seconds} = this.getTimeLeft();
     //const newTime = sprintf('%02d:%02d:%02d:%02d', days, hours, minutes, seconds);
     const daysText = sprintf('%02d', days);
@@ -96,7 +102,7 @@ export default class PollStatusCountdown extends Component {
           </View>
         </View>
         { this.state.pollsOpen &&
-          <TouchableOpacity style={styles.startButton} onPress = { () => this.props.navigation.navigate('Question')}>
+          <TouchableOpacity style={styles.startButton} onPress={onPressStart}>
             <Text style={[GlobalStyles.bodyText,styles.startButtonText]}>Start</Text>
           </TouchableOpacity>
         }

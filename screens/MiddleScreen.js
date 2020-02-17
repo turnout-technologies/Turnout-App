@@ -7,13 +7,22 @@ import PollStatusCountdown from '../components/PollStatusCountdown';
 
 class MiddleScreen extends Component {
 
+  constructor (props) {
+    super(props);
+    this.handleStartPressed = this.handleStartPressed.bind(this);
+  }
+
+  handleStartPressed() {
+    this.props.navigation.navigate('Question')
+  }
+
   render() {
     return (
       <View style={GlobalStyles.backLayerContainer}>
         <ScrollView style={GlobalStyles.frontLayerContainer}>
           <View style={{paddingBottom:20}}>
             <View style={styles.pollStatusContainer}>
-              <PollStatusCountdown/>
+              <PollStatusCountdown onPressStart={this.handleStartPressed}/>
             </View>
             <AnnouncementCard
               titleText="Announcement Title"
