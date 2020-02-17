@@ -20,11 +20,12 @@ export function hello() {
 	return axios.get("/hello");
 }
 
-export function addUser(name, email, phone) {
+export function addUser(name, email, phone, avatarURL) {
 	return axios.post("/users", {
 	    name: name,
 	    email: email,
-	    phone: phone
+	    phone: phone,
+	    avatarURL: avatarURL
 	 });
 }
 

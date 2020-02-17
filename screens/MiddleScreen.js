@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import { View, StyleSheet, Text, Button, Alert, ScrollView, TouchableOpacity } from 'react-native';
-import { ExpoLinksView } from '@expo/samples';
 
 import {GlobalStyles} from '../Globals';
 import AnnouncementCard from '../components/AnnouncementCard';
+import PollStatusCountdown from '../components/PollStatusCountdown';
 
 class MiddleScreen extends Component {
 
@@ -13,11 +13,7 @@ class MiddleScreen extends Component {
         <ScrollView style={GlobalStyles.frontLayerContainer}>
           <View style={{paddingBottom:20}}>
             <View style={styles.pollStatusContainer}>
-              <Text style={[GlobalStyles.bodyText,styles.pollStatusText]}>Polls close in</Text>
-              <Text style={[GlobalStyles.headerText,styles.pollCountdownText]}>01:37:34</Text>
-              <TouchableOpacity style={styles.startButton} onPress = { () => this.props.navigation.navigate('Question')}>
-                <Text style={[GlobalStyles.bodyText,styles.startButtonText]}>Start</Text>
-              </TouchableOpacity>
+              <PollStatusCountdown/>
             </View>
             <AnnouncementCard
               titleText="Announcement Title"
@@ -46,33 +42,6 @@ const styles = StyleSheet.create({
   pollStatusContainer: {
     marginVertical: 100
   },
-
-  pollStatusText: {
-    textAlign: "center",
-    fontSize: 20,
-  },
-
-  pollCountdownText: {
-    textAlign: "center",
-    fontSize: 50,
-    fontWeight: "bold"
-  },
-
-  startButton: {
-    width:270,
-    height: 68,
-    justifyContent: "center",
-    alignSelf: "center",
-    backgroundColor: global.CURRENT_THEME.colors.primary,
-    borderRadius: global.CURRENT_THEME.roundness
-  },
-
-  startButtonText: {
-    color: "white",
-    textAlign: "center",
-    fontSize: 35
-  },
-
   announcementButtonContainer: {
     width:82,
     height: 34,

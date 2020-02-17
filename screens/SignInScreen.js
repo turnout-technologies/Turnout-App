@@ -89,13 +89,15 @@ class SignInScreen extends React.Component {
                 console.log("NEW USER! Adding to DB...")
                 console.log("NAME: " + result.user.displayName);
                 console.log("Email: " + result.user.email);
-                API.addUser(result.user.displayName, result.user.email, "")
+                console.log("photoURL: " + result.user.photoURL);
+                API.addUser(result.user.displayName, result.user.email, "", result.user.photoURL)
                   .then(function(response) {
                     console.log(response.status);
                     console.log(response.data);
                   })
                   .catch(function (error) {
-                    console.log(error.response);
+                    console.log(error.response.status);
+                    console.log(error.response._response);
                   });
               }
             })

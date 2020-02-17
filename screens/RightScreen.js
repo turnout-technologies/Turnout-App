@@ -23,7 +23,6 @@ class RightScreen extends Component {
   		return (
   			<View style={GlobalStyles.backLayerContainer}>
 		        <ScrollView style={GlobalStyles.frontLayerContainer}>
-		          <View style={{paddingBottom:20}}>
 	        		<View style={styles.profileInfoContainer}>
 	        			<Image
 		          			style={styles.profileImage}
@@ -32,7 +31,20 @@ class RightScreen extends Component {
 	        			<Text style={[GlobalStyles.titleText, styles.name]}>{user.displayName}</Text>
 	        			<Text style={[GlobalStyles.bodyText, styles.email]}>{user.email}</Text>
 	        		</View>
-		          </View>
+	        		<View style={styles.statsRowContainer}>
+        				<View style={styles.statContainer}>
+        					<Text style={[GlobalStyles.headerText, styles.statNumber]}>10</Text>
+        					<Text style={[GlobalStyles.bodyText, styles.statSubtitle]}>Questions Answered</Text>
+        				</View>
+        				<View style={styles.statContainer}>
+        					<Text style={[GlobalStyles.headerText, styles.statNumber]}>200</Text>
+        					<Text style={[GlobalStyles.bodyText, styles.statSubtitle]}>Points</Text>
+        				</View>
+        				<View style={styles.statContainer}>
+        					<Text style={[GlobalStyles.headerText, styles.statNumber]}>3</Text>
+        					<Text style={[GlobalStyles.bodyText, styles.statSubtitle]}>Friend Invites</Text>
+        				</View>
+        			</View>
 		        </ScrollView>
 		        <Button style={{position: 'absolute', bottom: 0}} title="Sign Out" onPress={this.signOut} />
 		    </View>
@@ -41,7 +53,7 @@ class RightScreen extends Component {
 
 	static navigationOptions = ({navigation}) => {
 		return {
-		    title: 'Profiles',
+		    title: 'Profile',
 		    headerStyle: GlobalStyles.headerStyle,
 		    headerTintColor: global.CURRENT_THEME.colors.accent,
 		    headerRight: __DEV__ ? () => (
@@ -59,8 +71,10 @@ class RightScreen extends Component {
 
 const styles = StyleSheet.create({
   profileInfoContainer: {
+  	flex: 1,
   	alignItems: "center",
-  	marginTop: 20
+  	marginTop: 20,
+  	paddingBottom: 20
   },
   profileImage: {
   	width: 125,
@@ -72,6 +86,23 @@ const styles = StyleSheet.create({
   },
   email: {
   	fontSize: 15
+  },
+  statsRowContainer: {
+  	alignSelf: "center",
+  	width: 300,
+  	flexDirection: "row",
+  	justifyContent: "space-between"
+  },
+  statContainer: {
+  	alignItems: "center",
+  	width: "33%"
+  },
+  statNumber: {
+  	fontSize: 24
+  },
+  statSubtitle: {
+  	fontSize: 16,
+  	textAlign: 'center'
   }
 });
 
