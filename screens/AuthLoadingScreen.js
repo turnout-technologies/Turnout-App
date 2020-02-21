@@ -15,7 +15,9 @@ class AuthLoadingScreen extends Component {
     firebase.auth().onAuthStateChanged(
       function(user) {
         setUser(user);
-        Sentry.setUser({"id": user.uid});
+        if (!!user) {
+          Sentry.setUser({"id": user.uid});
+        }
         this.props.navigation.navigate(!!user ? 'Main' : 'Auth');
       }.bind(this)
     );
