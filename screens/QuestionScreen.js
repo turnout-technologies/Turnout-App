@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View, StyleSheet, Button, TouchableOpacity } from 'react-native';
+import { ActivityIndicator, View, StyleSheet, Button, TouchableOpacity } from 'react-native';
 
 import {GlobalStyles} from '../Globals';
 import Accordion from '../components/Accordion';
@@ -47,6 +47,11 @@ export default class QuestionScreen extends Component {
   render() {
     return (
       <View style={GlobalStyles.backLayerContainer}>
+      { !this.state.ballot &&
+        <View style={styles.loadingSpinnerContainer}>
+          <ActivityIndicator size={60} color={global.CURRENT_THEME.colors.accent} animating={!this.state.leaderboardData} />
+        </View>
+      }
       {!!this.state.ballot && <Accordion questions={this.state.ballot.questions} onSubmitResponses={this.submitResponsesHandler}/>}
       </View>
     );
@@ -54,4 +59,8 @@ export default class QuestionScreen extends Component {
 }
 
 const styles = StyleSheet.create({
+  loadingSpinnerContainer: {
+    flex: 1,
+    justifyContent: "center"
+  }
 });

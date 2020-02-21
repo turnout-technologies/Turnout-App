@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View, StyleSheet, Text, UIManager, FlatList, TouchableOpacity, Image } from 'react-native';
+import { ActivityIndicator, View, StyleSheet, Text, UIManager, FlatList, TouchableOpacity, Image } from 'react-native';
 import Backdrop from 'react-native-material-backdrop'
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -79,8 +79,13 @@ class LeftScreen extends Component {
           ]}
           frontLayerStyle={{marginBottom:50, backgroundColor: global.CURRENT_THEME.colors.background}}>
 
-          { !!this.state.leaderboardData &&
-            <View style={GlobalStyles.frontLayerContainer}>
+          <View style={GlobalStyles.frontLayerContainer}>
+            { !this.state.leaderboardData &&
+              <View style={styles.loadingSpinnerContainer}>
+                <ActivityIndicator size={60} color={global.CURRENT_THEME.colors.primary} animating={!this.state.leaderboardData} />
+              </View>
+            }
+            { !!this.state.leaderboardData &&
               <FlatList
                 ListHeaderComponent = { this.FlatListHeader }
                 data={this.state.leaderboardData.leaderboard.slice(3)}
@@ -103,8 +108,8 @@ class LeftScreen extends Component {
                 keyExtractor={(item, index) => index.toString()}
                 ItemSeparatorComponent={this.renderSeparator}
               />
-            </View>
-          }
+            }
+          </View>
         </Backdrop>
       </View>
     );
@@ -239,6 +244,10 @@ const styles = StyleSheet.create({
     borderRadius: LIST_ITEM_IMAGE_SIZE/2,
     marginLeft: 25
   },
+  loadingSpinnerContainer: {
+    flex: 1,
+    justifyContent: "center"
+  }
 });
 
 module.exports= LeftScreen
