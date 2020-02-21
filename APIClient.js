@@ -28,11 +28,6 @@ axios.interceptors.response.use(
   error => errorHandler(error)
 )
 
-
-export function hello() {
-	return axios.get("/hello");
-}
-
 export function addUser(name, email, phone, avatarURL) {
 	return axios.post("/users", {
 	    name: name,
@@ -40,6 +35,10 @@ export function addUser(name, email, phone, avatarURL) {
 	    phone: phone,
 	    avatarURL: avatarURL
 	 });
+}
+
+export function getLeaderboard() {
+	return axios.get("/users/leaderboard");
 }
 
 export function getBallotToday() {

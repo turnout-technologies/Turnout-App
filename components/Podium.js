@@ -1,9 +1,13 @@
 import React, {Component} from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, Image } from "react-native";
 import PropTypes from 'prop-types';
 import { Ionicons } from '@expo/vector-icons';
 
 import {GlobalStyles} from '../Globals';
+
+const FIRST_PLACE_SIZE=110;
+const SECOND_PLACE_SIZE=100;
+const THIRD_PLACE_SIZE=95;
 
 export default class Podium extends Component {
 
@@ -20,10 +24,9 @@ export default class Podium extends Component {
             <View style={[styles.secondPlaceCircle, styles.podiumPlaceCircle, {backgroundColor: "#BCBDBF"}]}>
               <Text style={[GlobalStyles.headerText, styles.podiumPlaceCircleNumber]}>2</Text>
             </View>
-            <Ionicons
-              name="md-contact"
-              size={100}
-              color={global.CURRENT_THEME.colors.text}
+            <Image
+              style={styles.secondPlaceImage}
+              source={{uri: leaders[1].avatarURL.replace("/150", "/"+SECOND_PLACE_SIZE)}}
             />
           </View>
           <Text style={[GlobalStyles.titleText, styles.secondPlaceText]}>{leaders[1].name}</Text>
@@ -34,10 +37,9 @@ export default class Podium extends Component {
             <View style={[styles.firstPlaceCircle, styles.podiumPlaceCircle, {backgroundColor: "#F3B50A"}]}>
               <Text style={[GlobalStyles.headerText, styles.podiumPlaceCircleNumber]}>1</Text>
             </View>
-            <Ionicons
-              name="md-contact"
-              size={110}
-              color={global.CURRENT_THEME.colors.text}
+            <Image
+              style={styles.firstPlaceImage}
+              source={{uri: leaders[0].avatarURL.replace("/150", "/"+FIRST_PLACE_SIZE)}}
             />
           </View>
           <Text style={[GlobalStyles.titleText, styles.firstPlaceText]}>{leaders[0].name}</Text>
@@ -48,10 +50,9 @@ export default class Podium extends Component {
             <View style={[styles.thirdPlaceCircle, styles.podiumPlaceCircle, {backgroundColor: "#B53F25"}]}>
               <Text style={[GlobalStyles.headerText, styles.podiumPlaceCircleNumber]}>3</Text>
             </View>
-            <Ionicons
-              name="md-contact"
-              size={95}
-              color={global.CURRENT_THEME.colors.text}
+            <Image
+              style={styles.thirdPlaceImage}
+              source={{uri: leaders[2].avatarURL.replace("/150", "/"+THIRD_PLACE_SIZE)}}
             />
           </View>
           <Text style={[GlobalStyles.titleText, styles.thirdPlaceText]}>{leaders[2].name}</Text>
@@ -96,6 +97,21 @@ const styles = StyleSheet.create({
     width: 21,
     height: 21,
     borderRadius: 21/2,
+  },
+  firstPlaceImage: {
+    width: FIRST_PLACE_SIZE,
+    height: FIRST_PLACE_SIZE,
+    borderRadius: FIRST_PLACE_SIZE/2,
+  },
+  secondPlaceImage: {
+    width: SECOND_PLACE_SIZE,
+    height: SECOND_PLACE_SIZE,
+    borderRadius: SECOND_PLACE_SIZE/2,
+  },
+  thirdPlaceImage: {
+    width: THIRD_PLACE_SIZE,
+    height: THIRD_PLACE_SIZE,
+    borderRadius: THIRD_PLACE_SIZE/2,
   },
   firstPlaceText: {
     alignSelf: "center",

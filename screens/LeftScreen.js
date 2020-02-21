@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
-import { View, StyleSheet, Text, UIManager, FlatList, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, UIManager, FlatList, TouchableOpacity, Image } from 'react-native';
 import Backdrop from 'react-native-material-backdrop'
 import { MaterialIcons } from '@expo/vector-icons';
 
 import {GlobalStyles} from '../Globals';
 import StatusBarBackground from '../components/StatusBarBackground';
-import Podium from '../components/Podium'
-import LeaderboardFilter from '../components/LeaderboardFilter'
+import Podium from '../components/Podium';
+import LeaderboardFilter from '../components/LeaderboardFilter';
+import * as API from '../APIClient';
 
 const animationExperimental = UIManager.setLayoutAnimationEnabledExperimental;
 
@@ -23,14 +24,27 @@ const TODAY_ICON_LABEL="view-day";
 const THISWEEK_ICON_LABEL="view-week";
 const ALLTIME_ICON_LABEL="view-module";
 
+const LIST_ITEM_IMAGE_SIZE=50;
+
 class LeftScreen extends Component {
 
   constructor() {
     super();
-    this.state = {peopleFilterSelected: "All", timeFilterSelected: "Today"};
+    this.state = {peopleFilterSelected: "All", timeFilterSelected: "Today", leaderboardData: null};
     if (!IOS && !!animationExperimental) {
       animationExperimental(true)
     }
+  }
+
+  componentDidMount() {
+    var _this = this;
+    API.getLeaderboard()
+      .then(function(response) {
+        _this.setState({leaderboardData: response.data});
+      })
+      .catch(function (error) {
+        console.log(error.response);
+      });
   }
 
   renderSeparator = () => (
@@ -41,6 +55,15 @@ class LeftScreen extends Component {
       }}
     />
   );
+
+  FlatListHeader = () => {
+    return (
+      <View>
+        <Podium leaders={this.state.leaderboardData.leaderboard.slice(0,3)}/>
+        {this.renderSeparator()}
+      </View>
+    );
+  }
 
   render() {
     return (
@@ -56,32 +79,32 @@ class LeftScreen extends Component {
           ]}
           frontLayerStyle={{marginBottom:50, backgroundColor: global.CURRENT_THEME.colors.background}}>
 
-          <View style={GlobalStyles.frontLayerContainer}>
-            <Podium leaders={global.LEADERBOARD_DATA.slice(0,3)}/>
-            <FlatList
-              data={global.LEADERBOARD_DATA.slice(3)}
-              renderItem={({ item, separators }) => (
-                <View style={styles.listItemContainer} >
-                  <View style={styles.listItemsLeftAlignContainer}>
-                    <Text style={[GlobalStyles.bodyText, styles.listItemTitle]}>{item.position}</Text>
-                    <MaterialIcons
-                      name="account-circle"
-                      size={50}
-                      style={{ marginLeft: 25 }}
-                      color={global.CURRENT_THEME.colors.text}
-                    />
-                    <View style={styles.listItemTitlesContainer}>
-                      <Text style={[GlobalStyles.bodyText, styles.listItemTitle]}>{item.name}</Text>
-                      <Text style={[GlobalStyles.bodyText, styles.listItemSubtitle]}>{item.schoolName}</Text>
+          { !!this.state.leaderboardData &&
+            <View style={GlobalStyles.frontLayerContainer}>
+              <FlatList
+                ListHeaderComponent = { this.FlatListHeader }
+                data={this.state.leaderboardData.leaderboard.slice(3)}
+                renderItem={({ item, index, separators }) => (
+                  <View style={styles.listItemContainer} >
+                    <View style={styles.listItemsLeftAlignContainer}>
+                      <Text style={[GlobalStyles.bodyText, styles.listItemTitle]}>{index+4}</Text>
+                      <Image
+                        style={styles.listItemImage}
+                        source={!!item.avatarURL ? {uri: item.avatarURL.replace("/150", "/"+LIST_ITEM_IMAGE_SIZE)} : null}
+                      />
+                      <View style={styles.listItemTitlesContainer}>
+                        <Text style={[GlobalStyles.bodyText, styles.listItemTitle]}>{item.name}</Text>
+                        {/*<Text style={[GlobalStyles.bodyText, styles.listItemSubtitle]}>{item.schoolName}</Text>*/}
+                      </View>
                     </View>
+                    <Text style={[GlobalStyles.bodyText, styles.listItemTitle, {textAlign: 'right'}]}>{item.points}</Text>
                   </View>
-                  <Text style={[GlobalStyles.bodyText, styles.listItemTitle, {textAlign: 'right'}]}>{item.points}</Text>
-                </View>
-              )}
-              keyExtractor={(item, index) => index.toString()}
-              ItemSeparatorComponent={this.renderSeparator}
-            />
-          </View>
+                )}
+                keyExtractor={(item, index) => index.toString()}
+                ItemSeparatorComponent={this.renderSeparator}
+              />
+            </View>
+          }
         </Backdrop>
       </View>
     );
@@ -209,7 +232,13 @@ const styles = StyleSheet.create({
   listItemSubtitle: {
     color: global.CURRENT_THEME.colors.text_opacity5,
     fontSize: 12
-  }
+  },
+  listItemImage: {
+    width: LIST_ITEM_IMAGE_SIZE,
+    height: LIST_ITEM_IMAGE_SIZE,
+    borderRadius: LIST_ITEM_IMAGE_SIZE/2,
+    marginLeft: 25
+  },
 });
 
 module.exports= LeftScreen

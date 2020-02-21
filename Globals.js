@@ -137,25 +137,29 @@ global.SAMPLE_QUESTIONS =
 }
 
 //Dummy Leaderboard
-global.LEADERBOARD_DATA = [
-	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 1, points:100 },
-	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 2, points:100 },
-	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 3, points:100 },
-	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 4, points:100 },
-	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 5, points:100 },
-	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 6, points:100 },
-	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 7, points:100 },
-	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 8, points:100 },
-	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 9, points:100 },
-	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 10, points:100 },
-	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 11, points:100 },
-	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 12, points:100 },
-	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 13, points:100 },
-	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 14, points:100 },
-	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 15, points:100 },
-	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 16, points:100 },
-	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 17, points:100 },
-	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 18, points:100 },
-	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 19, points:100 },
-	{ name: 'Person Name', 'schoolName': 'School Name', 'position': 20, points:100 }
-]
+global.LEADERBOARD_DATA = {
+	leaderboard: [
+		{ id: "1", name: "Person Name", avatarURL: "https://i.pravatar.cc/150", points:1000 },
+		{ id: "2", name: "Person Name", avatarURL: "https://i.pravatar.cc/150", points:900 },
+		{ id: "3", name: "Person Name", avatarURL: "https://i.pravatar.cc/150", points:800 },
+		{ id: "4", name: "Person Name", avatarURL: "https://i.pravatar.cc/150", points:700 },
+		{ id: "5", name: "Person Name", avatarURL: "https://i.pravatar.cc/150", points:600 },
+		{ id: "6", name: "Person Name", avatarURL: "https://i.pravatar.cc/150", points:500 },
+		{ id: "7", name: "Person Name", avatarURL: "https://i.pravatar.cc/150", points:400 },
+		{ id: "8", name: "Person Name", avatarURL: "https://i.pravatar.cc/150", points:300 },
+		{ id: "9", name: "Person Name", avatarURL: "https://i.pravatar.cc/150", points:200 },
+		{ id: "10", name: "Person Name", avatarURL: "https://i.pravatar.cc/150", points:100 },
+		{ id: "11", name: "Person Name", avatarURL: "https://i.pravatar.cc/150", points:90 },
+		{ id: "12", name: "Person Name", avatarURL: "https://i.pravatar.cc/150", points:80 },
+		{ id: "13", name: "Person Name", avatarURL: "https://i.pravatar.cc/150", points:70 },
+		{ id: "14", name: "Person Name", avatarURL: "https://i.pravatar.cc/150", points:60 },
+		{ id: "15", name: "Person Name", avatarURL: "https://i.pravatar.cc/150", points:50 },
+		{ id: "16", name: "Person Name", avatarURL: "https://i.pravatar.cc/150", points:40 },
+		{ id: "17", name: "Person Name", avatarURL: "https://i.pravatar.cc/150", points:30 },
+		{ id: "18", name: "Person Name", avatarURL: "https://i.pravatar.cc/150", points:20 },
+		{ id: "19", name: "Person Name", avatarURL: "https://i.pravatar.cc/150", points:10 },
+		{ id: "20", name: "Person Name", avatarURL: "https://i.pravatar.cc/150", points:5 },
+
+	],
+	self: { id: "21", name: "Person Name", avatarURL: "https://i.pravatar.cc/150", points:1 }
+}
