@@ -65,21 +65,6 @@ export default ({ question, questionIndex, openQuestion, questionResponseId, onA
     }
   };
 
-    /**
-   * Shuffles array in place. Used to shuffle the answer choices for the question.
-   * @param {Array} arr An array containing the items.
-   */
-  function shuffle(arr) {
-      var j, x, i;
-      for (i = arr.length - 1; i > 0; i--) {
-          j = Math.floor(Math.random() * (i + 1));
-          x = arr[i];
-          arr[i] = arr[j];
-          arr[j] = x;
-      }
-      return arr;
-  }
-
   return (
     <>
       <TouchableWithoutFeedback onPress={() => onQuestionPressed(questionIndex)}>
@@ -102,7 +87,7 @@ export default ({ question, questionIndex, openQuestion, questionResponseId, onA
       </TouchableWithoutFeedback>
       <Animated.View style={[styles.items, { height }]}>
         <View onLayout={_getLayoutChange}>
-          {shuffle(question.answers).map((item, key) => (
+          {question.answers.map((item, key) => (
             <Item {...{key, item}} answerSelected={questionResponseId == item.id} onAnswerPressed={questionHandleAnswerPressed} />
           ))}
         </View>

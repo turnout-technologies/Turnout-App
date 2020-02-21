@@ -14,6 +14,21 @@ export default class QuestionScreen extends Component {
     headerTintColor: global.CURRENT_THEME.colors.accent
   };
 
+  /**
+  * Shuffles array in place. Used to shuffle the answer choices for the question.
+  * @param {Array} arr An array containing the items.
+  */
+  shuffle(arr) {
+      var j, x, i;
+      for (i = arr.length - 1; i > 0; i--) {
+          j = Math.floor(Math.random() * (i + 1));
+          x = arr[i];
+          arr[i] = arr[j];
+          arr[j] = x;
+      }
+      return arr;
+  }
+
   constructor (props) {
      super(props);
      this.state = {ballot: null};
@@ -24,6 +39,9 @@ export default class QuestionScreen extends Component {
     var _this = this;
     API.getBallotToday()
       .then(function(response) {
+        response.data.questions.forEach(function(element) {
+          _this.shuffle(element.answers);
+        });
         _this.setState({ballot: response.data});
       })
       .catch(function (error) {
