@@ -2,7 +2,7 @@ import * as firebase from 'firebase';
 import axios from 'axios';
 import * as Sentry from 'sentry-expo';
 
-import getEnvVars from './auth/environment';
+import getEnvVars from './Environment';
 
 const env = getEnvVars();
 

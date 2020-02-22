@@ -6,7 +6,7 @@ import * as Google from 'expo-google-app-auth';
 import * as firebase from 'firebase';
 import { YellowBox } from 'react-native';
 
-import getEnvVars from '../auth/environment';
+import getEnvVars from '../Environment';
 import * as API from '../APIClient';
 import {setUser} from '../Globals';
 import StatusBarBackground from '../components/StatusBarBackground';
@@ -214,7 +214,7 @@ class SignInScreen extends React.Component {
       <View style={styles.container}>
         <StatusBarBackground backgroundColor="white"/>
         <View style={styles.topContainer}>
-          <Image source={require('../assets/images/logo_text.png')} style={styles.logoText} />
+          <Image source={require('../../assets/images/logo_text.png')} style={styles.logoText} />
           <View style={{flex:1, alignItems: 'center', justifyContent: 'center'}}>
             <Text>Carousel goes here</Text>
           </View>
@@ -223,7 +223,7 @@ class SignInScreen extends React.Component {
           <Text style={styles.bottomContainerTitle}>Let's get started.</Text>
           <View style={styles.signInButtonContainer}>
             <TouchableOpacity style={styles.signInButton} onPress={this.onPress}>
-              <Image source={require('../assets/images/google_logo.png')} style={styles.signInButtonLogo} />
+              <Image source={require('../../assets/images/google_logo.png')} style={styles.signInButtonLogo} />
               <Text style={[styles.signInButtonText]}>Sign in with Google</Text>
             </TouchableOpacity>
           </View>

@@ -3,7 +3,7 @@ import { View, Text, Image, Button, ScrollView, StyleSheet, TouchableOpacity } f
 import * as firebase from 'firebase';
 import { Ionicons } from '@expo/vector-icons';
 
-import getEnvVars from '../auth/environment';
+import getEnvVars from '../Environment';
 import * as API from '../APIClient';
 import {GlobalStyles, getUser} from '../Globals';
 

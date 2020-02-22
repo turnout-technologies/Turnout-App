@@ -76,7 +76,6 @@ export default class Accordion extends Component {
     var isSubmitOpen = this.state.openQuestion == this.numQuestions;
     // if submit card is open, close it
     if (isSubmitOpen) {
-      console.log("submitopen");
       this.toggleSubmitCard(false);
     }
     //set open question to the one pressed
