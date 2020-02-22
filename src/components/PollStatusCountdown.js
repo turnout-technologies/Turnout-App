@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View, StyleSheet, Text, Button, Alert, ScrollView, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, AppState } from 'react-native';
 import PropTypes from 'prop-types';
 import {sprintf} from 'sprintf-js';
 var moment = require('moment-timezone');
@@ -17,19 +17,35 @@ export default class PollStatusCountdown extends Component {
     this.state = {
       timer: null,
       pollStatusText: "",
-      pollsOpen: false
+      pollsOpen: false,
+      appState: AppState.currentState
     };
   }
 
   componentDidMount() {
+    AppState.addEventListener('change', this._handleAppStateChange);
+    this.initPollStatusCountdown();
+  }
+
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this._handleAppStateChange);
+    clearInterval(this.clockCall);
+  }
+
+  _handleAppStateChange = (nextAppState) => {
+    if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
+      this.initPollStatusCountdown();
+    } else {
+      clearInterval(this.clockCall);
+    }
+    this.setState({appState: nextAppState});
+  }
+
+  initPollStatusCountdown() {
     this.setPollState();
     this.clockCall = setInterval(() => {
       this.decrementClock();
     }, 1000);
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.clockCall);
   }
 
   setPollState() {
