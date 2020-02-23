@@ -27,6 +27,7 @@ export default class Podium extends Component {
             <Image
               style={styles.secondPlaceImage}
               source={{uri: leaders[1].avatarURL.replace("/150", "/"+SECOND_PLACE_SIZE)}}
+              defaultSource={require('../../assets/images/md-contact.png')}
             />
           </View>
           <Text style={[GlobalStyles.titleText, styles.secondPlaceText]}>{leaders[1].name}</Text>
@@ -40,6 +41,7 @@ export default class Podium extends Component {
             <Image
               style={styles.firstPlaceImage}
               source={{uri: leaders[0].avatarURL.replace("/150", "/"+FIRST_PLACE_SIZE)}}
+              defaultSource={require('../../assets/images/md-contact.png')}
             />
           </View>
           <Text style={[GlobalStyles.titleText, styles.firstPlaceText]}>{leaders[0].name}</Text>
@@ -53,6 +55,7 @@ export default class Podium extends Component {
             <Image
               style={styles.thirdPlaceImage}
               source={{uri: leaders[2].avatarURL.replace("/150", "/"+THIRD_PLACE_SIZE)}}
+              defaultSource={require('../../assets/images/md-contact.png')}
             />
           </View>
           <Text style={[GlobalStyles.titleText, styles.thirdPlaceText]}>{leaders[2].name}</Text>

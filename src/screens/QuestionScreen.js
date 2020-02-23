@@ -1,10 +1,12 @@
 import React, {Component} from 'react';
-import { ActivityIndicator, View, StyleSheet, Button, TouchableOpacity } from 'react-native';
+import { ActivityIndicator, View, StyleSheet, Button, TouchableOpacity, DeviceEventEmitter } from 'react-native';
+var moment = require('moment-timezone');
 
 import {GlobalStyles} from '../Globals';
 import Accordion from '../components/Accordion';
 import * as API from '../APIClient';
 import {getUser} from '../Globals';
+import {setLastBallotTimestamp} from '../AsyncStorage';
 
 export default class QuestionScreen extends Component {
 
@@ -49,6 +51,18 @@ export default class QuestionScreen extends Component {
       });
   }
 
+  updateLastBallotTimestamp() {
+    setLastBallotTimestamp(moment().unix().toString())
+      .then(function() {
+        DeviceEventEmitter.emit('ballotSubmittedListener',  {});
+        this.props.navigation.goBack();
+      }.bind(this))
+      .catch(function (error) {
+        console.log("ERR")
+        console.log(error);
+      });
+  }
+
   submitResponsesHandler(questionResponseObject) {
     console.log("Received responses submission");
     console.log(questionResponseObject);
@@ -59,7 +73,8 @@ export default class QuestionScreen extends Component {
       })
       .catch(function (error) {
         console.log(error.response);
-      });;
+      });
+    this.updateLastBallotTimestamp();
   }
 
   render() {

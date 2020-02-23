@@ -13,7 +13,8 @@ class MiddleScreen extends Component {
   }
 
   handleStartPressed() {
-    this.props.navigation.navigate('Question')
+    this.pollStatusCountdown.onPollStatusCountdownHidden();
+    this.props.navigation.navigate('Question');
   }
 
   render() {
@@ -22,7 +23,7 @@ class MiddleScreen extends Component {
         <ScrollView style={GlobalStyles.frontLayerContainer}>
           <View style={{paddingBottom:20}}>
             <View style={styles.pollStatusContainer}>
-              <PollStatusCountdown onPressStart={this.handleStartPressed}/>
+              <PollStatusCountdown ref={(pollStatusCountdown) => {this.pollStatusCountdown=pollStatusCountdown}} onPressStart={this.handleStartPressed}/>
             </View>
             <AnnouncementCard
               titleText="Announcement Title"

@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, TouchableOpacity, Text, Image, StyleSheet } from 'react-native';
 import Constants from 'expo-constants';
-import * as GoogleSignIn from 'expo-google-sign-in';
 import * as Google from 'expo-google-app-auth';
 import * as firebase from 'firebase';
 import { YellowBox } from 'react-native';
@@ -10,6 +9,7 @@ import getEnvVars from '../Environment';
 import * as API from '../APIClient';
 import {setUser} from '../Globals';
 import StatusBarBackground from '../components/StatusBarBackground';
+import getPushNotificationsTokenAsync from '../Notifications';
 
 YellowBox.ignoreWarnings(['Setting a timer']);
 const _console = { ...console };
@@ -18,11 +18,6 @@ console.warn = message => {
     _console.warn(message);
   }
 };
-
-const isInClient = Constants.appOwnership === 'expo';
-if (isInClient) {
-  GoogleSignIn.allowInClient();
-}
 
 const {googleAuthClientIds} = getEnvVars();
 /*
@@ -42,14 +37,6 @@ class SignInScreen extends React.Component {
   state = {
     user: null
   };
-
-  componentDidMount() {
-    if (!isInClient) {
-      this.initAsyncNative();
-    }
-  }
-
-
 
   isUserEqual = (googleUser, firebaseUser) => {
     if (firebaseUser) {
@@ -85,21 +72,30 @@ class SignInScreen extends React.Component {
             .then(function(result) {
               setUser(result);
               console.log('user signed in ');
-              if (result.additionalUserInfo.isNewUser) {
-                console.log("NEW USER! Adding to DB...")
-                console.log("NAME: " + result.user.displayName);
-                console.log("Email: " + result.user.email);
-                console.log("photoURL: " + result.user.photoURL);
-                API.addUser(result.user.displayName, result.user.email, "", result.user.photoURL)
-                  .then(function(response) {
-                    console.log(response.status);
-                    console.log(response.data);
-                  })
-                  .catch(function (error) {
-                    console.log(error.response.status);
-                    console.log(error.response);
-                  });
-              }
+              getPushNotificationsTokenAsync()
+              .then(function(token) {
+                console.log(token);
+                if (result.additionalUserInfo.isNewUser) {
+                  console.log("NEW USER! Adding to DB...")
+                  console.log("NAME: " + result.user.displayName);
+                  console.log("Email: " + result.user.email);
+                  console.log("photoURL: " + result.user.photoURL);
+                  API.addUser(result.user.displayName, result.user.email, "", result.user.photoURL)
+                    .then(function(response) {
+                      console.log(response.status);
+                      console.log(response.data);
+                    })
+                    .catch(function (error) {
+                      console.log(error.response.status);
+                      console.log(error.response);
+                    });
+                } else {
+                  console.log("registering push token");
+                }
+              })
+              .catch(function (error) {
+                console.log(error);
+              });
             })
             .catch(function(error) {
               // Handle Errors here.
@@ -118,57 +114,6 @@ class SignInScreen extends React.Component {
     );
   };
 
-  initAsyncNative = async () => {
-    try {
-      await GoogleSignIn.initAsync({
-        isPromptEnabled: true,
-        clientIdForUseInStandalone,
-      });
-      this._syncUserWithStateAsync();
-    } catch ({ message }) {
-      alert('GoogleSignIn.initAsyncNative(): ' + message);
-    }
-  };
-
-  _syncUserWithStateAsyncNative = async () => {
-    const data = await GoogleSignIn.signInSilentlyAsync();
-    if (data) {
-      const photoURL = await GoogleSignIn.getPhotoAsync(256);
-      const user = await GoogleSignIn.getCurrentUserAsync();
-      this.setState({
-        user: {
-          ...user.toJSON(),
-          photoURL: photoURL || user.photoURL,
-        },
-      });
-    } else {
-      this.setState({ user: null });
-    }
-  };
-
-  signOutAsyncNative = async () => {
-    try {
-      await GoogleSignIn.signOutAsync();
-      this.setState({ user: null });
-    } catch ({ message }) {
-      alert('signOutAsyncNative: ' + message);
-    } finally {
-      this.setState({ user: null });
-    }
-  };
-
-  signInAsyncNative = async () => {
-    try {
-      await GoogleSignIn.askForPlayServicesAsync();
-      const { type, user } = await GoogleSignIn.signInAsync();
-      if (type === 'success') {
-        this._syncUserWithStateAsync();
-      }
-    } catch ({ message }) {
-      alert('login: Error:' + message);
-    }
-  };
-
   signInAsyncWeb = async () => {
     try {
       const result = await Google.logInAsync({
@@ -183,7 +128,6 @@ class SignInScreen extends React.Component {
         /* `accessToken` is now valid and can be used to get data from the Google API with HTTP requests */
         this.onSignIn(result);
         return result.accessToken;
-        //this.setState({accessToken});
       } else {
         return null;
       }
@@ -193,20 +137,7 @@ class SignInScreen extends React.Component {
   };
 
   onPress = () => {
-    if (isInClient) {
-      this.signInAsyncWeb();
-    } else {
-      if (this.state.user) {
-        this.signOutAsyncNative();
-      } else {
-        this.signInAsyncNative();
-      }
-      this.setState({user: userData});
-    }
-  };
-
-  static navigationOptions = {
-    title: 'Please sign in',
+    this.signInAsyncWeb();
   };
 
   render() {

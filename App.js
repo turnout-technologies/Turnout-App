@@ -8,6 +8,7 @@ import { Provider as PaperProvider } from 'react-native-paper';
 import * as firebase from 'firebase';
 import * as Sentry from 'sentry-expo';
 import Constants from 'expo-constants';
+import { Notifications } from 'expo';
 
 import './src/Globals.js';
 import getEnvVars from './src/Environment';
@@ -23,12 +24,25 @@ Sentry.init({
   //debug: true
 });
 
+const _handleNotification = notification => {
+    //handle the notification when pressed
+    console.log(notification);
+};
+
+// Handle notifications that are received or selected while the app
+// is open. If the app was closed and then opened by tapping the
+// notification (rather than just tapping the app icon to open it),
+// this function will fire on the next tick after the app starts
+// with the notification data.
+const _notificationSubscription = Notifications.addListener(_handleNotification);
+
 export default function App(props) {
   if (!__DEV__) {
     console.log = () => {};
   } else {
     console.log("DEV Mode")
   }
+
   const [isLoadingComplete, setLoadingComplete] = useState(false);
 
   if (!isLoadingComplete && !props.skipLoadingScreen) {

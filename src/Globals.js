@@ -41,7 +41,8 @@ const UMich = {
     	accent: "#ffcf02",
     	background: "#FFFFFF",
     	text: "#062343",
-    	text_opacity3: 'rgba(6,35,67,0.3)'
+    	text_opacity3: 'rgba(6,35,67,0.3)',
+    	text_opacity5: 'rgba(6,35,67,0.5)'
   	},
   	roundness: 30
 };

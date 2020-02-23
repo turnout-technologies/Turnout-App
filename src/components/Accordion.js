@@ -55,7 +55,6 @@ export default class Accordion extends Component {
     this.questionResponses[questionIndex] = true;
     this.questionResponseObject[questionId] = answerId;
     console.log(this.questionResponseObject);
-    console.log(this.questionResponses);
     var nextOpenQuestion = questionIndex+1;
     var allQuestionsAnswered = true;
     for (var i = 0; i < this.numQuestions && allQuestionsAnswered; i++) {

@@ -28,7 +28,7 @@ LeftStack.navigationOptions = {
   tabBarLabel: 'Leaderboard',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon focused={focused} name={'md-trophy'} />
-  ),
+  )
 };
 
 LeftStack.path = '';
@@ -44,7 +44,7 @@ const MiddleStack = createStackNavigator(
 MiddleStack.navigationOptions = ({ navigation }) => {
   let tabBarVisible = navigation.state.index == 0;
   return ({
-    tabBarLabel: 'Turnout',
+    tabBarLabel: 'Home',
     tabBarIcon: ({ focused }) => (
       <TabBarIcon focused={focused} name={'md-checkbox'} />
     ),
@@ -79,7 +79,10 @@ const tabNavigator = createBottomTabNavigator(
     RightStack,
   },
   {
-    initialRouteName: "MiddleStack"
+    initialRouteName: "MiddleStack",
+    tabBarOptions: {
+      activeTintColor: global.CURRENT_THEME.colors.primary
+    }
   }
 );
 

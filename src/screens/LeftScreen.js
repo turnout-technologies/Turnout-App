@@ -96,6 +96,7 @@ class LeftScreen extends Component {
                       <Image
                         style={styles.listItemImage}
                         source={!!item.avatarURL ? {uri: item.avatarURL.replace("/150", "/"+LIST_ITEM_IMAGE_SIZE)} : null}
+                        defaultSource={require('../../assets/images/md-contact.png')}
                       />
                       <View style={styles.listItemTitlesContainer}>
                         <Text style={[GlobalStyles.bodyText, styles.listItemTitle]}>{item.name}</Text>
