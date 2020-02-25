@@ -37,6 +37,10 @@ export function addUser(name, email, phone, avatarURL) {
 	 });
 }
 
+export function getUser(uid) {
+	return axios.get("/users/"+uid);
+}
+
 export function getLeaderboard() {
 	return axios.get("/users/leaderboard");
 }

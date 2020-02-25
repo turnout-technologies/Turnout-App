@@ -4,6 +4,7 @@ import firebase from 'firebase';
 import * as Sentry from 'sentry-expo';
 
 import {setUser} from '../Globals';
+import * as API from '../APIClient';
 
 class AuthLoadingScreen extends Component {
 
@@ -11,12 +12,27 @@ class AuthLoadingScreen extends Component {
     this.checkIfLoggedIn();
   }
 
+  alreadySignedIn = true;
+
   checkIfLoggedIn = () => {
     firebase.auth().onAuthStateChanged(
       function(user) {
-        setUser(user);
-        if (!!user) {
+        if (!!user && this.alreadySignedIn) {
+          API.getUser(user.uid)
+            .then(function(response) {
+              console.log(response.data);
+              if (response.data) {
+                setUser(response.data);
+              }
+            })
+            .catch(function (error) {
+              console.log(error.response);
+              firebase.auth().signOut();
+              alert("Error getting user data. Please sign in again.")
+            });
           Sentry.setUser({"id": user.uid});
+        } else {
+          this.alreadySignedIn = false;
         }
         this.props.navigation.navigate(!!user ? 'Main' : 'Auth');
       }.bind(this)

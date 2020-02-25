@@ -9,9 +9,6 @@ global.IOS = Platform.OS === 'ios';
 var user = null;
 
 export function getUser() {
-	if (user == null) {
-		user = firebase.auth().currentUser;
-	}
 	return user;
 }
 

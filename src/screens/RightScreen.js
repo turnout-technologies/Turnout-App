@@ -26,9 +26,9 @@ class RightScreen extends Component {
 	        		<View style={styles.profileInfoContainer}>
 	        			<Image
 		          			style={styles.profileImage}
-		          			source={{uri: user.photoURL.replace("s96-c", "s384-c")}}
+		          			source={{uri: user.avatarURL.replace("s96-c", "s384-c")}}
 	        			/>
-	        			<Text style={[GlobalStyles.titleText, styles.name]}>{user.displayName}</Text>
+	        			<Text style={[GlobalStyles.titleText, styles.name]}>{user.name}</Text>
 	        			<Text style={[GlobalStyles.bodyText, styles.email]}>{user.email}</Text>
 	        		</View>
 	        		<View style={styles.statsRowContainer}>

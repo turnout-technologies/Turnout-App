@@ -58,8 +58,8 @@ export default class PollStatusCountdown extends Component {
   }
 
   setPollState() {
-    //var curMoment = moment();
-    var curMoment = moment.tz("2020-02-23 18:59:50", "America/New_York");
+    var curMoment = moment();
+    //var curMoment = moment.tz("2020-02-25 18:59:50", "America/New_York");
     var pollsOpenTimeEastern = moment.tz({y:curMoment.year(), M:curMoment.month(), date:curMoment.date(), h:18, m:0}, "America/New_York");
     var pollsCloseTimeEastern = moment.tz({y:curMoment.year(), M:curMoment.month(), date:curMoment.date(), h:22, m:0}, "America/New_York");
     if (curMoment <= pollsOpenTimeEastern) {

@@ -7,9 +7,9 @@ import { YellowBox } from 'react-native';
 
 import getEnvVars from '../Environment';
 import * as API from '../APIClient';
-import {setUser} from '../Globals';
 import StatusBarBackground from '../components/StatusBarBackground';
 import getPushNotificationsTokenAsync from '../Notifications';
+import {getUser, setUser} from '../Globals';
 
 YellowBox.ignoreWarnings(['Setting a timer']);
 const _console = { ...console };
@@ -70,24 +70,23 @@ class SignInScreen extends React.Component {
             .auth()
             .signInWithCredential(credential)
             .then(function(result) {
-              setUser(result);
               console.log('user signed in ');
               getPushNotificationsTokenAsync()
               .then(function(token) {
                 console.log(token);
                 if (result.additionalUserInfo.isNewUser) {
                   console.log("NEW USER! Adding to DB...")
-                  console.log("NAME: " + result.user.displayName);
-                  console.log("Email: " + result.user.email);
-                  console.log("photoURL: " + result.user.photoURL);
                   API.addUser(result.user.displayName, result.user.email, "", result.user.photoURL)
                     .then(function(response) {
-                      console.log(response.status);
                       console.log(response.data);
+                      if (response.data) {
+                        setUser(response.data);
+                      }
                     })
                     .catch(function (error) {
-                      console.log(error.response.status);
-                      console.log(error.response);
+                      console.log(error);
+                      firebase.auth().signOut();
+                      alert("Error signing in. Please try again")
                     });
                 } else {
                   console.log("registering push token");
