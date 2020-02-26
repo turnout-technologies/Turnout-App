@@ -161,3 +161,187 @@ global.LEADERBOARD_DATA = {
 	],
 	self: { id: "21", name: "Person Name", avatarURL: "https://i.pravatar.cc/150", points:1 }
 }
+
+//Dummy Result:
+global.RESULTS_DATA = {
+    "date": 1582498800,
+    "id": "f6a3c5f0-56bc-11ea-a9e9-2742320751ba",
+    "questions": [
+        {
+            "title": "Hijavco ji seuju revi ihizaf?",
+            "id": "f6a3ed00-56bc-11ea-a9e9-2742320751ba",
+            "createdAt": 1582518018,
+            "answers": [
+                {
+                    "text": "Wa zic.",
+                    "id": "f6a3ed01-56bc-11ea-a9e9-2742320751ba"
+                },
+                {
+                    "id": "f6a3ed02-56bc-11ea-a9e9-2742320751ba",
+                    "text": "Ejuika julirju."
+                },
+                {
+                    "text": "Agineti fiwuzru.",
+                    "id": "f6a3ed03-56bc-11ea-a9e9-2742320751ba"
+                },
+                {
+                    "text": "Fonide fegiuda.",
+                    "id": "f6a3ed04-56bc-11ea-a9e9-2742320751ba"
+                }
+            ]
+        },
+        {
+            "id": "f6a41410-56bc-11ea-a9e9-2742320751ba",
+            "createdAt": 1582518018,
+            "answers": [
+                {
+                    "text": "Dur kuzdoc.",
+                    "id": "f6a41411-56bc-11ea-a9e9-2742320751ba"
+                },
+                {
+                    "text": "Vehte offupuk.",
+                    "id": "f6a41412-56bc-11ea-a9e9-2742320751ba"
+                },
+                {
+                    "text": "Vosci dotil.",
+                    "id": "f6a43b20-56bc-11ea-a9e9-2742320751ba"
+                },
+                {
+                    "text": "Otabocmej gutla.",
+                    "id": "f6a43b21-56bc-11ea-a9e9-2742320751ba"
+                }
+            ],
+            "title": "Bekeziva etawumuh ukpi ap wil?"
+        },
+        {
+            "id": "f6a43b22-56bc-11ea-a9e9-2742320751ba",
+            "createdAt": 1582518018,
+            "answers": [
+                {
+                    "text": "Alaafadeb pifpipe.",
+                    "id": "f6a43b23-56bc-11ea-a9e9-2742320751ba"
+                },
+                {
+                    "text": "Wajaccu arcep.",
+                    "id": "f6a43b24-56bc-11ea-a9e9-2742320751ba"
+                },
+                {
+                    "text": "Zoz wo.",
+                    "id": "f6a43b25-56bc-11ea-a9e9-2742320751ba"
+                },
+                {
+                    "text": "Efikaina uro.",
+                    "id": "f6a43b26-56bc-11ea-a9e9-2742320751ba"
+                }
+            ],
+            "title": "Co lopfev vi saivijip omaewiw?"
+        },
+        {
+            "id": "f6a43b27-56bc-11ea-a9e9-2742320751ba",
+            "createdAt": 1582518018,
+            "answers": [
+                {
+                    "id": "f6a43b28-56bc-11ea-a9e9-2742320751ba",
+                    "text": "Heg pialu."
+                },
+                {
+                    "id": "f6a43b29-56bc-11ea-a9e9-2742320751ba",
+                    "text": "Siig uvebowju."
+                },
+                {
+                    "text": "Voijoluh buekjov.",
+                    "id": "f6a43b2a-56bc-11ea-a9e9-2742320751ba"
+                },
+                {
+                    "text": "Cobiro ki.",
+                    "id": "f6a43b2b-56bc-11ea-a9e9-2742320751ba"
+                }
+            ],
+            "title": "Jafo izse nocuaw mudhec punvo?"
+        },
+        {
+            "title": "Sej oniub uzuotudu asotad omeul?",
+            "id": "f6a43b2c-56bc-11ea-a9e9-2742320751ba",
+            "createdAt": 1582518018,
+            "answers": [
+                {
+                    "text": "Lekwodazi hiz.",
+                    "id": "f6a43b2d-56bc-11ea-a9e9-2742320751ba"
+                },
+                {
+                    "text": "Unore najvu.",
+                    "id": "f6a43b2e-56bc-11ea-a9e9-2742320751ba"
+                },
+                {
+                    "text": "Uf diwi.",
+                    "id": "f6a43b2f-56bc-11ea-a9e9-2742320751ba"
+                },
+                {
+                    "id": "f6a43b30-56bc-11ea-a9e9-2742320751ba",
+                    "text": "Ul remvesa."
+                }
+            ]
+        }
+    ],
+    // question_id: { "answer_id": <count>, ... }
+    "aggregate": {
+        "f6a43b2c-56bc-11ea-a9e9-2742320751ba": {
+            "f6a43b2e-56bc-11ea-a9e9-2742320751ba": 16,
+            "f6a43b2f-56bc-11ea-a9e9-2742320751ba": 10,
+            "f6a43b30-56bc-11ea-a9e9-2742320751ba": 16,
+            "f6a43b2d-56bc-11ea-a9e9-2742320751ba": 9
+        },
+        "f6a3ed00-56bc-11ea-a9e9-2742320751ba": {
+            "f6a3ed03-56bc-11ea-a9e9-2742320751ba": 12,
+            "f6a3ed02-56bc-11ea-a9e9-2742320751ba": 12,
+            "f6a3ed01-56bc-11ea-a9e9-2742320751ba": 12,
+            "f6a3ed04-56bc-11ea-a9e9-2742320751ba": 15
+        },
+        "f6a43b22-56bc-11ea-a9e9-2742320751ba": {
+            "f6a43b24-56bc-11ea-a9e9-2742320751ba": 10,
+            "f6a43b26-56bc-11ea-a9e9-2742320751ba": 17,
+            "f6a43b25-56bc-11ea-a9e9-2742320751ba": 9,
+            "f6a43b23-56bc-11ea-a9e9-2742320751ba": 15
+        },
+        "f6a43b27-56bc-11ea-a9e9-2742320751ba": {
+            "f6a43b28-56bc-11ea-a9e9-2742320751ba": 8,
+            "f6a43b2a-56bc-11ea-a9e9-2742320751ba": 17,
+            "f6a43b2b-56bc-11ea-a9e9-2742320751ba": 11,
+            "f6a43b29-56bc-11ea-a9e9-2742320751ba": 15
+        },
+        "f6a41410-56bc-11ea-a9e9-2742320751ba": {
+            "f6a41411-56bc-11ea-a9e9-2742320751ba": 10,
+            "f6a41412-56bc-11ea-a9e9-2742320751ba": 12,
+            "f6a43b21-56bc-11ea-a9e9-2742320751ba": 16,
+            "f6a43b20-56bc-11ea-a9e9-2742320751ba": 13
+        }
+    },
+    // question_id: ["answer_id", ...] if there are multiple winning answers
+    "winningAnswers": {
+        "f6a43b2c-56bc-11ea-a9e9-2742320751ba": [
+            "f6a43b2e-56bc-11ea-a9e9-2742320751ba",
+            "f6a43b30-56bc-11ea-a9e9-2742320751ba"
+        ],
+        "f6a3ed00-56bc-11ea-a9e9-2742320751ba": [
+            "f6a3ed04-56bc-11ea-a9e9-2742320751ba"
+        ],
+        "f6a43b22-56bc-11ea-a9e9-2742320751ba": [
+            "f6a43b26-56bc-11ea-a9e9-2742320751ba"
+        ],
+        "f6a43b27-56bc-11ea-a9e9-2742320751ba": [
+            "f6a43b2a-56bc-11ea-a9e9-2742320751ba"
+        ],
+        "f6a41410-56bc-11ea-a9e9-2742320751ba": [
+            "f6a43b21-56bc-11ea-a9e9-2742320751ba"
+        ]
+    },
+    "userPoints": 1,
+    "response": {
+        "f6a43b2c-56bc-11ea-a9e9-2742320751ba": "f6a43b2f-56bc-11ea-a9e9-2742320751ba",
+        "f6a43b27-56bc-11ea-a9e9-2742320751ba": "f6a43b29-56bc-11ea-a9e9-2742320751ba",
+        "f6a41410-56bc-11ea-a9e9-2742320751ba": "f6a43b21-56bc-11ea-a9e9-2742320751ba",
+        "userId": "DtI7puD3g9MSbEp41oZ9XSPmtJh2",
+        "f6a3ed00-56bc-11ea-a9e9-2742320751ba": "f6a3ed01-56bc-11ea-a9e9-2742320751ba",
+        "f6a43b22-56bc-11ea-a9e9-2742320751ba": "f6a43b25-56bc-11ea-a9e9-2742320751ba"
+    }
+}

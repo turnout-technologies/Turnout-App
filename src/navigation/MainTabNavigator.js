@@ -8,6 +8,7 @@ import LeftScreen from '../screens/LeftScreen';
 import MiddleScreen from '../screens/MiddleScreen';
 import RightScreen from '../screens/RightScreen';
 import QuestionScreen from '../screens/QuestionScreen';
+import ResultsScreen from '../screens/ResultsScreen';
 import DebugOptionsScreen from '../screens/DebugOptionsScreen';
 
 const config = Platform.select({
@@ -36,7 +37,8 @@ LeftStack.path = '';
 const MiddleStack = createStackNavigator(
   {
     Middle: MiddleScreen,
-    Question: QuestionScreen
+    Question: QuestionScreen,
+    Results: ResultsScreen
   },
   config
 );

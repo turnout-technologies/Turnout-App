@@ -76,7 +76,7 @@ class SignInScreen extends React.Component {
                 console.log(token);
                 if (result.additionalUserInfo.isNewUser) {
                   console.log("NEW USER! Adding to DB...")
-                  API.addUser(result.user.displayName, result.user.email, "", result.user.photoURL)
+                  API.addUser(result.user.displayName, result.user.email, "", result.user.photoURL, token)
                     .then(function(response) {
                       console.log(response.data);
                       if (response.data) {

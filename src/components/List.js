@@ -34,11 +34,6 @@ const styles = StyleSheet.create({
   }
 });
 
-export interface List {
-  name: string;
-  items: ListItem[];
-}
-
 export default ({ question, questionIndex, openQuestion, questionResponseId, onAnswerPressed, onQuestionPressed, onContentReady }: ListProps) => {
   var questionId = question.id;
   var isOpen = openQuestion == questionIndex;

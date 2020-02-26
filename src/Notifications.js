@@ -3,7 +3,7 @@ import * as Permissions from 'expo-permissions';
 
 //const PUSH_ENDPOINT = 'https://your-server.com/users/push-token';
 
-export default async function getPushNotificationsTokenAsync() {
+export async function getPushNotificationsTokenAsync() {
   const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
   // only asks if permissions have not already been determined, because
   // iOS won't necessarily prompt the user a second time.
@@ -22,3 +22,14 @@ export default async function getPushNotificationsTokenAsync() {
   // POST the token to your backend server from where you can retrieve it to send push notifications.
   return token;
 }
+
+ export async function setupNotificationChannels() {
+    if (Platform.OS === 'android') {
+      Notifications.createChannelAndroidAsync('poll-notifications', {
+        name: 'Poll Notifications',
+        sound: true,
+        priority: "max",
+        vibrate: true,
+      });
+    }
+  }

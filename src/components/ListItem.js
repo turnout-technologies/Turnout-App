@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View, TouchableOpacity, Alert } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { MaterialIcons } from '@expo/vector-icons';
 
 import {GlobalStyles} from '../Globals';
@@ -71,7 +71,7 @@ export default ({ item, answerSelected, onAnswerPressed }: ListItemProps) => {
       <View style={styles.answerButtonContainer}>
         <TouchableOpacity style={answerButtonStyle} onPress={ () => onAnswerPressed(item.id)}>
           <View style={styles.answerContentContainer}>
-            <Text style={[GlobalStyles.bodyText, answerButtonTextStyle]}>{item.text}</Text>
+            <Text style={[GlobalStyles.titleText, answerButtonTextStyle]}>{item.text}</Text>
             {answerSelected && <MaterialIcons style={{marginLeft: 10}} name="check" size={25} color={global.CURRENT_THEME.colors.accent} />}
           </View>
         </TouchableOpacity>

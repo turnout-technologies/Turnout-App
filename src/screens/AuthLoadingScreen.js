@@ -5,11 +5,13 @@ import * as Sentry from 'sentry-expo';
 
 import {setUser} from '../Globals';
 import * as API from '../APIClient';
+import {getPushNotificationsTokenAsync, setupNotificationChannels} from '../Notifications';
 
 class AuthLoadingScreen extends Component {
 
   componentDidMount() {
     this.checkIfLoggedIn();
+    setupNotificationChannels();
   }
 
   alreadySignedIn = true;

@@ -28,12 +28,13 @@ axios.interceptors.response.use(
   error => errorHandler(error)
 )
 
-export function addUser(name, email, phone, avatarURL) {
+export function addUser(name, email, phone, avatarURL, pushToken) {
 	return axios.post("/users", {
 	    name: name,
 	    email: email,
 	    phone: phone,
-	    avatarURL: avatarURL
+	    avatarURL: avatarURL,
+	    pushToken: pushToken
 	 });
 }
 
@@ -54,4 +55,8 @@ export function submitBallot(ballotId, userId, questionResponse) {
 	    userId: userId,
 	    response: questionResponse
 	 });
+}
+
+export function getLatestBallotResults() {
+	return axios.get("/ballots/latest/results");
 }

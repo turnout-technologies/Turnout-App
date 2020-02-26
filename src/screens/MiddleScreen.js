@@ -29,7 +29,7 @@ class MiddleScreen extends Component {
               titleText="Announcement Title"
               buttonText="Button"
               bodyText="These are the details of the announcement. It's a pretty exciting announcement. Like, really exciting."
-              buttonOnPress={ () => Alert.alert('Announcment Button pressed')}
+              buttonOnPress={ () => this.props.navigation.navigate('Results')}
             />
             <View style={{marginVertical: 10}}/>
             <AnnouncementCard
