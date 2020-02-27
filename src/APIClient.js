@@ -42,6 +42,10 @@ export function getUser(uid) {
 	return axios.get("/users/"+uid);
 }
 
+export function putPushToken(uid, token) {
+	return axios.put("/users/"+uid+"/push-token", {pushToken: token});
+}
+
 export function getLeaderboard() {
 	return axios.get("/users/leaderboard");
 }

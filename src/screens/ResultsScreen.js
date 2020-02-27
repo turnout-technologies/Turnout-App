@@ -5,7 +5,6 @@ var moment = require('moment-timezone');
 import {GlobalStyles} from '../Globals';
 import QuestionResult from '../components/QuestionResult';
 import * as API from '../APIClient';
-import {getUser} from '../Globals';
 import {setLastBallotTimestamp} from '../AsyncStorage';
 
 export default class ResultsScreen extends Component {
@@ -25,7 +24,6 @@ export default class ResultsScreen extends Component {
     var _this = this;
     API.getLatestBallotResults()
       .then(function(response) {
-        console.log(response.data)
         _this.setState({ballotResult: response.data})
       })
       .catch(function (error) {

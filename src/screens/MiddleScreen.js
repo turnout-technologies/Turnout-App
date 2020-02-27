@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { View, StyleSheet, Text, Button, Alert, ScrollView, TouchableOpacity } from 'react-native';
 
-import {GlobalStyles, getUser} from '../Globals';
+import {GlobalStyles} from '../Globals';
 import AnnouncementCard from '../components/AnnouncementCard';
 import PollStatusCountdown from '../components/PollStatusCountdown';
 

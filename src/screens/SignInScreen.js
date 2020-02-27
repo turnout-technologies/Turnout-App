@@ -4,12 +4,13 @@ import Constants from 'expo-constants';
 import * as Google from 'expo-google-app-auth';
 import * as firebase from 'firebase';
 import { YellowBox } from 'react-native';
+var moment = require('moment-timezone');
 
 import getEnvVars from '../Environment';
 import * as API from '../APIClient';
 import StatusBarBackground from '../components/StatusBarBackground';
-import getPushNotificationsTokenAsync from '../Notifications';
-import {getUser, setUser} from '../Globals';
+import {getPushNotificationsTokenAsync, setNotificationsEnabled} from '../Notifications';
+import {setUser, setLastRefreshUserTimestamp} from '../AsyncStorage';
 
 YellowBox.ignoreWarnings(['Setting a timer']);
 const _console = { ...console };
@@ -73,14 +74,16 @@ class SignInScreen extends React.Component {
               console.log('user signed in ');
               getPushNotificationsTokenAsync()
               .then(function(token) {
-                console.log(token);
                 if (result.additionalUserInfo.isNewUser) {
                   console.log("NEW USER! Adding to DB...")
                   API.addUser(result.user.displayName, result.user.email, "", result.user.photoURL, token)
                     .then(function(response) {
                       console.log(response.data);
                       if (response.data) {
-                        setUser(response.data);
+                        global.user = response.data;
+                        console.log(global.user);
+                        setUser();
+                        setLastRefreshUserTimestamp(moment().unix());
                       }
                     })
                     .catch(function (error) {
@@ -89,14 +92,29 @@ class SignInScreen extends React.Component {
                       alert("Error signing in. Please try again")
                     });
                 } else {
-                  console.log("registering push token");
+                  API.getUser(result.user.uid)
+                    .then(function(response) {
+                      if (response.data) {
+                        global.user = response.data;
+                        console.log(global.user)
+                        setUser();
+                        setLastRefreshUserTimestamp(moment().unix());
+                      }
+                    })
+                    .catch(function (error) {
+                      console.log(error);
+                      firebase.auth().signOut();
+                      alert("Error getting user data. Please sign in again.")
+                    });
                 }
               })
               .catch(function (error) {
+                console.log("HERE2")
                 console.log(error);
               });
             })
             .catch(function(error) {
+              console.log(error);
               // Handle Errors here.
               var errorCode = error.code;
               var errorMessage = error.message;

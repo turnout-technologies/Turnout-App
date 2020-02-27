@@ -6,15 +6,7 @@ import * as firebase from 'firebase';
 global.IOS = Platform.OS === 'ios';
 
 //USER INFO
-var user = null;
-
-export function getUser() {
-	return user;
-}
-
-export function setUser(curUser) {
-	user = curUser;
-}
+global.user = null;
 
 //THEMES
 const MainTheme = {

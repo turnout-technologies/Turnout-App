@@ -5,7 +5,6 @@ var moment = require('moment-timezone');
 import {GlobalStyles} from '../Globals';
 import Accordion from '../components/Accordion';
 import * as API from '../APIClient';
-import {getUser} from '../Globals';
 import {setLastBallotTimestamp} from '../AsyncStorage';
 
 export default class QuestionScreen extends Component {
@@ -66,7 +65,7 @@ export default class QuestionScreen extends Component {
   submitResponsesHandler(questionResponseObject) {
     console.log("Received responses submission");
     console.log(questionResponseObject);
-    API.submitBallot(this.state.ballot.id, getUser().id, questionResponseObject)
+    API.submitBallot(this.state.ballot.id, global.user.id, questionResponseObject)
       .then(function(response) {
         console.log(response.status);
         console.log(response.data);

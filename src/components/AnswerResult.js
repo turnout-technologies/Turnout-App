@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
 import { MaterialIcons } from '@expo/vector-icons';
 var moment = require('moment-timezone');
 
-import {GlobalStyles, getUser} from '../Globals';
+import {GlobalStyles} from '../Globals';
 
 //const CORRECT_ANSWER_COLOR='rgba(62, 185, 62, 1)';
 //const INCORRECT_ANSWER_COLOR='rgba(238, 55, 57, 1)';
@@ -91,7 +91,7 @@ export default ({ answer, count, totalCount, isCorrectAnswer, isUserResponse }: 
         <View style={styles.rightContainer}/>
         <View style={styles.answerContentContainer}>
           <Text style={[GlobalStyles.titleText, styles.answerText]}>{answer.text}</Text>
-          {isUserResponse && <Image style={styles.profileImage} source={{uri: getUser().avatarURL.replace("s96-c", "s384-c")}}/>}
+          {isUserResponse && <Image style={styles.profileImage} source={{uri: global.user.avatarURL.replace("s96-c", "s384-c")}}/>}
           {isUserResponse && isCorrectAnswer && <MaterialIcons style={{marginLeft: 10}} name="check" size={25} color={CORRECT_ANSWER_COLOR} />}
           {isIncorrectAnswer && <MaterialIcons style={{marginLeft: 10}} name="close" size={25} color={INCORRECT_ANSWER_COLOR} />}
         </View>

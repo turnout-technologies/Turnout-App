@@ -1,6 +1,9 @@
 import { Notifications } from 'expo';
 import * as Permissions from 'expo-permissions';
 
+import {setUser} from './AsyncStorage';
+import * as API from './APIClient';
+
 //const PUSH_ENDPOINT = 'https://your-server.com/users/push-token';
 
 export async function getPushNotificationsTokenAsync() {
@@ -31,5 +34,30 @@ export async function getPushNotificationsTokenAsync() {
         priority: "max",
         vibrate: true,
       });
+    }
+  }
+
+  function sendPushToken(enable, token) {
+    API.putPushToken(global.user.id, token)
+      .then(function(response) {
+        global.user.pushToken=token;
+        setUser();
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
+  export async function setNotificationsEnabled(enable) {
+    if (enable) {
+      getPushNotificationsTokenAsync()
+        .then(function(token) {
+          sendPushToken(enable, token);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    }  else {
+      sendPushToken(enable, "");
     }
   }
