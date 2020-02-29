@@ -28,7 +28,7 @@ axios.interceptors.response.use(
   error => errorHandler(error)
 )
 
-export function addUser(name, email, phone, avatarURL, pushToken) {
+export function addUser(name, email, avatarURL, pushToken) {
 	return axios.post("/users", {
 	    name: name,
 	    email: email,
