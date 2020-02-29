@@ -33,9 +33,9 @@ class MiddleScreen extends Component {
             />
             <View style={{marginVertical: 10}}/>
             <AnnouncementCard
-              titleText="Earn faster by inviting friends"
-              buttonText="Invite"
-              buttonOnPress={ () => Alert.alert('Invite Button pressed')}
+              titleText="Redeem your free scoop at Molly Moon's!"
+              buttonText="Redeem"
+              buttonOnPress={ () => this.props.navigation.navigate('Redemption')}
             />
           </View>
         </ScrollView>

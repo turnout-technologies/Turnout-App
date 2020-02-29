@@ -48,13 +48,13 @@ const styles = StyleSheet.create({
 
 	announcementTitleText: {
 		fontSize: 16,
-		alignSelf: "center"
+		alignSelf: "center",
+		maxWidth: "75%",
 	},
 
 	announcementButtonContainer: {
 		width:82,
-	    height: 34,
-	    alignSelf:'center',
+	    height: 34
 	},
 
 	announcementButton: {

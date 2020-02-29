@@ -9,6 +9,7 @@ import MiddleScreen from '../screens/MiddleScreen';
 import RightScreen from '../screens/RightScreen';
 import QuestionScreen from '../screens/QuestionScreen';
 import ResultsScreen from '../screens/ResultsScreen';
+import RedemptionScreen from '../screens/RedemptionScreen';
 import DebugOptionsScreen from '../screens/DebugOptionsScreen';
 
 const config = Platform.select({
@@ -38,7 +39,8 @@ const MiddleStack = createStackNavigator(
   {
     Middle: MiddleScreen,
     Question: QuestionScreen,
-    Results: ResultsScreen
+    Results: ResultsScreen,
+    Redemption: RedemptionScreen
   },
   config
 );
