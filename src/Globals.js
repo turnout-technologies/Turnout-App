@@ -12,7 +12,6 @@ global.user = {
     "email": "",
     "id": "",
     "name": "",
-    "phone": "",
     "points": 0,
     "pushToken": "",
 

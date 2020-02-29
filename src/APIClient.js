@@ -32,7 +32,6 @@ export function addUser(name, email, phone, avatarURL, pushToken) {
 	return axios.post("/users", {
 	    name: name,
 	    email: email,
-	    phone: phone,
 	    avatarURL: avatarURL,
 	    pushToken: pushToken
 	 });
