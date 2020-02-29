@@ -9,6 +9,7 @@ import MiddleScreen from '../screens/MiddleScreen';
 import RightScreen from '../screens/RightScreen';
 import QuestionScreen from '../screens/QuestionScreen';
 import ResultsScreen from '../screens/ResultsScreen';
+import FeedbackScreen from '../screens/FeedbackScreen';
 import DebugOptionsScreen from '../screens/DebugOptionsScreen';
 
 const config = Platform.select({
@@ -60,6 +61,7 @@ MiddleStack.path = '';
 const RightStack = createStackNavigator(
   {
     Right: RightScreen,
+    Feedback: FeedbackScreen,
     DebugOptions: DebugOptionsScreen
   },
   config

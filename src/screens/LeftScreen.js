@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import { ActivityIndicator, View, StyleSheet, Text, UIManager, FlatList, TouchableOpacity, Image } from 'react-native';
 import Backdrop from 'react-native-material-backdrop'
-import { MaterialIcons } from '@expo/vector-icons';
 
 import {GlobalStyles} from '../Globals';
 import StatusBarBackground from '../components/StatusBarBackground';
@@ -153,7 +152,7 @@ class LeftScreen extends Component {
             color={global.CURRENT_THEME.colors.accent}
           />
         </TouchableOpacity>*/}
-        <TouchableOpacity style={styles.backdropHeader} onPress = { () => this.backdrop.toggleLayout()}>
+        <TouchableOpacity style={styles.backdropHeader} onPress = { () => alert('Leaderboard filters coming soon. Wait on it.') /*this.backdrop.toggleLayout()*/}>
           <LeaderboardFilter icon={this.getIconName(this.state.peopleFilterSelected)} text={this.state.peopleFilterSelected} selected={true}/>
           <View style={{marginHorizontal: 10, borderLeftColor:'white',borderLeftWidth:1,height:'50%'}}/>
           <LeaderboardFilter icon={this.getIconName(this.state.timeFilterSelected)} text={this.state.timeFilterSelected} selected={true}/>

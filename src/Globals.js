@@ -6,7 +6,17 @@ import * as firebase from 'firebase';
 global.IOS = Platform.OS === 'ios';
 
 //USER INFO
-global.user = null;
+global.user = {
+    "avatarURL": "",
+    "createdAt": 0,
+    "email": "",
+    "id": "",
+    "name": "",
+    "phone": "",
+    "points": 0,
+    "pushToken": "",
+
+};
 
 //THEMES
 const MainTheme = {

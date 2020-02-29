@@ -21,6 +21,7 @@ class AuthLoadingScreen extends Component {
     firebase.auth().onAuthStateChanged(
       function(user) {
         if (!!user && this.alreadySignedIn) {
+          var _this = this;
           getLastRefreshUserTimestamp()
             .then(function(lastRefreshUserTimestamp) {
               var shouldRefreshUser = !lastRefreshUserTimestamp || !moment.unix(lastRefreshUserTimestamp).tz("America/New_York").isSame(moment().tz("America/New_York"), 'day');
@@ -32,6 +33,7 @@ class AuthLoadingScreen extends Component {
                     console.log(global.user)
                     setUser();
                     setLastRefreshUserTimestamp(moment().unix());
+                    _this.props.navigation.navigate('Main');
                   }
                 })
                 .catch(function (error) {
@@ -44,7 +46,8 @@ class AuthLoadingScreen extends Component {
                   .then(function(user) {
                     global.user = JSON.parse(user);
                     console.log(global.user);
-                  }.bind(this))
+                    _this.props.navigation.navigate('Main');
+                  })
                   .catch(function (error) {
                     console.log(error);
                   });
@@ -56,8 +59,8 @@ class AuthLoadingScreen extends Component {
             });
         } else {
           this.alreadySignedIn = false;
+          this.props.navigation.navigate('Auth');
         }
-        this.props.navigation.navigate(!!user ? 'Main' : 'Auth');
       }.bind(this)
     );
   };

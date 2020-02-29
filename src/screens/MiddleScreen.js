@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import { View, StyleSheet, Text, Button, Alert, ScrollView, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, Button, Alert, ScrollView } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import {GlobalStyles} from '../Globals';
 import AnnouncementCard from '../components/AnnouncementCard';
@@ -12,10 +13,33 @@ class MiddleScreen extends Component {
     this.handleStartPressed = this.handleStartPressed.bind(this);
   }
 
+  componentDidMount() {
+    this.props.navigation.setParams({
+      header: (
+        <View style={styles.customHeaderContainer} >
+          <View style={styles.headerPointsContainer}>
+            <MaterialCommunityIcons name="ticket" size={25} color={global.CURRENT_THEME.colors.accent} />
+            <Text style={[GlobalStyles.bodyText, styles.headerPointsText]}>{global.user.points}</Text>
+          </View>
+        </View>
+      )
+    })
+  }
+
   handleStartPressed() {
     this.pollStatusCountdown.onPollStatusCountdownHidden();
     this.props.navigation.navigate('Question');
   }
+
+  static navigationOptions = ({navigation}) => {
+    //  headerStyle: GlobalStyles.headerStyle,
+    const {state} = navigation;
+    if (state.params != undefined){
+      return {
+        header: navigation.state.params.header
+      }
+    }
+  };
 
   render() {
     return (
@@ -44,11 +68,25 @@ class MiddleScreen extends Component {
   }
 }
 
-MiddleScreen.navigationOptions = {
-  headerStyle: GlobalStyles.headerStyle
-};
-
 const styles = StyleSheet.create({
+  customHeaderContainer: {
+    backgroundColor: global.CURRENT_THEME.colors.primary,
+    marginTop: Platform.OS == "ios" ? 20 : 0,
+    height: 80,
+    paddingTop: 20,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  headerPointsContainer: {
+    flexDirection: "row",
+    alignItems: "center"
+  },
+  headerPointsText: {
+    color: global.CURRENT_THEME.colors.accent,
+    fontSize: 18,
+    marginLeft: 5
+  },
   pollStatusContainer: {
     marginVertical: 100
   },

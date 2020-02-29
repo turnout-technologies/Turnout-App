@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Component} from 'react';
 import { View, TouchableOpacity, Text, Image, StyleSheet } from 'react-native';
 import Constants from 'expo-constants';
 import * as Google from 'expo-google-app-auth';
@@ -20,20 +20,7 @@ console.warn = message => {
   }
 };
 
-const {googleAuthClientIds} = getEnvVars();
-/*
- * Redefine this one with your client ID
- *
- * The iOS value is the one that really matters,
- * on Android this does nothing because the client ID
- * is read from the google-services.json.
- */
-const clientIdForUseInStandalone = Platform.select({
-  android: googleAuthClientIds.androidStandaloneClientId,
-  ios: googleAuthClientIds.iOSStandaloneClientId,
-});
-
-class SignInScreen extends React.Component {
+class SignInScreen extends Component {
 
   state = {
     user: null
@@ -67,6 +54,7 @@ class SignInScreen extends React.Component {
             googleUser.accessToken
           );
           // Sign in with credential from the Google user.
+          var _this = this;
           firebase
             .auth()
             .signInWithCredential(credential)
@@ -84,6 +72,7 @@ class SignInScreen extends React.Component {
                         console.log(global.user);
                         setUser();
                         setLastRefreshUserTimestamp(moment().unix());
+                        _this.props.navigation.navigate('Main');
                       }
                     })
                     .catch(function (error) {
@@ -99,6 +88,7 @@ class SignInScreen extends React.Component {
                         console.log(global.user)
                         setUser();
                         setLastRefreshUserTimestamp(moment().unix());
+                        _this.props.navigation.navigate('Main');
                       }
                     })
                     .catch(function (error) {
@@ -109,7 +99,6 @@ class SignInScreen extends React.Component {
                 }
               })
               .catch(function (error) {
-                console.log("HERE2")
                 console.log(error);
               });
             })
@@ -134,10 +123,10 @@ class SignInScreen extends React.Component {
   signInAsyncWeb = async () => {
     try {
       const result = await Google.logInAsync({
-        iosClientId: googleAuthClientIds.iOSExpoClientId,
-        androidClientId: googleAuthClientIds.androidExpoClientId,
-        iosStandaloneAppClientId: googleAuthClientIds.iOSStandaloneClientId,
-        androidStandaloneAppClientId: googleAuthClientIds.androidStandaloneClientId,
+        iosClientId: Constants.manifest.extra.iOSExpoClientId,
+        androidClientId: Constants.manifest.extra.androidExpoClientId,
+        iosStandaloneAppClientId: Constants.manifest.extra.iOSStandaloneClientId,
+        androidStandaloneAppClientId: Constants.manifest.extra.androidStandaloneClientId,
         scopes: ['profile', 'email']
       });
 

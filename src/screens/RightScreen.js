@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
-import { View, Text, Image, Button, ScrollView, StyleSheet, TouchableNativeFeedback, Switch } from 'react-native';
+import { View, Text, Image, Button, ScrollView, StyleSheet, TouchableNativeFeedback, TouchableOpacity, Switch } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import getEnvVars from '../Environment';
-import * as API from '../APIClient';
 import {GlobalStyles} from '../Globals';
 import {setNotificationsEnabled} from '../Notifications';
 import {setUser} from '../AsyncStorage';
@@ -11,8 +10,8 @@ import {setUser} from '../AsyncStorage';
 
 class RightScreen extends Component {
 
-	constructor() {
-    super();
+	constructor(props) {
+    super(props);
     this.state = {notificationsEnabled: !!global.user.pushToken};
 
     this.notificationSwitchHandler = this.notificationSwitchHandler.bind(this);
@@ -24,15 +23,15 @@ class RightScreen extends Component {
         headerStyle: GlobalStyles.headerStyle,
         headerTintColor: global.CURRENT_THEME.colors.accent,
         headerRight: __DEV__ ? () => (
-          <TouchableNativeFeedback style={{paddingRight: 20}} onPress={() => navigation.navigate('DebugOptions')}>
+          <TouchableOpacity style={{marginRight: 20}} onPress={() => navigation.navigate('DebugOptions')}>
             <Ionicons name="md-bug" size={25} color={global.CURRENT_THEME.colors.accent} />
-          </TouchableNativeFeedback>
+          </TouchableOpacity>
         ) : null
       };
   }
 
   submitFeedback(feedbackType) {
-    console.log(feedbackType);
+    this.props.navigation.navigate('Feedback', {type: feedbackType})
   }
 
   notificationSwitchHandler(enable) {
@@ -44,32 +43,47 @@ class RightScreen extends Component {
 		return (
 			<View style={GlobalStyles.backLayerContainer}>
 	        <ScrollView style={GlobalStyles.frontLayerContainer}>
-        		<View style={styles.profileInfoContainer}>
-        			<Image
-	          			style={styles.profileImage}
-	          			source={{uri: global.user.avatarURL.replace("s96-c", "s384-c")}}
-        			/>
-        			<Text style={[GlobalStyles.headerText, styles.name]}>{global.user.name}</Text>
-        			<Text style={[GlobalStyles.bodyText, styles.email]}>{global.user.email}</Text>
-        		</View>
+        		<View style={styles.profileContainer}>
+              <Image
+                  style={styles.profileImage}
+                  source={{uri: global.user.avatarURL.replace("s96-c", "s384-c")}}
+              />
+              <View style={styles.profileInfoContainer}>
+          			<Text style={[GlobalStyles.headerText, styles.nameText]}>{global.user.name}</Text>
+          			<Text style={[GlobalStyles.bodyText, styles.emailText]}>{global.user.email}</Text>
+                <Text style={[GlobalStyles.titleText, styles.pointsText]}>{global.user.points} points</Text>
+          		</View>
+            </View>
             <View style={styles.settingsSeparator} />
             <Text style={[GlobalStyles.titleText, styles.settingHeaderText]}>Feedback</Text>
             <TouchableNativeFeedback onPress={ () => this.submitFeedback("bug")}>
               <View style={styles.settingsItem}>
-                <Ionicons name="md-bug" size={25} color={global.CURRENT_THEME.colors.primary} style={styles.settingsItemIcon} />
+                <Ionicons name="md-bug" size={25} color="red" style={styles.settingsItemIcon} />
                 <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>I found a bug</Text>
               </View>
             </TouchableNativeFeedback>
-            <TouchableNativeFeedback onPress={ () => this.submitFeedback("feedback")}>
+            <TouchableNativeFeedback onPress={ () => this.submitFeedback("question_idea")}>
               <View style={styles.settingsItem}>
                 <Ionicons name="md-chatbubbles" size={25} color={global.CURRENT_THEME.colors.primary} style={styles.settingsItemIcon} />
-                <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>I have a suggestion/feedback</Text>
+                <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>I want to suggest a ballot question</Text>
               </View>
             </TouchableNativeFeedback>
-            <TouchableNativeFeedback onPress={ () => this.submitFeedback("questionidea")}>
+            <TouchableNativeFeedback onPress={ () => this.submitFeedback("happy")}>
+              <View style={styles.settingsItem}>
+                <Ionicons name="md-happy" size={25} color={global.CURRENT_THEME.colors.primary} style={styles.settingsItemIcon} />
+                <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>I like something</Text>
+              </View>
+            </TouchableNativeFeedback>
+            <TouchableNativeFeedback onPress={ () => this.submitFeedback("sad")}>
+              <View style={styles.settingsItem}>
+                <Ionicons name="md-sad" size={25} color={global.CURRENT_THEME.colors.primary} style={styles.settingsItemIcon} />
+                <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>I don't like something</Text>
+              </View>
+            </TouchableNativeFeedback>
+            <TouchableNativeFeedback onPress={ () => this.submitFeedback("suggestion")}>
               <View style={styles.settingsItem}>
                 <Ionicons name="md-bulb" size={25} color={global.CURRENT_THEME.colors.primary} style={styles.settingsItemIcon} />
-                <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>I have an idea for a ballot question</Text>
+                <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>I have an idea/suggestion</Text>
               </View>
             </TouchableNativeFeedback>
             <View style={styles.settingsSeparator} />
@@ -78,7 +92,7 @@ class RightScreen extends Component {
               <View style={[styles.settingsItem, {justifyContent: "space-between"}]}>
                 <View style={{flexDirection: "row"}}>
                   <Ionicons name="md-notifications" size={25} color={global.CURRENT_THEME.colors.primary} style={styles.settingsItemIcon} />
-                  <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>Enable Notifications</Text>
+                  <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>Enable notifications</Text>
                 </View>
                 <Switch
                   value={this.state.notificationsEnabled}
@@ -88,6 +102,12 @@ class RightScreen extends Component {
               </View>
             </TouchableNativeFeedback>
             <View style={styles.settingsSeparator} />
+            <TouchableNativeFeedback onPress={ () => alert('About coming soon')}>
+              <View style={styles.settingsItem}>
+                <Ionicons name="md-information-circle" size={25} color={global.CURRENT_THEME.colors.primary} style={styles.settingsItemIcon} />
+                <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>About</Text>
+              </View>
+            </TouchableNativeFeedback>
         		{/*<View style={styles.statsRowContainer}>
       				<View style={styles.statContainer}>
       					<Text style={[GlobalStyles.headerText, styles.statNumber]}>10</Text>
@@ -109,23 +129,33 @@ class RightScreen extends Component {
 }
 
 const styles = StyleSheet.create({
+  profileContainer: {
+    alignSelf: "center",
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    maxWidth: 300,
+    alignItems: "center",
+    margin: 25
+  },
   profileInfoContainer: {
-  	flex: 1,
   	alignItems: "center",
-  	marginTop: 20,
-  	paddingBottom: 20
+    marginLeft: 20
   },
   profileImage: {
   	width: 125,
   	height: 125,
   	borderRadius: 125/2
   },
-  name: {
+  nameText: {
   	fontSize: 25,
     marginTop: 15
   },
-  email: {
+  emailText: {
   	fontSize: 15
+  },
+  pointsText: {
+    fontSize: 20,
+    color: global.CURRENT_THEME.colors.primary
   },
   settingHeaderText: {
     marginLeft: 20,
