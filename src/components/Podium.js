@@ -15,52 +15,70 @@ export default class Podium extends Component {
     leaders: PropTypes.array
   }
 
+  getCircleBackgroundColor(position) {
+    switch(position) {
+      case 1:
+        return "#F3B50A";
+      case 2:
+        return "#BCBDBF";
+      case 3:
+        return "#B53F25";
+    }
+  }
+
   render() {
     const { leaders } = this.props;
+    var podiumSize = leaders.length;
     return (
       <View style={styles.podiumContainer}>
-        <View style={[styles.podiumPlaceContainer, {marginTop: 20}]}>
-          <View style={styles.podiumPlacePicContainer}>
-            <View style={[styles.secondPlaceCircle, styles.podiumPlaceCircle, {backgroundColor: "#BCBDBF"}]}>
-              <Text style={[GlobalStyles.headerText, styles.podiumPlaceCircleNumber]}>2</Text>
+        {podiumSize >= 2 &&
+          <View style={[styles.podiumPlaceContainer, {marginTop: 20}]}>
+            <View style={styles.podiumPlacePicContainer}>
+              <View style={[styles.secondPlaceCircle, styles.podiumPlaceCircle, {backgroundColor: this.getCircleBackgroundColor(leaders[1].position)}]}>
+                <Text style={[GlobalStyles.headerText, styles.podiumPlaceCircleNumber]}>{leaders[1].position}</Text>
+              </View>
+              <Image
+                style={styles.secondPlaceImage}
+                source={{uri: leaders[1].avatarURL.replace("/150", "/"+SECOND_PLACE_SIZE)}}
+                defaultSource={require('../../assets/images/md-contact.png')}
+              />
             </View>
-            <Image
-              style={styles.secondPlaceImage}
-              source={{uri: leaders[1].avatarURL.replace("/150", "/"+SECOND_PLACE_SIZE)}}
-              defaultSource={require('../../assets/images/md-contact.png')}
-            />
+            <Text style={[GlobalStyles.titleText, styles.secondPlaceText]}>{leaders[1].name}</Text>
+            <Text style={[GlobalStyles.bodyText, styles.secondPlaceText]}>{leaders[1].points}</Text>
           </View>
-          <Text style={[GlobalStyles.titleText, styles.secondPlaceText]}>{leaders[1].name}</Text>
-          <Text style={[GlobalStyles.bodyText, styles.secondPlaceText]}>{leaders[1].points}</Text>
-        </View>
-        <View style={styles.podiumPlaceContainer}>
-          <View style={styles.podiumPlacePicContainer}>
-            <View style={[styles.firstPlaceCircle, styles.podiumPlaceCircle, {backgroundColor: "#F3B50A"}]}>
-              <Text style={[GlobalStyles.headerText, styles.podiumPlaceCircleNumber]}>1</Text>
+        }
+        { podiumSize >= 1 &&
+          <View style={styles.podiumPlaceContainer}>
+            <View style={styles.podiumPlacePicContainer}>
+              <View style={[styles.firstPlaceCircle, styles.podiumPlaceCircle, {backgroundColor: this.getCircleBackgroundColor(leaders[0].position)}]}>
+                <Text style={[GlobalStyles.headerText, styles.podiumPlaceCircleNumber]}>{leaders[0].position}</Text>
+              </View>
+              <Image
+                style={styles.firstPlaceImage}
+                source={{uri: leaders[0].avatarURL.replace("/150", "/"+FIRST_PLACE_SIZE)}}
+                defaultSource={require('../../assets/images/md-contact.png')}
+              />
             </View>
-            <Image
-              style={styles.firstPlaceImage}
-              source={{uri: leaders[0].avatarURL.replace("/150", "/"+FIRST_PLACE_SIZE)}}
-              defaultSource={require('../../assets/images/md-contact.png')}
-            />
+            <Text style={[GlobalStyles.titleText, styles.firstPlaceText]}>{leaders[0].name}</Text>
+            <Text style={[GlobalStyles.bodyText, styles.firstPlaceText]}>{leaders[0].points}</Text>
           </View>
-          <Text style={[GlobalStyles.titleText, styles.firstPlaceText]}>{leaders[0].name}</Text>
-          <Text style={[GlobalStyles.bodyText, styles.firstPlaceText]}>{leaders[0].points}</Text>
-        </View>
-        <View style={[styles.podiumPlaceContainer, {marginTop: 30}]}>
-          <View style={styles.podiumPlacePicContainer}>
-            <View style={[styles.thirdPlaceCircle, styles.podiumPlaceCircle, {backgroundColor: "#B53F25"}]}>
-              <Text style={[GlobalStyles.headerText, styles.podiumPlaceCircleNumber]}>3</Text>
+        }
+        { podiumSize >= 3 &&
+          <View style={[styles.podiumPlaceContainer, {marginTop: 30}]}>
+            <View style={styles.podiumPlacePicContainer}>
+              <View style={[styles.thirdPlaceCircle, styles.podiumPlaceCircle, {backgroundColor: this.getCircleBackgroundColor(leaders[2].position)}]}>
+                <Text style={[GlobalStyles.headerText, styles.podiumPlaceCircleNumber]}>{leaders[2].position}</Text>
+              </View>
+              <Image
+                style={styles.thirdPlaceImage}
+                source={{uri: leaders[2].avatarURL.replace("/150", "/"+THIRD_PLACE_SIZE)}}
+                defaultSource={require('../../assets/images/md-contact.png')}
+              />
             </View>
-            <Image
-              style={styles.thirdPlaceImage}
-              source={{uri: leaders[2].avatarURL.replace("/150", "/"+THIRD_PLACE_SIZE)}}
-              defaultSource={require('../../assets/images/md-contact.png')}
-            />
+            <Text style={[GlobalStyles.titleText, styles.thirdPlaceText]}>{leaders[2].name}</Text>
+            <Text style={[GlobalStyles.bodyText, styles.thirdPlaceText]}>{leaders[2].points}</Text>
           </View>
-          <Text style={[GlobalStyles.titleText, styles.thirdPlaceText]}>{leaders[2].name}</Text>
-          <Text style={[GlobalStyles.bodyText, styles.thirdPlaceText]}>{leaders[2].points}</Text>
-        </View>
+        }
       </View>
     );
   };

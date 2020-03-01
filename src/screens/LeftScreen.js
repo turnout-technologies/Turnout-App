@@ -29,7 +29,7 @@ class LeftScreen extends Component {
 
   constructor() {
     super();
-    this.state = {peopleFilterSelected: "All", timeFilterSelected: "Today", leaderboardData: null};
+    this.state = {peopleFilterSelected: "All", timeFilterSelected: "Today", leaderboardData: null, podiumSize: 0};
     if (!IOS && !!animationExperimental) {
       animationExperimental(true)
     }
@@ -37,13 +37,41 @@ class LeftScreen extends Component {
 
   componentDidMount() {
     var _this = this;
-    API.getLeaderboard()
+    /*API.getLeaderboard()
       .then(function(response) {
-        _this.setState({leaderboardData: response.data});
+        _this.setState({leaderboardData: _this.processLeaderboardData(response.data)});
       })
       .catch(function (error) {
         console.log(error.response);
-      });
+      });*/
+    this.setState({leaderboardData: this.processLeaderboardData(global.LEADERBOARD_DATA), podiumSize: this.getPodiumSize(global.LEADERBOARD_DATA)});
+  }
+
+  getPodiumSize(leaderboardData) {
+    if (leaderboardData.leaderboard.length <= 3) {
+      return leaderboardData.leaderboard.length;
+    }
+    for (var i = 2; i >= 0; i--) {
+      if (leaderboardData.leaderboard[i].position < leaderboardData.leaderboard[i+1].position) {
+        return i+1;
+      }
+    }
+    return 0;
+  }
+
+  processLeaderboardData(leaderboardData) {
+    leaderboardData.leaderboard[0].position = 1;
+    var prevPoints = -1;
+    var curPosition = 1;
+    for (var i = 1; i < leaderboardData.leaderboard.length; i++) {
+      if (leaderboardData.leaderboard[i].points == leaderboardData.leaderboard[i-1].points) {
+        leaderboardData.leaderboard[i].position = curPosition;
+      } else {
+        leaderboardData.leaderboard[i].position = i+1;
+        curPosition = i+1;
+      }
+    }
+    return leaderboardData;
   }
 
   renderSeparator = () => (
@@ -58,7 +86,7 @@ class LeftScreen extends Component {
   FlatListHeader = () => {
     return (
       <View>
-        <Podium leaders={this.state.leaderboardData.leaderboard.slice(0,3)}/>
+        <Podium leaders={this.state.leaderboardData.leaderboard.slice(0,this.state.podiumSize)}/>
         {this.renderSeparator()}
       </View>
     );
@@ -76,7 +104,7 @@ class LeftScreen extends Component {
           backRevealedElementsConfig={[
             {el: this.renderBackLayerRevealed, offset: 125}
           ]}
-          frontLayerStyle={{marginBottom:50, backgroundColor: global.CURRENT_THEME.colors.background}}>
+          frontLayerStyle={{marginBottom:50, backgroundColor: global.CURRENT_THEME.colors.background, borderRadius: global.CURRENT_THEME.roundness}}>
 
           <View style={GlobalStyles.frontLayerContainer}>
             { !this.state.leaderboardData &&
@@ -87,11 +115,11 @@ class LeftScreen extends Component {
             { !!this.state.leaderboardData &&
               <FlatList
                 ListHeaderComponent = { this.FlatListHeader }
-                data={this.state.leaderboardData.leaderboard.slice(3)}
+                data={this.state.leaderboardData.leaderboard.slice(this.state.podiumSize)}
                 renderItem={({ item, index, separators }) => (
                   <View style={styles.listItemContainer} >
                     <View style={styles.listItemsLeftAlignContainer}>
-                      <Text style={[GlobalStyles.bodyText, styles.listItemTitle]}>{index+4}</Text>
+                      <Text style={[GlobalStyles.bodyText, styles.listItemTitle]}>{item.position}</Text>
                       <Image
                         style={styles.listItemImage}
                         source={!!item.avatarURL ? {uri: item.avatarURL.replace("/150", "/"+LIST_ITEM_IMAGE_SIZE)} : null}
@@ -152,7 +180,7 @@ class LeftScreen extends Component {
             color={global.CURRENT_THEME.colors.accent}
           />
         </TouchableOpacity>*/}
-        <TouchableOpacity style={styles.backdropHeader} onPress = { () => alert('Leaderboard filters coming soon. Wait on it.') /*this.backdrop.toggleLayout()*/}>
+        <TouchableOpacity style={styles.backdropHeader} onPress = { () => alert('Leaderboard filters coming soon. Wait on it🙏') /*this.backdrop.toggleLayout()*/}>
           <LeaderboardFilter icon={this.getIconName(this.state.peopleFilterSelected)} text={this.state.peopleFilterSelected} selected={true}/>
           <View style={{marginHorizontal: 10, borderLeftColor:'white',borderLeftWidth:1,height:'50%'}}/>
           <LeaderboardFilter icon={this.getIconName(this.state.timeFilterSelected)} text={this.state.timeFilterSelected} selected={true}/>
