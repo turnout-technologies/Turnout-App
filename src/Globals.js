@@ -23,6 +23,7 @@ const MainTheme = {
   	colors: {
     	...DefaultTheme.colors,
     	primary: "#0CBAE3",
+        primary_75: "#86e4f9",
     	accent: "#FFFFFF",
     	background: "#FFFFFF",
     	text: "#707070",

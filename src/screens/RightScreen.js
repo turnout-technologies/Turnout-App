@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View, Text, Image, Button, ScrollView, StyleSheet, TouchableNativeFeedback, TouchableOpacity, Switch, DeviceEventEmitter } from 'react-native';
+import { View, Text, Image, Button, ScrollView, StyleSheet, TouchableHighlight, TouchableOpacity, Switch, StatusBar, DeviceEventEmitter } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import getEnvVars from '../Environment';
@@ -46,6 +46,7 @@ class RightScreen extends Component {
 	render() {
 		return (
 			<View style={GlobalStyles.backLayerContainer}>
+        <StatusBar barStyle="light-content"/>
 	        <ScrollView style={GlobalStyles.frontLayerContainer}>
         		<View style={styles.profileContainer}>
               <Image
@@ -60,39 +61,39 @@ class RightScreen extends Component {
             </View>
             <View style={styles.settingsSeparator} />
             <Text style={[GlobalStyles.titleText, styles.settingHeaderText]}>Feedback</Text>
-            <TouchableNativeFeedback onPress={ () => this.submitFeedback("bug")}>
+            <TouchableHighlight underlayColor={global.CURRENT_THEME.colors.text_opacity3} style={styles.touchableHighlight} onPress={ () => this.submitFeedback("bug")}>
               <View style={styles.settingsItem}>
                 <Ionicons name="md-bug" size={25} color="red" style={styles.settingsItemIcon} />
                 <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>I found a bug</Text>
               </View>
-            </TouchableNativeFeedback>
-            <TouchableNativeFeedback onPress={ () => this.submitFeedback("question_idea")}>
+            </TouchableHighlight>
+            <TouchableHighlight underlayColor={global.CURRENT_THEME.colors.text_opacity3} onPress={ () => this.submitFeedback("question_idea")}>
               <View style={styles.settingsItem}>
                 <Ionicons name="md-chatbubbles" size={25} color={global.CURRENT_THEME.colors.primary} style={styles.settingsItemIcon} />
                 <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>I want to suggest a ballot question</Text>
               </View>
-            </TouchableNativeFeedback>
-            <TouchableNativeFeedback onPress={ () => this.submitFeedback("happy")}>
+            </TouchableHighlight>
+            <TouchableHighlight underlayColor={global.CURRENT_THEME.colors.text_opacity3} onPress={ () => this.submitFeedback("happy")}>
               <View style={styles.settingsItem}>
                 <Ionicons name="md-happy" size={25} color={global.CURRENT_THEME.colors.primary} style={styles.settingsItemIcon} />
                 <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>I like something</Text>
               </View>
-            </TouchableNativeFeedback>
-            <TouchableNativeFeedback onPress={ () => this.submitFeedback("sad")}>
+            </TouchableHighlight>
+            <TouchableHighlight underlayColor={global.CURRENT_THEME.colors.text_opacity3} onPress={ () => this.submitFeedback("sad")}>
               <View style={styles.settingsItem}>
                 <Ionicons name="md-sad" size={25} color={global.CURRENT_THEME.colors.primary} style={styles.settingsItemIcon} />
                 <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>I don't like something</Text>
               </View>
-            </TouchableNativeFeedback>
-            <TouchableNativeFeedback onPress={ () => this.submitFeedback("suggestion")}>
+            </TouchableHighlight>
+            <TouchableHighlight underlayColor={global.CURRENT_THEME.colors.text_opacity3} onPress={ () => this.submitFeedback("suggestion")}>
               <View style={styles.settingsItem}>
                 <Ionicons name="md-bulb" size={25} color={global.CURRENT_THEME.colors.primary} style={styles.settingsItemIcon} />
                 <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>I have an idea/suggestion</Text>
               </View>
-            </TouchableNativeFeedback>
+            </TouchableHighlight>
             <View style={styles.settingsSeparator} />
             <Text style={[GlobalStyles.titleText, styles.settingHeaderText]}>Notifications</Text>
-            <TouchableNativeFeedback onPress={ () => this.notificationSwitchHandler(!this.state.notificationsEnabled)}>
+            <TouchableHighlight underlayColor={global.CURRENT_THEME.colors.text_opacity3} onPress={ () => this.notificationSwitchHandler(!this.state.notificationsEnabled)}>
               <View style={[styles.settingsItem, {justifyContent: "space-between"}]}>
                 <View style={{flexDirection: "row"}}>
                   <Ionicons name="md-notifications" size={25} color={global.CURRENT_THEME.colors.primary} style={styles.settingsItemIcon} />
@@ -100,18 +101,20 @@ class RightScreen extends Component {
                 </View>
                 <Switch
                   value={this.state.notificationsEnabled}
-                  thumbColor={global.CURRENT_THEME.colors.primary}
+                  thumbColor={this.state.notificationsEnabled && Platform.OS == "android" ? global.CURRENT_THEME.colors.primary : "white"}
+                  trackColor={{true: Platform.OS == "android" ? global.CURRENT_THEME.colors.primary_75 : global.CURRENT_THEME.colors.primary}}
                   style={styles.settingsSwitch}
+                  ios_backgroundColor="#F4F4F4"
                   onValueChange={v => {this.notificationSwitchHandler(v)}} />
               </View>
-            </TouchableNativeFeedback>
+            </TouchableHighlight>
             <View style={styles.settingsSeparator} />
-            <TouchableNativeFeedback onPress={ () => alert('About coming soon')}>
+            <TouchableHighlight underlayColor={global.CURRENT_THEME.colors.text_opacity3} onPress={ () => alert('About coming soon')}>
               <View style={styles.settingsItem}>
                 <Ionicons name="md-information-circle" size={25} color={global.CURRENT_THEME.colors.primary} style={styles.settingsItemIcon} />
                 <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>About</Text>
               </View>
-            </TouchableNativeFeedback>
+            </TouchableHighlight>
         		{/*<View style={styles.statsRowContainer}>
       				<View style={styles.statContainer}>
       					<Text style={[GlobalStyles.headerText, styles.statNumber]}>10</Text>

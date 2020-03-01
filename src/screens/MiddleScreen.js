@@ -72,8 +72,7 @@ class MiddleScreen extends Component {
 const styles = StyleSheet.create({
   customHeaderContainer: {
     backgroundColor: global.CURRENT_THEME.colors.primary,
-    marginTop: Platform.OS == "ios" ? 20 : 0,
-    height: 80,
+    height: Platform.OS == "android" ? 80: 75,
     paddingTop: 20,
     flexDirection: "row",
     justifyContent: "center",

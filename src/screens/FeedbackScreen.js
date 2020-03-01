@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableNativeFeedback, Image, TouchableOpacity} from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableHighlight, Image, TouchableOpacity} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { TextField } from 'react-native-material-textfield';
 import * as ImagePicker from 'expo-image-picker';
@@ -91,12 +91,12 @@ class FeedbackScreen extends Component {
                 ref={this.fieldRef}
               />
               {!image &&
-                <TouchableNativeFeedback onPress={this._pickImage}>
+                <TouchableHighlight underlayColor={global.CURRENT_THEME.colors.text_opacity3} onPress={this._pickImage}>
                   <View style={styles.addScreenshotItem}>
                     <Ionicons name="md-add-circle-outline" size={25} color={global.CURRENT_THEME.colors.primary} style={styles.addScreenshotIcon} />
                     <Text style={[GlobalStyles.bodyText, styles.addScreenshotText]}>Add screenshot</Text>
                   </View>
-                </TouchableNativeFeedback>
+                </TouchableHighlight>
               }
               {image &&
                 <View style={styles.screenshotThumbnailContainer}>
