@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View, Text, Image, Button, ScrollView, StyleSheet, TouchableNativeFeedback, TouchableOpacity, Switch } from 'react-native';
+import { View, Text, Image, Button, ScrollView, StyleSheet, TouchableNativeFeedback, TouchableOpacity, Switch, DeviceEventEmitter } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import getEnvVars from '../Environment';
@@ -15,6 +15,10 @@ class RightScreen extends Component {
     this.state = {notificationsEnabled: !!global.user.pushToken};
 
     this.notificationSwitchHandler = this.notificationSwitchHandler.bind(this);
+  }
+
+  componentDidMount() {
+    DeviceEventEmitter.addListener('notificationsEnabledChangedListener', (e)=>{this.setState({notificationsEnabled: e.enabled})});
   }
 
   static navigationOptions = ({navigation}) => {
@@ -51,7 +55,7 @@ class RightScreen extends Component {
               <View style={styles.profileInfoContainer}>
           			<Text style={[GlobalStyles.headerText, styles.nameText]}>{global.user.name}</Text>
           			<Text style={[GlobalStyles.bodyText, styles.emailText]}>{global.user.email}</Text>
-                <Text style={[GlobalStyles.titleText, styles.pointsText]}>{global.user.points} points</Text>
+                <Text style={[GlobalStyles.titleText, styles.pointsText]}>{global.user.points} point{global.user.points != 1 ? "s" : null}</Text>
           		</View>
             </View>
             <View style={styles.settingsSeparator} />

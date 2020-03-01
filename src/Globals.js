@@ -6,7 +6,7 @@ import * as firebase from 'firebase';
 global.IOS = Platform.OS === 'ios';
 
 //USER INFO
-global.user = {
+/*global.user = {
     "avatarURL": "",
     "createdAt": 0,
     "email": "",
@@ -15,7 +15,7 @@ global.user = {
     "points": 0,
     "pushToken": "",
 
-};
+};*/
 
 //THEMES
 const MainTheme = {
@@ -138,12 +138,12 @@ global.SAMPLE_QUESTIONS =
 //Dummy Leaderboard
 global.LEADERBOARD_DATA = {
 	leaderboard: [
-		{ id: "1", name: "Person Name", avatarURL: "https://i.pravatar.cc/150", points:1000 },
-		{ id: "2", name: "Person Name", avatarURL: "https://i.pravatar.cc/150", points:900 },
-		{ id: "3", name: "Person Name", avatarURL: "https://i.pravatar.cc/150", points:800 },
-		{ id: "4", name: "Person Name", avatarURL: "https://i.pravatar.cc/150", points:700 },
-		{ id: "5", name: "Person Name", avatarURL: "https://i.pravatar.cc/150", points:600 },
-		{ id: "6", name: "Person Name", avatarURL: "https://i.pravatar.cc/150", points:500 },
+		{ id: "1", name: "Person Name", avatarURL: "https://i.pravatar.cc/150", points:800 },
+		{ id: "2", name: "Person Name", avatarURL: "https://i.pravatar.cc/150", points:800 },
+		{ id: "3", name: "Person Name", avatarURL: "https://i.pravatar.cc/150", points:770 },
+		{ id: "4", name: "Person Name", avatarURL: "https://i.pravatar.cc/150", points:770 },
+		{ id: "5", name: "Person Name", avatarURL: "https://i.pravatar.cc/150", points:700 },
+		{ id: "6", name: "Person Name", avatarURL: "https://i.pravatar.cc/150", points:700 },
 		{ id: "7", name: "Person Name", avatarURL: "https://i.pravatar.cc/150", points:400 },
 		{ id: "8", name: "Person Name", avatarURL: "https://i.pravatar.cc/150", points:300 },
 		{ id: "9", name: "Person Name", avatarURL: "https://i.pravatar.cc/150", points:200 },

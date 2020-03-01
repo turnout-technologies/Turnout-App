@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import { ActivityIndicator, View, StyleSheet, ScrollView } from 'react-native';
+import { ActivityIndicator, View, StyleSheet, ScrollView, Text, TouchableOpacity, Alert } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 var moment = require('moment-timezone');
 
 import {GlobalStyles} from '../Globals';
@@ -7,28 +8,62 @@ import QuestionResult from '../components/QuestionResult';
 import * as API from '../APIClient';
 import {setLastBallotTimestamp} from '../AsyncStorage';
 
-export default class ResultsScreen extends Component {
+const RESULTS_HELP_TITLE = "About Scoring";
+const RESULTS_HELP_MESSAGE = "Remember, you only get points for choosing the most popular answer! Point values increase by 1 for each question you get right. For example, if you get 3 questions right, you score 1+2+3 = 6 points."
 
-  static navigationOptions = {
-    title: 'Results',
-    headerStyle: GlobalStyles.headerStyle,
-    headerTintColor: global.CURRENT_THEME.colors.accent
-  };
+export default class ResultsScreen extends Component {
 
   constructor (props) {
      super(props);
-     this.state = {ballotResult: null};
+     this.state = {ballotResult: null, numCorrect: 0, score: 0};
   }
 
   componentDidMount() {
     var _this = this;
     API.getLatestBallotResults()
       .then(function(response) {
-        _this.setState({ballotResult: response.data})
+        var headerTitle = "Results for " + moment.unix(response.data.date).tz("America/New_York").format("M/D");
+        _this.props.navigation.setParams({headerTitle: headerTitle});
+        const {numCorrect, score} = _this.calculateScore(response.data.response, response.data.winningAnswers);
+        _this.setState({ballotResult: response.data, numCorrect, score });
       })
       .catch(function (error) {
-        console.log(error.response);
+        console.log(error);
       });
+  }
+
+  static navigationOptions = ({navigation}) => {
+    const {state} = navigation;
+    if (state.params != undefined){
+      return {
+        title: navigation.state.params.headerTitle,
+        headerStyle: GlobalStyles.headerStyle,
+        headerTintColor: global.CURRENT_THEME.colors.accent,
+        headerRight: (
+          <TouchableOpacity style={{marginRight: 20}} onPress={() => Alert.alert(RESULTS_HELP_TITLE, RESULTS_HELP_MESSAGE)}>
+            <Ionicons name="md-help-circle" size={25} color={global.CURRENT_THEME.colors.accent} />
+          </TouchableOpacity>
+        )
+      }
+    } else {
+      return {
+        title: 'Results',
+        headerStyle: GlobalStyles.headerStyle,
+        headerTintColor: global.CURRENT_THEME.colors.accent,
+      }
+    }
+  };
+
+  calculateScore(responses, winningAnswers) {
+    var numCorrect = 0;
+    var score = 0;
+    for (var questionId in winningAnswers) {
+      if (winningAnswers[questionId].includes(responses[questionId])) {
+        numCorrect += 1;
+        score += numCorrect;
+      }
+    }
+    return {numCorrect, score};
   }
 
   render() {
@@ -41,8 +76,22 @@ export default class ResultsScreen extends Component {
         }
         {!!this.state.ballotResult &&
           <ScrollView style={styles.scrollviewStyle} contentContainerStyle={{flexGrow: 1}}>
+            <Text style={styles.helloTitleContainer}>
+              <Text style={[GlobalStyles.bodyText, styles.helloTitleText]}>Hey {global.user.name.split(" ")[0]}, you were in the majority for </Text>
+              <Text style={[GlobalStyles.headerText, styles.helloTitleText]}>{this.state.numCorrect}</Text>
+              <Text style={[GlobalStyles.bodyText, styles.helloTitleText]}> question{this.state.numCorrect != 1
+               ? "s" : null}, earning you </Text>
+              <Text style={[GlobalStyles.headerText, styles.helloTitleText]}>{this.state.score}</Text>
+              <Text style={[GlobalStyles.bodyText, styles.helloTitleText]}> point{this.state.score != 1 ? "s" : null}.</Text>
+            </Text>
             {this.state.ballotResult.questions.map((item, index) => (
-              <QuestionResult key={item.id} question={item} questionIndex={index} aggregate={this.state.ballotResult.aggregate[item.id]} winningAnswers={this.state.ballotResult.winningAnswers[item.id]} response={this.state.ballotResult.response[item.id]} />
+              <QuestionResult
+                key={item.id}
+                question={item}
+                questionIndex={index}
+                aggregate={this.state.ballotResult.aggregate[item.id]}
+                winningAnswers={this.state.ballotResult.winningAnswers[item.id]}
+                response={this.state.ballotResult.response[item.id]} />
             ))}
         </ScrollView>}
       </View>
@@ -58,5 +107,12 @@ const styles = StyleSheet.create({
   scrollviewStyle: {
     flex: 1,
     paddingHorizontal: 10,
+  },
+  helloTitleContainer: {
+    marginBottom: 20
+  },
+  helloTitleText: {
+    fontSize: 22,
+    color: global.CURRENT_THEME.colors.accent
   },
 });

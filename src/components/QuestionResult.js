@@ -49,7 +49,7 @@ export default ({ question, questionIndex, aggregate, winningAnswers, response }
             <Text style={[GlobalStyles.titleText, styles.questionTitle]}>{question.title}</Text>
           </Text>
         </View>
-      <View style={[styles.items, {paddingBottom: LIST_PADDING_BOTTOM}]}>
+      <View style={[styles.items, {paddingBottom: LIST_PADDING_BOTTOM, marginBottom: 10}]}>
         <View>
           {question.answers.map((item, key) => (
             <AnswerResult {...{key, item}} answer={item} count={aggregate[item.id]} totalCount={totalCount} isCorrectAnswer={winningAnswers.includes(item.id)} isUserResponse={item.id===response} />

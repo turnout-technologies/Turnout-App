@@ -52,13 +52,14 @@ const styles = StyleSheet.create({
 	},
 
 	announcementButtonContainer: {
-		width:82,
-	    height: 34,
+	    minHeight: 34,
 	    alignSelf:'center',
 	},
 
 	announcementButton: {
 		flex: 1,
+		paddingVertical: 5,
+		paddingHorizontal: 10,
 		justifyContent: "center",
 	    backgroundColor: 'rgba(0, 0, 0, 0)',
 	    borderRadius: global.CURRENT_THEME.roundness,

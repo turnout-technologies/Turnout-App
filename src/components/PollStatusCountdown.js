@@ -7,6 +7,7 @@ var moment = require('moment-timezone');
 
 import {GlobalStyles} from '../Globals';
 import {getLastBallotTimestamp, removeLastBallotTimestamp} from '../AsyncStorage';
+import {setNotificationsEnabled} from '../Notifications';
 
 export default class PollStatusCountdown extends Component {
 
@@ -21,8 +22,10 @@ export default class PollStatusCountdown extends Component {
       pollStatusText: "",
       pollsOpen: false,
       appState: AppState.currentState,
-      ballotSubmittedToday: false
+      ballotSubmittedToday: false,
+      getNotifiedPressed: false
     };
+    this.getNotifiedHandler = this.getNotifiedHandler.bind(this);
   }
 
   componentDidMount() {
@@ -59,7 +62,7 @@ export default class PollStatusCountdown extends Component {
 
   setPollState() {
     var curMoment = moment();
-    var curMoment = moment.tz("2020-02-28 18:59:50", "America/New_York");
+    var curMoment = moment.tz("2020-02-29 18:59:50", "America/New_York");
     var pollsOpenTimeEastern = moment.tz({y:curMoment.year(), M:curMoment.month(), date:curMoment.date(), h:18, m:0}, "America/New_York");
     var pollsCloseTimeEastern = moment.tz({y:curMoment.year(), M:curMoment.month(), date:curMoment.date(), h:22, m:0}, "America/New_York");
     if (curMoment <= pollsOpenTimeEastern) {
@@ -99,6 +102,11 @@ export default class PollStatusCountdown extends Component {
       days: Math.floor(seconds / (3600*24)),
     };
   };
+
+  getNotifiedHandler() {
+    this.setState({getNotifiedPressed: true});
+    setNotificationsEnabled(true);
+  }
 
   render() {
     if (this.state.pollsOpen && this.state.ballotSubmittedToday) {
@@ -153,6 +161,26 @@ export default class PollStatusCountdown extends Component {
               <Text style={[GlobalStyles.bodyText,styles.startButtonText]}>Start</Text>
             </TouchableOpacity>
           }
+          { !this.state.pollsOpen && !global.user.pushToken &&
+            <TouchableOpacity style={styles.getNotifiedButton} onPress={this.getNotifiedHandler}>
+              <Ionicons
+                name="md-notifications"
+                size={18}
+                style={{ alignSelf: "center" }}
+                color={global.CURRENT_THEME.colors.primary} />
+              <Text style={[GlobalStyles.bodyText,styles.getNotifiedButtonText]}>Get notified</Text>
+            </TouchableOpacity>
+          }
+          { !this.state.pollsOpen && !!global.user.pushToken && this.state.getNotifiedPressed &&
+            <TouchableOpacity style={styles.getNotifiedButton} onPress={this.getNotifiedHandler}>
+              <Ionicons
+                name="md-checkmark"
+                size={18}
+                style={{ alignSelf: "center" }}
+                color={global.CURRENT_THEME.colors.text} />
+              <Text style={[GlobalStyles.bodyText,styles.notifyYouText]}>We'll notify you when polls open</Text>
+            </TouchableOpacity>
+          }
         </View>
       );
     }
@@ -188,10 +216,23 @@ const styles = StyleSheet.create({
     backgroundColor: global.CURRENT_THEME.colors.primary,
     borderRadius: global.CURRENT_THEME.roundness
   },
-
   startButtonText: {
-    color: "white",
+    color: global.CURRENT_THEME.colors.accent,
     textAlign: "center",
     fontSize: 35
+  },
+  getNotifiedButton: {
+    alignSelf: "center",
+    flexDirection: "row"
+  },
+  getNotifiedButtonText: {
+    color: global.CURRENT_THEME.colors.primary,
+    fontSize: 18,
+    marginLeft: 5
+  },
+  notifyYouText: {
+    color: global.CURRENT_THEME.colors.text,
+    fontSize: 18,
+    marginLeft: 5
   }
 });

@@ -1,5 +1,6 @@
 import { Notifications } from 'expo';
 import * as Permissions from 'expo-permissions';
+import {DeviceEventEmitter } from 'react-native';
 
 import {setUser} from './AsyncStorage';
 import * as API from './APIClient';
@@ -42,6 +43,7 @@ export async function getPushNotificationsTokenAsync() {
       .then(function(response) {
         global.user.pushToken=token;
         setUser();
+        DeviceEventEmitter.emit('notificationsEnabledChangedListener',  {enabled: enable});
       })
       .catch(function (error) {
         console.log(error);

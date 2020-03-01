@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View, StyleSheet, Text, Button, Alert, ScrollView } from 'react-native';
+import { View, StyleSheet, Text, Button, Alert, ScrollView, TouchableOpacity } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import {GlobalStyles} from '../Globals';
@@ -17,10 +17,10 @@ class MiddleScreen extends Component {
     this.props.navigation.setParams({
       header: (
         <View style={styles.customHeaderContainer} >
-          <View style={styles.headerPointsContainer}>
+          <TouchableOpacity style={styles.headerPointsContainer} onPress={() => Alert.alert("Points", "This is the total number of points you have scored so far. They aren't good for anything besides bragging rights (yet 😅).")}>
             <MaterialCommunityIcons name="ticket" size={25} color={global.CURRENT_THEME.colors.accent} />
             <Text style={[GlobalStyles.bodyText, styles.headerPointsText]}>{global.user.points}</Text>
-          </View>
+          </TouchableOpacity>
         </View>
       )
     })
@@ -50,16 +50,17 @@ class MiddleScreen extends Component {
               <PollStatusCountdown ref={(pollStatusCountdown) => {this.pollStatusCountdown=pollStatusCountdown}} onPressStart={this.handleStartPressed}/>
             </View>
             <AnnouncementCard
-              titleText="Announcement Title"
-              buttonText="Button"
-              bodyText="These are the details of the announcement. It's a pretty exciting announcement. Like, really exciting."
+              titleText="View results"
+              buttonText="Results"
+              bodyText="Take a look at the results from the most recent ballot"
               buttonOnPress={ () => this.props.navigation.navigate('Results')}
             />
             <View style={{marginVertical: 10}}/>
             <AnnouncementCard
-              titleText="Earn faster by inviting friends"
-              buttonText="Invite"
-              buttonOnPress={ () => Alert.alert('Invite Button pressed')}
+              titleText="Have thoughts?"
+              bodyText="Let us know what's on your mind"
+              buttonText="Send feedback"
+              buttonOnPress={ () => this.props.navigation.navigate('Feedback', {type: "suggestion"})}
             />
           </View>
         </ScrollView>
@@ -88,7 +89,7 @@ const styles = StyleSheet.create({
     marginLeft: 5
   },
   pollStatusContainer: {
-    marginVertical: 100
+    marginVertical: 75
   },
   announcementButtonContainer: {
     width:82,
