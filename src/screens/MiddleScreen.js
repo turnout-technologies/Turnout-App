@@ -10,11 +10,29 @@ class MiddleScreen extends Component {
   constructor (props) {
     super(props);
     this.handleStartPressed = this.handleStartPressed.bind(this);
+    this.handleRedeemPressed = this.handleRedeemPressed.bind(this);
   }
 
   handleStartPressed() {
     this.pollStatusCountdown.onPollStatusCountdownHidden();
     this.props.navigation.navigate('Question');
+  }
+
+  handleRedeemPressed() {
+    // Works on both Android and iOS
+    Alert.alert(
+      "Attention!",
+      "Once you activate this reward, you will have 15 minutes to redeem. You will need to present your student ID.\n\nPress 'Activate' ONLY IF you:\n\n1) Are at Molly Moon's and\n2) Have your student ID",
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {text: 'Activate', onPress: () => this.props.navigation.navigate('Redemption')},
+      ],
+      {cancelable: false},
+    );
   }
 
   render() {
@@ -35,7 +53,7 @@ class MiddleScreen extends Component {
             <AnnouncementCard
               titleText="Redeem your free scoop at Molly Moon's!"
               buttonText="Redeem"
-              buttonOnPress={ () => this.props.navigation.navigate('Redemption')}
+              buttonOnPress={this.handleRedeemPressed}
             />
           </View>
         </ScrollView>
