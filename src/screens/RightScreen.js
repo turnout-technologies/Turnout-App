@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import { View, Text, Image, Button, ScrollView, StyleSheet, TouchableHighlight, TouchableOpacity, Switch, StatusBar, DeviceEventEmitter } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { Snackbar } from 'react-native-paper';
 
 import getEnvVars from '../Environment';
 import {GlobalStyles} from '../Globals';
@@ -12,7 +13,10 @@ class RightScreen extends Component {
 
 	constructor(props) {
     super(props);
-    this.state = {notificationsEnabled: !!global.user.pushToken};
+    this.state = {
+      notificationsEnabled: !!global.user.pushToken,
+      snackbarVisible: false
+    };
 
     this.notificationSwitchHandler = this.notificationSwitchHandler.bind(this);
   }
@@ -34,8 +38,12 @@ class RightScreen extends Component {
       };
   }
 
+  onFeedbackSubmitted = data => {
+    this.setState(data);
+  };
+
   submitFeedback(feedbackType) {
-    this.props.navigation.navigate('Feedback', {type: feedbackType})
+    this.props.navigation.navigate('Feedback', {type: feedbackType, onFeedbackSubmitted: this.onFeedbackSubmitted})
   }
 
   notificationSwitchHandler(enable) {
@@ -109,7 +117,7 @@ class RightScreen extends Component {
               </View>
             </TouchableHighlight>
             <View style={styles.settingsSeparator} />
-            <TouchableHighlight underlayColor={global.CURRENT_THEME.colors.text_opacity3} onPress={ () => alert('About coming soon')}>
+            <TouchableHighlight underlayColor={global.CURRENT_THEME.colors.text_opacity3} onPress={() => this.props.navigation.navigate('About')}>
               <View style={styles.settingsItem}>
                 <Ionicons name="md-information-circle" size={25} color={global.CURRENT_THEME.colors.primary} style={styles.settingsItemIcon} />
                 <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>About</Text>
@@ -130,6 +138,13 @@ class RightScreen extends Component {
       				</View>
       			</View>*/}
 	        </ScrollView>
+          <Snackbar
+            visible={this.state.snackbarVisible}
+            style={styles.snackbar}
+            duration={5000}
+            onDismiss={() => this.setState({ snackbarVisible: false })} >
+            Feedback submitted. Thanks!
+          </Snackbar>
 	    </View>
 		);
 	}
@@ -205,6 +220,12 @@ const styles = StyleSheet.create({
   	fontSize: 16,
   	textAlign: 'center'
   },
+  snackbar: {
+    backgroundColor: global.CURRENT_THEME.colors.primary,
+    borderRadius: 0,
+    width: '100%',
+    margin: 0,
+  }
 });
 
 module.exports= RightScreen

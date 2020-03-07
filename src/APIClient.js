@@ -63,3 +63,12 @@ export function submitBallot(ballotId, userId, questionResponse) {
 export function getLatestBallotResults() {
 	return axios.get("/ballots/latest/results");
 }
+
+export function sendFeedback(type, message, filename, uid) {
+	return axios.post("/contact", {
+	    type: type,
+	    message: message,
+	    filename: filename,
+	    uid: uid
+	 });
+}

@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableHighlight, Image, TouchableOpacity} from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableHighlight, Image, TouchableOpacity, Alert} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { TextField } from 'react-native-material-textfield';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 import { Linking } from 'expo';
+import * as firebase from 'firebase';
 
 import {GlobalStyles} from '../Globals';
 import * as API from '../APIClient';
@@ -15,10 +16,41 @@ class FeedbackScreen extends Component {
 	constructor(props) {
     super(props);
     this.state = {
-      image: null,
+      image: null
     };
+    this.type = props.navigation.state.params.type;
+    this.placeholderText = this.getPlaceholderText(this.type);
+
     this.removeScreenshot = this.removeScreenshot.bind(this);
-    this.placeholderText = this.getPlaceholderText(props.navigation.state.params.type);
+    this.submitFeedback = this.submitFeedback.bind(this);
+  }
+
+  componentDidMount() {
+    this.props.navigation.setParams({
+      headerRight: (
+        <TouchableOpacity style={{marginRight: 20}} onPress={this.submitFeedback}>
+          <Ionicons name="md-send" size={25} color={global.CURRENT_THEME.colors.accent} />
+        </TouchableOpacity>
+      )
+    })
+  }
+
+  static navigationOptions = ({navigation}) => {
+    const {state} = navigation;
+    if (state.params != undefined) {
+      return {
+        title: 'Submit Feedback',
+        headerStyle: GlobalStyles.headerStyle,
+        headerTintColor: global.CURRENT_THEME.colors.accent,
+        headerRight: navigation.state.params.headerRight
+      };
+    } else {
+      return {
+        title: 'Submit Feedback',
+        headerStyle: GlobalStyles.headerStyle,
+        headerTintColor: global.CURRENT_THEME.colors.accent
+      };
+    }
   }
 
   getPlaceholderText(type) {
@@ -36,18 +68,103 @@ class FeedbackScreen extends Component {
     }
   }
 
-  static navigationOptions = ({navigation}) => {
-    return {
-        title: 'Submit Feedback',
-        headerStyle: GlobalStyles.headerStyle,
-        headerTintColor: global.CURRENT_THEME.colors.accent,
-        headerRight: (
-          <TouchableOpacity style={{marginRight: 20}} onPress={() => console.log("submit")}>
-            <Ionicons name="md-send" size={25} color={global.CURRENT_THEME.colors.accent} />
-          </TouchableOpacity>
-        )
-      };
+  submitFeedback() {
+    var message = this.textField.value();
+
+    if (!this.state.image && !message) {
+      Alert.alert("", "Enter feedback and/or attach a screenshot before submitting.");
+    } else {
+      var filename = "";
+      if (this.state.image) {
+        console.log('yes screenshot');
+        //set filename to uid_curTimestamp
+        var filename = global.user.id + "_" + Math.round(new Date().getTime() / 1000) + ".png";
+        //upload the screenshot
+        this.uploadScreenshot(filename);
+      } else {
+        console.log('no screenshot');
+      }
+      const { navigation } = this.props;
+      API.sendFeedback(this.type, message, filename, global.user.id)
+      .then(function(response) {
+        navigation.goBack();
+        navigation.state.params.onFeedbackSubmitted({ snackbarVisible: true });
+      })
+      .catch(function (error) {
+        navigation.goBack();
+        navigation.state.params.onFeedbackSubmitted({ snackbarVisible: true });
+        console.log(error.response);
+      });
+      //this.props.navigation.goBack();
+    }
   }
+
+  //uplaods screenshot to firebase storage and returns the filename
+  uploadScreenshot = async (filename) => {
+    if (!this.state.image) {
+      //return if there is no screenshot
+      return ;
+    }
+
+    // Create the file metadata
+    var metadata = {
+      contentType: 'image/png'
+    };
+
+    // Create a root reference
+    var storageRef = firebase.storage().ref();
+
+    //image blob
+    const response = await fetch(this.state.image.uri);
+    const blob = await response.blob();
+
+    // Upload file and metadata to the object 'images/mountains.jpg'
+    try {
+      var uploadTask = storageRef.child('screenshots/' + filename).put(blob, metadata);
+
+      // Listen for state changes, errors, and completion of the upload.
+      uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
+        function(snapshot) {
+          // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+          var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log('Upload is ' + progress + '% done');
+          switch (snapshot.state) {
+            case firebase.storage.TaskState.PAUSED: // or 'paused'
+              console.log('Upload is paused');
+              break;
+            case firebase.storage.TaskState.RUNNING: // or 'running'
+              console.log('Upload is running');
+              break;
+          }
+        }, function(error) {
+          console.log(error);
+          // A full list of error codes is available at
+          // https://firebase.google.com/docs/storage/web/handle-errors
+          /*switch (error.code) {
+            case 'storage/unauthorized':
+              // User doesn't have permission to access the object
+              break;
+
+            case 'storage/canceled':
+              // User canceled the upload
+              break;
+
+            ...
+
+            case 'storage/unknown':
+              // Unknown error occurred, inspect error.serverResponse
+              break;
+          }*/
+        }, function() {
+          // Upload completed successfully, now we can get the download URL
+          uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+            console.log('File available at', downloadURL);
+          });
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   getPermissionAsync = async () => {
     if (Constants.platform.ios) {
@@ -56,12 +173,12 @@ class FeedbackScreen extends Component {
         alert('Sorry, we need camera roll permissions to make this work!');
       }
     }
-  }
+  };
 
   _pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
-      base64: true
+      quality: 0.5
     });
 
     if (!result.cancelled) {
@@ -88,7 +205,7 @@ class FeedbackScreen extends Component {
                 label={this.placeholderText}
                 animationDuration={100}
                 labelTextStyle={GlobalStyles.bodyText}
-                ref={this.fieldRef}
+                ref={(textField) => {this.textField=textField}}
               />
               {!image &&
                 <TouchableHighlight underlayColor={global.CURRENT_THEME.colors.text_opacity3} onPress={this._pickImage}>
@@ -101,7 +218,7 @@ class FeedbackScreen extends Component {
               {image &&
                 <View style={styles.screenshotThumbnailContainer}>
                   <TouchableOpacity style={styles.deleteScreenshot} onPress={this.removeScreenshot}>
-                    <Ionicons name="md-close" size={20} color={global.CURRENT_THEME.colors.accent} />
+                    <Ionicons name="md-close" size={20} color="white" />
                   </TouchableOpacity>
                   <Image source={{ uri: image.uri }} style={{ width: 100, height: 100*(image.height/image.width) }} />
                 </View>
@@ -151,7 +268,7 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 20/2,
-    backgroundColor: global.CURRENT_THEME.colors.primary,
+    backgroundColor: "#EE3738",
     alignItems: "center",
     justifyContent: "center",
     zIndex: 1,

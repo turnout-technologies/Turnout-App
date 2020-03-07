@@ -10,6 +10,7 @@ import RightScreen from '../screens/RightScreen';
 import QuestionScreen from '../screens/QuestionScreen';
 import ResultsScreen from '../screens/ResultsScreen';
 import FeedbackScreen from '../screens/FeedbackScreen';
+import AboutScreen from '../screens/AboutScreen';
 import DebugOptionsScreen from '../screens/DebugOptionsScreen';
 
 const config = Platform.select({
@@ -62,6 +63,7 @@ const RightStack = createStackNavigator(
   {
     Right: RightScreen,
     Feedback: FeedbackScreen,
+    About: AboutScreen,
     DebugOptions: DebugOptionsScreen
   },
   config

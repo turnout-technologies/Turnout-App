@@ -22,10 +22,11 @@ export default class ResultsScreen extends Component {
     var _this = this;
     API.getLatestBallotResults()
       .then(function(response) {
-        var headerTitle = "Results for " + moment.unix(response.data.date).tz("America/New_York").format("M/D");
+        var headerTitle = "Results for " + moment.unix(response.data.date).tz("America/New_York").format("MMMM Do");
         _this.props.navigation.setParams({headerTitle: headerTitle});
         const {numCorrect, score} = _this.calculateScore(response.data.response, response.data.winningAnswers);
         _this.setState({ballotResult: response.data, numCorrect, score });
+        this.didVote = response.data.response != null;
       })
       .catch(function (error) {
         console.log(error);
@@ -55,6 +56,9 @@ export default class ResultsScreen extends Component {
   };
 
   calculateScore(responses, winningAnswers) {
+    if (responses == null) {
+      return {numCorrect: 0, score: 0};
+    }
     var numCorrect = 0;
     var score = 0;
     for (var questionId in winningAnswers) {
@@ -77,12 +81,13 @@ export default class ResultsScreen extends Component {
         {!!this.state.ballotResult &&
           <ScrollView style={styles.scrollviewStyle} contentContainerStyle={{flexGrow: 1}}>
             <Text style={styles.helloTitleContainer}>
-              <Text style={[GlobalStyles.bodyText, styles.helloTitleText]}>Hey {global.user.name.split(" ")[0]}, you were in the majority for </Text>
-              <Text style={[GlobalStyles.headerText, styles.helloTitleText]}>{this.state.numCorrect}</Text>
-              <Text style={[GlobalStyles.bodyText, styles.helloTitleText]}> question{this.state.numCorrect != 1
-               ? "s" : null}, earning you </Text>
-              <Text style={[GlobalStyles.headerText, styles.helloTitleText]}>{this.state.score}</Text>
-              <Text style={[GlobalStyles.bodyText, styles.helloTitleText]}> point{this.state.score != 1 ? "s" : null}.</Text>
+              <Text style={[GlobalStyles.bodyText, styles.helloTitleText]}>Hey {global.user.name.split(" ")[0]}, </Text>
+              { this.didVote &&
+                <Text style={[GlobalStyles.bodyText, styles.helloTitleText]}>you were in the majority for {this.state.numCorrect} question{this.state.numCorrect != 1 ? "s" : null}, earning you {this.state.score}  point{this.state.score != 1 ? "s" : null}.</Text>
+              }
+              { !this.didVote &&
+                <Text style={[GlobalStyles.bodyText, styles.helloTitleText]}>make sure you turn out next time to get on the board!</Text>
+              }
             </Text>
             {this.state.ballotResult.questions.map((item, index) => (
               <QuestionResult
@@ -91,7 +96,7 @@ export default class ResultsScreen extends Component {
                 questionIndex={index}
                 aggregate={this.state.ballotResult.aggregate[item.id]}
                 winningAnswers={this.state.ballotResult.winningAnswers[item.id]}
-                response={this.state.ballotResult.response[item.id]} />
+                response={this.state.ballotResult.response ? this.state.ballotResult.response[item.id] : null} />
             ))}
         </ScrollView>}
       </View>

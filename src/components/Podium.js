@@ -26,6 +26,19 @@ export default class Podium extends Component {
     }
   }
 
+  formatAvatarURL(avatarURL, position) {
+    var imageSize;
+    switch(position) {
+      case 1:
+        imageSize = FIRST_PLACE_SIZE;
+      case 2:
+        imageSize = SECOND_PLACE_SIZE;
+      case 3:
+        imageSize = THIRD_PLACE_SIZE;
+    }
+    return avatarURL.replace("=s96", "=s"+imageSize).replace("/thumb", "");
+  }
+
   render() {
     const { leaders } = this.props;
     var podiumSize = leaders.length;
@@ -39,7 +52,7 @@ export default class Podium extends Component {
               </View>
               <Image
                 style={styles.secondPlaceImage}
-                source={{uri: leaders[1].avatarURL.replace("/150", "/"+SECOND_PLACE_SIZE)}}
+                source={{uri: this.formatAvatarURL(leaders[1].avatarURL)}}
                 defaultSource={require('../../assets/images/md-contact.png')}
               />
             </View>
@@ -55,7 +68,7 @@ export default class Podium extends Component {
               </View>
               <Image
                 style={styles.firstPlaceImage}
-                source={{uri: leaders[0].avatarURL.replace("/150", "/"+FIRST_PLACE_SIZE)}}
+                source={{uri: this.formatAvatarURL(leaders[0].avatarURL)}}
                 defaultSource={require('../../assets/images/md-contact.png')}
               />
             </View>
@@ -71,7 +84,7 @@ export default class Podium extends Component {
               </View>
               <Image
                 style={styles.thirdPlaceImage}
-                source={{uri: leaders[2].avatarURL.replace("/150", "/"+THIRD_PLACE_SIZE)}}
+                source={{uri: this.formatAvatarURL(leaders[2].avatarURL)}}
                 defaultSource={require('../../assets/images/md-contact.png')}
               />
             </View>

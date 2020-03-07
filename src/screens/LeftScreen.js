@@ -37,14 +37,13 @@ class LeftScreen extends Component {
 
   componentDidMount() {
     var _this = this;
-    /*API.getLeaderboard()
+    API.getLeaderboard()
       .then(function(response) {
-        _this.setState({leaderboardData: _this.processLeaderboardData(response.data)});
+        _this.setState({leaderboardData: _this.processLeaderboardData(response.data), podiumSize: _this.getPodiumSize(response.data)});
       })
       .catch(function (error) {
         console.log(error.response);
-      });*/
-    this.setState({leaderboardData: this.processLeaderboardData(global.LEADERBOARD_DATA), podiumSize: this.getPodiumSize(global.LEADERBOARD_DATA)});
+      });
   }
 
   getPodiumSize(leaderboardData) {
@@ -122,7 +121,7 @@ class LeftScreen extends Component {
                       <Text style={[GlobalStyles.bodyText, styles.listItemTitle]}>{item.position}</Text>
                       <Image
                         style={styles.listItemImage}
-                        source={!!item.avatarURL ? {uri: item.avatarURL.replace("/150", "/"+LIST_ITEM_IMAGE_SIZE)} : null}
+                        source={!!item.avatarURL ? {uri: item.avatarURL.replace("=s96", "=s"+LIST_ITEM_IMAGE_SIZE).replace("/thumb", "/med")} : null}
                         defaultSource={require('../../assets/images/md-contact.png')}
                       />
                       <View style={styles.listItemTitlesContainer}>

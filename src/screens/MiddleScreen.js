@@ -32,9 +32,8 @@ class MiddleScreen extends Component {
   }
 
   static navigationOptions = ({navigation}) => {
-    //  headerStyle: GlobalStyles.headerStyle,
     const {state} = navigation;
-    if (state.params != undefined){
+    if (state.params != undefined) {
       return {
         header: navigation.state.params.header
       }

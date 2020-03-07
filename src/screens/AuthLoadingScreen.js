@@ -28,6 +28,7 @@ class AuthLoadingScreen extends Component {
               if (shouldRefreshUser) {
                 API.getUser(user.uid)
                 .then(function(response) {
+                  console.log(response);
                   if (response.data) {
                     global.user = response.data;
                     console.log(global.user)
@@ -37,6 +38,7 @@ class AuthLoadingScreen extends Component {
                   }
                 })
                 .catch(function (error) {
+                  console.log("Here2");
                   console.log(error);
                   firebase.auth().signOut();
                   alert("Error getting user data. Please sign in again.")
