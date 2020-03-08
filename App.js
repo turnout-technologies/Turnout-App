@@ -15,7 +15,7 @@ import getEnvVars from './src/Environment';
 import AppNavigator from './src/navigation/AppNavigator';
 
 if (!firebase.apps.length) {
-    firebase.initializeApp(Constants.manifest.extra.firebaseConfig);
+    firebase.initializeApp(__DEV__ ? Constants.manifest.extra.firebaseConfigDev : Constants.manifest.extra.firebaseConfigAlpha);
 }
 
 Sentry.init({

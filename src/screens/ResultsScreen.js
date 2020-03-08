@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { ActivityIndicator, View, StyleSheet, ScrollView, Text, TouchableOpacity, Alert } from 'react-native';
+import { ActivityIndicator, View, StyleSheet, ScrollView, Text, TouchableOpacity, Alert, SafeAreaView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 var moment = require('moment-timezone');
 
@@ -86,18 +86,20 @@ export default class ResultsScreen extends Component {
                 <Text style={[GlobalStyles.bodyText, styles.helloTitleText]}>you were in the majority for {this.state.numCorrect} question{this.state.numCorrect != 1 ? "s" : null}, earning you {this.state.score}  point{this.state.score != 1 ? "s" : null}.</Text>
               }
               { !this.didVote &&
-                <Text style={[GlobalStyles.bodyText, styles.helloTitleText]}>make sure you turn out next time to get on the board!</Text>
+                <Text style={[GlobalStyles.bodyText, styles.helloTitleText]}>you didn't participate in the last poll. Make sure you turn out next time to get on the board!</Text>
               }
             </Text>
-            {this.state.ballotResult.questions.map((item, index) => (
-              <QuestionResult
-                key={item.id}
-                question={item}
-                questionIndex={index}
-                aggregate={this.state.ballotResult.aggregate[item.id]}
-                winningAnswers={this.state.ballotResult.winningAnswers[item.id]}
-                response={this.state.ballotResult.response ? this.state.ballotResult.response[item.id] : null} />
-            ))}
+            <SafeAreaView>
+              {this.state.ballotResult.questions.map((item, index) => (
+                <QuestionResult
+                  key={item.id}
+                  question={item}
+                  questionIndex={index}
+                  aggregate={this.state.ballotResult.aggregate[item.id]}
+                  winningAnswers={this.state.ballotResult.winningAnswers[item.id]}
+                  response={this.state.ballotResult.response ? this.state.ballotResult.response[item.id] : null} />
+              ))}
+            </SafeAreaView>
         </ScrollView>}
       </View>
     );
@@ -114,7 +116,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   helloTitleContainer: {
-    marginBottom: 20
+    marginTop: 10,
+    marginBottom: 30
   },
   helloTitleText: {
     fontSize: 22,

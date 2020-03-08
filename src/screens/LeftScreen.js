@@ -103,7 +103,7 @@ class LeftScreen extends Component {
           backRevealedElementsConfig={[
             {el: this.renderBackLayerRevealed, offset: 125}
           ]}
-          frontLayerStyle={{marginBottom:50, backgroundColor: global.CURRENT_THEME.colors.background, borderRadius: global.CURRENT_THEME.roundness}}>
+          frontLayerStyle={styles.frontLayerStyle}>
 
           <View style={GlobalStyles.frontLayerContainer}>
             { !this.state.leaderboardData &&
@@ -224,6 +224,11 @@ LeftScreen.navigationOptions = {
 };
 
 const styles = StyleSheet.create({
+  frontLayerStyle: {
+    marginBottom: 50,
+    backgroundColor: global.CURRENT_THEME.colors.background,
+    borderRadius: global.CURRENT_THEME.roundness
+  },
   backArrow: {
     position: "absolute",
     left:10,

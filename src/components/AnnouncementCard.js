@@ -37,25 +37,22 @@ const styles = StyleSheet.create({
 	announcementCard: {
 		backgroundColor: global.CURRENT_THEME.colors.background,
 		marginHorizontal: 10,
-		borderRadius: 20
+		borderRadius: 20,
+		marginBottom: 20,
 	},
-
 	announcementTitleContainer: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		marginHorizontal: 0,
 	},
-
 	announcementTitleText: {
 		fontSize: 16,
 		alignSelf: "center"
 	},
-
 	announcementButtonContainer: {
 	    minHeight: 34,
 	    alignSelf:'center',
 	},
-
 	announcementButton: {
 		flex: 1,
 		paddingVertical: 5,
@@ -66,13 +63,11 @@ const styles = StyleSheet.create({
 	    borderColor: global.CURRENT_THEME.colors.primary,
 	    borderWidth: 1
 	},
-
 	announcementButtonText: {
 	    color: global.CURRENT_THEME.colors.primary,
 	    textAlign: "center",
 	    fontSize: 16
 	},
-
 	announcementBodyText: {
 		fontSize: 14,
 		color: global.CURRENT_THEME.colors.text,

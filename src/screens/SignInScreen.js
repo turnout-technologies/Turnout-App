@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View, TouchableOpacity, Text, Image, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, Text, Image, StyleSheet, SafeAreaView } from 'react-native';
 import Constants from 'expo-constants';
 import * as Google from 'expo-google-app-auth';
 import * as firebase from 'firebase';
@@ -150,12 +150,12 @@ class SignInScreen extends Component {
     return (
       <View style={styles.container}>
         <StatusBarBackground backgroundColor="white"/>
-        <View style={styles.topContainer}>
+        <SafeAreaView style={styles.topContainer}>
           <Image source={require('../../assets/images/logo_text.png')} style={styles.logoText} />
           <View style={{flex:1, alignItems: 'center', justifyContent: 'center'}}>
             <Text>Carousel goes here</Text>
           </View>
-        </View>
+        </SafeAreaView>
         <View style={styles.bottomContainer}>
           <Text style={styles.bottomContainerTitle}>Let's get started.</Text>
           <View style={styles.signInButtonContainer}>

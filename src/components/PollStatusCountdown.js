@@ -171,7 +171,7 @@ export default class PollStatusCountdown extends Component {
               <Text style={[GlobalStyles.bodyText,styles.getNotifiedButtonText]}>Get notified</Text>
             </TouchableOpacity>
           }
-          { !this.state.pollsOpen && !!global.user.pushToken && this.state.getNotifiedPressed &&
+          { !this.state.pollsOpen && !!global.user.pushToken &&
             <TouchableOpacity style={styles.getNotifiedButton} onPress={this.getNotifiedHandler}>
               <Ionicons
                 name="md-checkmark"
