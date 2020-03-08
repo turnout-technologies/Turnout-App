@@ -6,6 +6,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 import { Linking } from 'expo';
 import * as firebase from 'firebase';
+import * as ImageManipulator from 'expo-image-manipulator';
 
 import {GlobalStyles} from '../Globals';
 import * as API from '../APIClient';
@@ -177,12 +178,16 @@ class FeedbackScreen extends Component {
 
   _pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,
-      quality: 0.5
+      allowsEditing: false
     });
 
     if (!result.cancelled) {
-      this.setState({ image: result });
+      const manipResult = await ImageManipulator.manipulateAsync(
+        result.uri,
+        [{ resize: {width: 720} }],
+        { compress: 0.5, format: ImageManipulator.SaveFormat.PNG }
+      );
+      this.setState({ image: manipResult });
     }
   };
 
