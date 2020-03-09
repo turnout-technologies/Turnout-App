@@ -2,9 +2,7 @@ import * as firebase from 'firebase';
 import axios from 'axios';
 import * as Sentry from 'sentry-expo';
 
-import getEnvVars from './Environment';
-
-const env = getEnvVars();
+import * as Env from './Environment';
 
 const successHandler = (response) => {
   	return response
@@ -15,7 +13,7 @@ const errorHandler = (error) => {
   	return Promise.reject({ ...error })
 }
 
-axios.defaults.baseURL = env.apiUrl;
+axios.defaults.baseURL = Env.getAPIUrl();
 axios.interceptors.request.use(async config => {
 	config.headers["Authorization"] = "Bearer " + await firebase.auth().currentUser.getIdToken();
 	return config

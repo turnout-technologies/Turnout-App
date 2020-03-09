@@ -11,11 +11,11 @@ import Constants from 'expo-constants';
 import { Notifications } from 'expo';
 
 import './src/Globals.js';
-import getEnvVars from './src/Environment';
+import * as Env from './src/Environment';
 import AppNavigator from './src/navigation/AppNavigator';
 
 if (!firebase.apps.length) {
-    firebase.initializeApp(__DEV__ ? Constants.manifest.extra.firebaseConfigDev : Constants.manifest.extra.firebaseConfigAlpha);
+    firebase.initializeApp(Env.getFirebaseConfig());
 }
 
 Sentry.init({
@@ -68,8 +68,11 @@ export default function App(props) {
 async function loadResourcesAsync() {
   await Promise.all([
     Asset.loadAsync([
-      require('./assets/images/logo_text.png'),
       require('./assets/images/google_logo.png'),
+      require('./assets/images/logo_icon.png'),
+      require('./assets/images/logo_icon_grey.png'),
+      require('./assets/images/logo_text.png'),
+      require('./assets/images/md-contact.png')
     ]),
     Font.loadAsync({
       'circularstd-book': require('./assets/fonts/CircularStd-Book.ttf'),

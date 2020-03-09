@@ -12,8 +12,5 @@ web-report/
 
 # macOS
 .DS_Store
-auth/google-services.json
-auth/google-services.jsonZone.Identifier
-auth/environment.js
+auth/
 app.json
-src/Environment.js

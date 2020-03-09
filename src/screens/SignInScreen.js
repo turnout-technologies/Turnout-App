@@ -122,13 +122,7 @@ class SignInScreen extends Component {
 
   signInAsyncWeb = async () => {
     try {
-      const result = await Google.logInAsync({
-        iosClientId: Constants.manifest.extra.iOSExpoClientId,
-        androidClientId: Constants.manifest.extra.androidExpoClientId,
-        iosStandaloneAppClientId: Constants.manifest.extra.iOSStandaloneClientId,
-        androidStandaloneAppClientId: Constants.manifest.extra.androidStandaloneClientId,
-        scopes: ['profile', 'email']
-      });
+      const result = await Google.logInAsync(Constants.manifest.extra.googleLogInConfig);
 
       if (result.type === 'success') {
         /* `accessToken` is now valid and can be used to get data from the Google API with HTTP requests */
