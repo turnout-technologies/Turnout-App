@@ -20,6 +20,7 @@ if (!firebase.apps.length) {
 
 Sentry.init({
   dsn: Constants.manifest.extra.SentryDSN,
+  environment: Env.getEnvName()
   //enableInExpoDevelopment: true,
   //debug: true
 });
