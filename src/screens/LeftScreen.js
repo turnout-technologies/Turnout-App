@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import { ActivityIndicator, View, StyleSheet, Text, UIManager, FlatList, TouchableOpacity, Image } from 'react-native';
-import Backdrop from 'react-native-material-backdrop'
+
+import Backdrop from '../submodules/react-native-material-backdrop/src/backdrop'
 
 import {GlobalStyles} from '../Globals';
 import StatusBarBackground from '../components/StatusBarBackground';
