@@ -11,6 +11,7 @@ import QuestionScreen from '../screens/QuestionScreen';
 import ResultsScreen from '../screens/ResultsScreen';
 import FeedbackScreen from '../screens/FeedbackScreen';
 import AboutScreen from '../screens/AboutScreen';
+import LicensesScreen from '../screens/LicensesScreen';
 import DebugOptionsScreen from '../screens/DebugOptionsScreen';
 
 const config = Platform.select({
@@ -64,6 +65,7 @@ const RightStack = createStackNavigator(
     Right: RightScreen,
     Feedback: FeedbackScreen,
     About: AboutScreen,
+    Licenses: LicensesScreen,
     DebugOptions: DebugOptionsScreen
   },
   config
