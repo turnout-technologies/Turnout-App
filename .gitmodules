@@ -1,0 +1,3 @@
+[submodule "src/submodules/react-native-material-backdrop"]
+	path = src/submodules/react-native-material-backdrop
+	url = https://github.com/turnout-technologies/react-native-material-backdrop.git
