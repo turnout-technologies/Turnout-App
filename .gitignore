@@ -14,4 +14,3 @@ web-report/
 .DS_Store
 auth/
 app.json
-src/Environment.js
