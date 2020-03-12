@@ -140,14 +140,14 @@ const styles = StyleSheet.create({
   },
   firstPlaceText: {
     alignSelf: "center",
-    fontSize: 18
+    fontSize: 17
   },
   secondPlaceText: {
     alignSelf: "center",
-    fontSize: 16
+    fontSize: 15
   },
   thirdPlaceText: {
     alignSelf: "center",
-    fontSize: 15
+    fontSize: 14
   },
 });

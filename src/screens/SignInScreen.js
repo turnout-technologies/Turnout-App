@@ -11,7 +11,7 @@ import getEnvVars from '../Environment';
 import * as API from '../APIClient';
 import StatusBarBackground from '../components/StatusBarBackground';
 import {getPushNotificationsTokenAsync} from '../Notifications';
-import {setUser, setLastRefreshUserTimestamp} from '../AsyncStorage';
+import {setUser, setLastRefreshUserTimestamp, getLastVersionOpened} from '../AsyncStorage';
 
 YellowBox.ignoreWarnings(['Setting a timer']);
 const _console = { ...console };
@@ -30,6 +30,23 @@ class SignInScreen extends Component {
 
   componentDidMount() {
     SplashScreen.hide();
+  }
+
+  advance() {
+    var curVersion = Constants.nativeAppVersion;
+    var _this = this;
+    getLastVersionOpened()
+      .then(function(lastVersionOpened) {
+        if (!lastVersionOpened || lastVersionOpened != curVersion) {
+          _this.props.navigation.navigate('Note');
+        } else {
+          _this.props.navigation.navigate('Main');
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+        _this.props.navigation.navigate('Main');
+      });
   }
 
   isUserEqual = (googleUser, firebaseUser) => {
@@ -78,7 +95,7 @@ class SignInScreen extends Component {
                         console.log(global.user);
                         setUser();
                         setLastRefreshUserTimestamp(moment().unix());
-                        _this.props.navigation.navigate('Main');
+                        _this.advance();
                       }
                     })
                     .catch(function (error) {
@@ -94,7 +111,7 @@ class SignInScreen extends Component {
                         console.log(global.user)
                         setUser();
                         setLastRefreshUserTimestamp(moment().unix());
-                        _this.props.navigation.navigate('Main');
+                        _this.advance();
                       }
                     })
                     .catch(function (error) {
