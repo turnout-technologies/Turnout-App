@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import { View, StyleSheet, Text, Button, Alert, ScrollView, TouchableOpacity, SafeAreaView, StatusBar } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { SplashScreen } from 'expo';
+import { Linking } from 'expo';
 
 import {GlobalStyles} from '../Globals';
 import AnnouncementCard from '../components/AnnouncementCard';
@@ -14,6 +16,7 @@ class MiddleScreen extends Component {
   }
 
   componentDidMount() {
+    SplashScreen.hide();
     this.props.navigation.setParams({
       header: (
         <SafeAreaView style={styles.customHeaderContainer} >
@@ -50,16 +53,16 @@ class MiddleScreen extends Component {
               <PollStatusCountdown ref={(pollStatusCountdown) => {this.pollStatusCountdown=pollStatusCountdown}} onPressStart={this.handleStartPressed}/>
             </View>
             <AnnouncementCard
-              titleText="View results"
+              titleText="View Results"
               buttonText="Results"
-              bodyText="Take a look at the results from the most recent ballot"
+              bodyText="Take a look at the results from the most recent ballot 🗳"
               buttonOnPress={ () => this.props.navigation.navigate('Results')}
             />
             <AnnouncementCard
-              titleText="Have thoughts?"
-              bodyText="Let us know what's on your mind"
-              buttonText="Send feedback"
-              buttonOnPress={ () => this.props.navigation.navigate('Feedback', {type: "suggestion"})}
+              titleText="Support Turnout!"
+              bodyText="Please chip in if you can to help us reach as many college students as possible in the fall! We appreciate you ♥"
+              buttonText="Donate"
+              buttonOnPress={ () => Linking.openURL('https://donorbox.org/campus-impact-turnout-2020')}
             />
           </View>
         </ScrollView>
@@ -87,14 +90,13 @@ const styles = StyleSheet.create({
     marginLeft: 5
   },
   pollStatusContainer: {
-    marginVertical: 150
+    marginVertical: 115
   },
   announcementButtonContainer: {
     width:82,
     height: 34,
     alignSelf:'center',
   },
-
   announcementButton: {
     flex: 1,
     justifyContent: "center",

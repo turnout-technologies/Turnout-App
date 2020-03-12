@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { ActivityIndicator, StatusBar, View } from 'react-native';
+import { ActivityIndicator, StatusBar, View, StyleSheet, Alert } from 'react-native';
 import firebase from 'firebase';
 import * as Sentry from 'sentry-expo';
 var moment = require('moment-timezone');
@@ -38,10 +38,9 @@ class AuthLoadingScreen extends Component {
                   }
                 })
                 .catch(function (error) {
-                  console.log("Here2");
-                  console.log(error);
                   firebase.auth().signOut();
-                  alert("Error getting user data. Please sign in again.")
+                  Alert.alert("Error", "There was a problem fetching your user info. Please sign in again.");
+                  console.log(error);
                 });
               } else {
                 getUser()
@@ -51,12 +50,16 @@ class AuthLoadingScreen extends Component {
                     _this.props.navigation.navigate('Main');
                   })
                   .catch(function (error) {
+                    firebase.auth().signOut();
+                    Alert.alert("Error", "There was a problem reading your user info. Please sign in again.");
                     console.log(error);
                   });
               }
               Sentry.setUser({"id": user.uid});
             })
             .catch(function (error) {
+              firebase.auth().signOut();
+              Alert.alert("Error", "There was a problem reading the last refresh timestamp. Please sign in again.");
               console.log(error);
             });
         } else {
@@ -70,12 +73,18 @@ class AuthLoadingScreen extends Component {
   // Render any loading content that you like here
   render() {
     return (
-      <View>
-        <ActivityIndicator />
-        <StatusBar barStyle="default" />
+      <View style={styles.loadingSpinnerContainer}>
+        <ActivityIndicator size={60} color={global.CURRENT_THEME.colors.primary} />
       </View>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  loadingSpinnerContainer: {
+    flex: 1,
+    justifyContent: "center"
+  }
+});
 
 module.exports= AuthLoadingScreen

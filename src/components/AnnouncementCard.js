@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
 	    fontSize: 16
 	},
 	announcementBodyText: {
-		fontSize: 14,
+		fontSize: 16,
 		color: global.CURRENT_THEME.colors.text,
 		marginTop: 25,
 		marginBottom: 10

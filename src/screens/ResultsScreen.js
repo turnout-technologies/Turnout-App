@@ -15,7 +15,7 @@ export default class ResultsScreen extends Component {
 
   constructor (props) {
      super(props);
-     this.state = {ballotResult: null, numCorrect: 0, score: 0};
+     this.state = {isLoading: true, ballotResult: null, numCorrect: 0, score: 0};
   }
 
   componentDidMount() {
@@ -25,10 +25,11 @@ export default class ResultsScreen extends Component {
         var headerTitle = "Results for " + moment.unix(response.data.date).tz("America/New_York").format("MMMM Do");
         _this.props.navigation.setParams({headerTitle: headerTitle});
         const {numCorrect, score} = _this.calculateScore(response.data.response, response.data.winningAnswers);
-        _this.setState({ballotResult: response.data, numCorrect, score });
-        this.didVote = response.data.response != null;
+        _this.setState({isLoading: false, ballotResult: response.data, numCorrect, score });
+        _this.didVote = response.data.response != null;
       })
       .catch(function (error) {
+        _this.setState({isLoading: false});
         console.log(error);
       });
   }
@@ -73,12 +74,18 @@ export default class ResultsScreen extends Component {
   render() {
     return (
       <View style={GlobalStyles.backLayerContainer}>
-        { !this.state.ballotResult &&
+        { !this.state.ballotResult && this.state.isLoading &&
           <View style={styles.loadingSpinnerContainer}>
-            <ActivityIndicator size={60} color={global.CURRENT_THEME.colors.accent} animating={!this.state.leaderboardData} />
+            <ActivityIndicator size={60} color={global.CURRENT_THEME.colors.accent} />
           </View>
         }
-        {!!this.state.ballotResult &&
+        { !this.state.ballotResult && !this.state.isLoading &&
+          <View style={styles.errorContainer}>
+            <Ionicons name="md-warning" size={75} color={global.CURRENT_THEME.colors.accent} />
+            <Text style={[GlobalStyles.bodyText, styles.helloTitleText]}>Error getting ballot results</Text>
+          </View>
+        }
+        { !!this.state.ballotResult &&
           <ScrollView style={styles.scrollviewStyle} contentContainerStyle={{flexGrow: 1}}>
             <Text style={styles.helloTitleContainer}>
               <Text style={[GlobalStyles.bodyText, styles.helloTitleText]}>Hey {global.user.name.split(" ")[0]}, </Text>
@@ -122,5 +129,10 @@ const styles = StyleSheet.create({
   helloTitleText: {
     fontSize: 22,
     color: global.CURRENT_THEME.colors.accent
+  },
+  errorContainer: {
+    flex: 0.85,
+    justifyContent: "center",
+    alignItems: "center"
   },
 });

@@ -1,15 +1,16 @@
 import React, {Component} from 'react';
-import { View, TouchableOpacity, Text, Image, StyleSheet, SafeAreaView } from 'react-native';
+import { View, TouchableOpacity, Text, Image, StyleSheet, SafeAreaView, YellowBox } from 'react-native';
 import Constants from 'expo-constants';
 import * as Google from 'expo-google-app-auth';
 import * as firebase from 'firebase';
-import { YellowBox } from 'react-native';
+import { SplashScreen } from 'expo';
+
 var moment = require('moment-timezone');
 
 import getEnvVars from '../Environment';
 import * as API from '../APIClient';
 import StatusBarBackground from '../components/StatusBarBackground';
-import {getPushNotificationsTokenAsync, setNotificationsEnabled} from '../Notifications';
+import {getPushNotificationsTokenAsync} from '../Notifications';
 import {setUser, setLastRefreshUserTimestamp} from '../AsyncStorage';
 
 YellowBox.ignoreWarnings(['Setting a timer']);
@@ -22,9 +23,14 @@ console.warn = message => {
 
 class SignInScreen extends Component {
 
-  state = {
-    user: null
-  };
+  constructor(props) {
+    super(props);
+    this.state = {user: null};
+  }
+
+  componentDidMount() {
+    SplashScreen.hide();
+  }
 
   isUserEqual = (googleUser, firebaseUser) => {
     if (firebaseUser) {
@@ -104,14 +110,6 @@ class SignInScreen extends Component {
             })
             .catch(function(error) {
               console.log(error);
-              // Handle Errors here.
-              var errorCode = error.code;
-              var errorMessage = error.message;
-              // The email of the user's account used.
-              var email = error.email;
-              // The firebase.auth.AuthCredential type that was used.
-              var credential = error.credential;
-              // ...
             });
         } else {
           console.log('User already signed-in Firebase.');

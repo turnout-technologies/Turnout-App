@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import { ActivityIndicator, View, StyleSheet, Text, UIManager, FlatList, TouchableOpacity, Image } from 'react-native';
-
-import Backdrop from '../submodules/react-native-material-backdrop/src/backdrop'
+import { Ionicons } from '@expo/vector-icons';
 
 import {GlobalStyles} from '../Globals';
 import StatusBarBackground from '../components/StatusBarBackground';
+import Backdrop from '../submodules/react-native-material-backdrop/src/backdrop'
 import Podium from '../components/Podium';
 import LeaderboardFilter from '../components/LeaderboardFilter';
 import * as API from '../APIClient';
@@ -30,20 +30,28 @@ class LeftScreen extends Component {
 
   constructor() {
     super();
-    this.state = {peopleFilterSelected: "All", timeFilterSelected: "Today", leaderboardData: null, podiumSize: 0};
+    this.state = {isLoading: true, peopleFilterSelected: "All", timeFilterSelected: "Today", leaderboardData: null, podiumSize: 0};
     if (!IOS && !!animationExperimental) {
       animationExperimental(true)
     }
+
+    this.fetchLeaderboardData = this.fetchLeaderboardData.bind(this);
   }
 
   componentDidMount() {
+    this.fetchLeaderboardData();
+  }
+
+  fetchLeaderboardData() {
+    this.setState({isLoading: true});
     var _this = this;
     API.getLeaderboard()
       .then(function(response) {
-        _this.setState({leaderboardData: _this.processLeaderboardData(response.data), podiumSize: _this.getPodiumSize(response.data)});
+        _this.setState({isLoading: false, leaderboardData: _this.processLeaderboardData(response.data), podiumSize: _this.getPodiumSize(response.data)});
       })
       .catch(function (error) {
-        console.log(error.response);
+        _this.setState({isLoading: false});
+        console.log(error);
       });
   }
 
@@ -107,9 +115,18 @@ class LeftScreen extends Component {
           frontLayerStyle={styles.frontLayerStyle}>
 
           <View style={GlobalStyles.frontLayerContainer}>
-            { !this.state.leaderboardData &&
+            { !this.state.leaderboardData && this.state.isLoading &&
               <View style={styles.loadingSpinnerContainer}>
                 <ActivityIndicator size={60} color={global.CURRENT_THEME.colors.primary} animating={!this.state.leaderboardData} />
+              </View>
+            }
+            { !this.state.leaderboardData && !this.state.isLoading &&
+              <View style={styles.errorContainer}>
+                <Ionicons name="md-warning" size={75} color={global.CURRENT_THEME.colors.text_opacity5} />
+                <Text style={[GlobalStyles.bodyText, styles.errorText]}>Error getting leaderboard data</Text>
+                <TouchableOpacity onPress={this.fetchLeaderboardData}>
+                  <Text style={[GlobalStyles.bodyText,styles.tryAgainText]}>TRY AGAIN</Text>
+                </TouchableOpacity>
               </View>
             }
             { !!this.state.leaderboardData &&
@@ -193,22 +210,22 @@ class LeftScreen extends Component {
     return (
       <View style={styles.backdropExpandedContainer} >
         <View style={styles.backdropExpandedFilterColumn}>
-          <TouchableOpacity style={{marginBottom: 5}} onPress = { () => this.selectPeopleFilter(FRIENDS_LABEL)}>
+          <TouchableOpacity style={styles.filterItem} onPress = { () => this.selectPeopleFilter(FRIENDS_LABEL)}>
             <LeaderboardFilter icon={FRIENDS_ICON_LABEL} text={FRIENDS_LABEL} selected={this.state.peopleFilterSelected == FRIENDS_LABEL}/>
           </TouchableOpacity>
-          <TouchableOpacity style={{marginBottom: 5}} onPress = { () => this.selectPeopleFilter(SCHOOL_LABEL)}>
+          <TouchableOpacity style={styles.filterItem} onPress = { () => this.selectPeopleFilter(SCHOOL_LABEL)}>
             <LeaderboardFilter icon={SCHOOL_ICON_LABEL} text={SCHOOL_LABEL} selected={this.state.peopleFilterSelected == SCHOOL_LABEL}/>
           </TouchableOpacity>
           <TouchableOpacity onPress = { () => this.selectPeopleFilter(ALL_LABEL)}>
             <LeaderboardFilter icon={ALL_ICON_LABEL} text={ALL_LABEL} selected={this.state.peopleFilterSelected == ALL_LABEL}/>
           </TouchableOpacity>
         </View>
-        <View style={{marginHorizontal: 10, borderLeftColor:'white',borderLeftWidth:1,height:'75%'}}/>
+        <View style={styles.verticalSeparator}/>
         <View style={styles.backdropExpandedFilterColumn}>
-          <TouchableOpacity style={{marginBottom: 5}} onPress = { () => this.selectTimeFilter(TODAY_LABEL)}>
+          <TouchableOpacity style={styles.filterItem} onPress = { () => this.selectTimeFilter(TODAY_LABEL)}>
             <LeaderboardFilter icon={TODAY_ICON_LABEL} text={TODAY_LABEL} selected={this.state.timeFilterSelected == TODAY_LABEL}/>
           </TouchableOpacity>
-          <TouchableOpacity style={{marginBottom: 5}} onPress = { () => this.selectTimeFilter(THISWEEK_LABEL)}>
+          <TouchableOpacity style={styles.filterItem} onPress = { () => this.selectTimeFilter(THISWEEK_LABEL)}>
             <LeaderboardFilter icon={THISWEEK_ICON_LABEL} text={THISWEEK_LABEL} selected={this.state.timeFilterSelected == THISWEEK_LABEL}/>
           </TouchableOpacity>
           <TouchableOpacity onPress = { () => this.selectTimeFilter(ALLTIME_LABEL)}>
@@ -250,6 +267,15 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     justifyContent: "space-between",
   },
+  verticalSeparator: {
+    marginHorizontal: 10,
+    borderLeftColor: global.CURRENT_THEME.colors.accent,
+    borderLeftWidth:1,
+    height:'75%'
+  },
+  filterItem: {
+    marginBottom: 5
+  },
   listItemContainer: {
     paddingHorizontal: 25,
     height: 62.5,
@@ -280,7 +306,21 @@ const styles = StyleSheet.create({
   loadingSpinnerContainer: {
     flex: 1,
     justifyContent: "center"
-  }
+  },
+  errorContainer: {
+    flex: 0.85,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  errorText: {
+    fontSize: 22,
+    color: global.CURRENT_THEME.colors.text_opacity5
+  },
+  tryAgainText: {
+    color: global.CURRENT_THEME.colors.primary,
+    fontSize: 18,
+    marginTop: 5
+  },
 });
 
 module.exports= LeftScreen

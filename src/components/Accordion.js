@@ -5,6 +5,8 @@ import PropTypes from 'prop-types';
 import List, { List as ListModel } from "./List";
 import {GlobalStyles} from '../Globals';
 
+const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
+
 export default class Accordion extends Component {
 
   static propTypes = {
@@ -28,6 +30,7 @@ export default class Accordion extends Component {
      this.submitButtonInterpolationAnimationVal = new Animated.Value(0);
      this.submitButtonFontSizeAnimationVal = new Animated.Value(16);
 
+     this.submitButtonBorderWidthInterpolation = this.submitButtonInterpolationAnimationVal.interpolate({inputRange:[0,1], outputRange:[1,0]});
      this.submitButtonScaleInterpolation = this.submitButtonInterpolationAnimationVal.interpolate({inputRange:[0,1], outputRange:[1,3.07]});
      this.submitButtonColorInterpolation = this.submitButtonInterpolationAnimationVal.interpolate({inputRange:[0,1], outputRange:[global.CURRENT_THEME.colors.accent,global.CURRENT_THEME.colors.primary]});
      this.submitButtonFontColorInterpolation = this.submitButtonInterpolationAnimationVal.interpolate({inputRange:[0,1], outputRange:[global.CURRENT_THEME.colors.primary,global.CURRENT_THEME.colors.accent]});
@@ -41,8 +44,8 @@ export default class Accordion extends Component {
       }),
       Animated.timing(this.submitButtonInterpolationAnimationVal,{toValue:open ? 1 : 0}),
       Animated.timing(this.submitButtonFontSizeAnimationVal, {
-        toValue: open ? 10 : 16,
-        duration: 150
+        toValue: open ? 35 : 16,
+        duration: 300
       })
     ]).start();
     if (open) {
@@ -105,13 +108,13 @@ export default class Accordion extends Component {
           ))}
         <TouchableWithoutFeedback onPress={() => this.ballotHandleQuestionPressed(this.numQuestions)}>
           <Animated.View style={[styles.submitContainer, {height: this.submitContainerHeightAnimationVal}]}>
-            <Animated.View style={[styles.submitButtonContainer, {transform:[{scale: this.submitButtonScaleInterpolation}], backgroundColor: this.submitButtonColorInterpolation}]}>
-              <TouchableOpacity
-                style={styles.submitButton}
+            <Animated.View style={{transform:[{scale: this.submitButtonScaleInterpolation}]}}>
+              <AnimatedTouchableOpacity
+                style={[styles.submitButton, {backgroundColor: this.submitButtonColorInterpolation, borderWidth: this.submitButtonBorderWidthInterpolation}]}
                 onPress = { () => this.handleSubmitPressed()}>
-                  <Animated.Text style={[GlobalStyles.bodyText, styles.submitButtonText, {fontSize: this.submitButtonFontSizeAnimationVal, color:this.submitButtonFontColorInterpolation}]}>Send It</Animated.Text>
-              </TouchableOpacity>
+              </AnimatedTouchableOpacity>
             </Animated.View>
+            <Animated.Text pointerEvents="none" style={[GlobalStyles.bodyText, styles.submitButtonText, {position: "absolute", fontSize: this.submitButtonFontSizeAnimationVal, color:this.submitButtonFontColorInterpolation}]}>Send It</Animated.Text>
           </Animated.View>
         </TouchableWithoutFeedback>
         </ScrollView>
@@ -138,19 +141,14 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: global.CURRENT_THEME.roundness,
     borderTopRightRadius: global.CURRENT_THEME.roundness,
   },
-  submitButtonContainer: {
+  submitButton: {
     width:82,
     height: 34,
     alignSelf:'center',
     borderRadius: global.CURRENT_THEME.roundness,
     borderColor: global.CURRENT_THEME.colors.primary,
-    borderWidth: 1,
-  },
-  submitButton: {
-    flex: 1,
     justifyContent: "center",
   },
-
   submitButtonText: {
     color: global.CURRENT_THEME.colors.primary,
     textAlign: "center",

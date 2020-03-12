@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import { ActivityIndicator, View, StyleSheet, Button, TouchableOpacity, DeviceEventEmitter } from 'react-native';
+import { ActivityIndicator, View, StyleSheet, Button, TouchableOpacity, DeviceEventEmitter, Text, Alert } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 var moment = require('moment-timezone');
 
 import {GlobalStyles} from '../Globals';
@@ -20,19 +21,19 @@ export default class QuestionScreen extends Component {
   * @param {Array} arr An array containing the items.
   */
   shuffle(arr) {
-      var j, x, i;
-      for (i = arr.length - 1; i > 0; i--) {
-          j = Math.floor(Math.random() * (i + 1));
-          x = arr[i];
-          arr[i] = arr[j];
-          arr[j] = x;
-      }
-      return arr;
+    var j, x, i;
+    for (i = arr.length - 1; i > 0; i--) {
+        j = Math.floor(Math.random() * (i + 1));
+        x = arr[i];
+        arr[i] = arr[j];
+        arr[j] = x;
+    }
+    return arr;
   }
 
   constructor (props) {
      super(props);
-     this.state = {ballot: null};
+     this.state = {isLoading: true, ballot: null};
      this.submitResponsesHandler = this.submitResponsesHandler.bind(this);
   }
 
@@ -46,7 +47,8 @@ export default class QuestionScreen extends Component {
         _this.setState({ballot: response.data});
       })
       .catch(function (error) {
-        console.log(error.response);
+        _this.setState({isLoading: false});
+        console.log(error);
       });
   }
 
@@ -57,8 +59,8 @@ export default class QuestionScreen extends Component {
         this.props.navigation.goBack();
       }.bind(this))
       .catch(function (error) {
-        console.log("ERR")
         console.log(error);
+        this.props.navigation.goBack();
       });
   }
 
@@ -67,24 +69,29 @@ export default class QuestionScreen extends Component {
     console.log(questionResponseObject);
     API.submitBallot(this.state.ballot.id, global.user.id, questionResponseObject)
       .then(function(response) {
-        console.log(response.status);
-        console.log(response.data);
+        this.updateLastBallotTimestamp();
       })
       .catch(function (error) {
-        console.log(error.response);
+        Alert.alert("Error submitting ballot", "We ran into an issue submitting your ballot 😔");
+        console.log(error);
       });
-    this.updateLastBallotTimestamp();
   }
 
   render() {
     return (
       <View style={GlobalStyles.backLayerContainer}>
-      { !this.state.ballot &&
-        <View style={styles.loadingSpinnerContainer}>
-          <ActivityIndicator size={60} color={global.CURRENT_THEME.colors.accent} animating={!this.state.leaderboardData} />
-        </View>
-      }
-      {!!this.state.ballot && <Accordion questions={this.state.ballot.questions} onSubmitResponses={this.submitResponsesHandler}/>}
+        { !this.state.ballot && this.state.isLoading &&
+          <View style={styles.loadingSpinnerContainer}>
+            <ActivityIndicator size={60} color={global.CURRENT_THEME.colors.accent} />
+          </View>
+        }
+        { !this.state.ballot && !this.state.isLoading &&
+          <View style={styles.errorContainer}>
+            <Ionicons name="md-warning" size={75} color={global.CURRENT_THEME.colors.accent} />
+            <Text style={[GlobalStyles.bodyText, styles.errorText]}>Error getting ballot</Text>
+          </View>
+        }
+        {!!this.state.ballot && <Accordion questions={this.state.ballot.questions} onSubmitResponses={this.submitResponsesHandler}/>}
       </View>
     );
   }
@@ -94,5 +101,14 @@ const styles = StyleSheet.create({
   loadingSpinnerContainer: {
     flex: 1,
     justifyContent: "center"
-  }
+  },
+  errorContainer: {
+    flex: 0.85,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  errorText: {
+    fontSize: 22,
+    color: global.CURRENT_THEME.colors.accent
+  },
 });

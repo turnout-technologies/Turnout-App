@@ -32,7 +32,7 @@ class AboutScreen extends Component {
                 <Text style={[GlobalStyles.bodyText, {fontSize: 16}]}>Turnout is an initiative dedicated to getting more college students to vote and use their collective voice to make the world a better place. </Text>
               </View>
               <View style={styles.messageContainer}>
-                <Text style={[GlobalStyles.bodyText, styles.messageText]}>Help support our initiative! </Text>
+                <Text style={[GlobalStyles.bodyText, styles.messageText]}>Help support Turnout! </Text>
                 <TouchableOpacity style={styles.donateButton} onPress={() => Linking.openURL('https://donorbox.org/campus-impact-turnout-2020')}>
                   <Text style={[GlobalStyles.bodyText,styles.donateButtonText]}>Donate</Text>
                 </TouchableOpacity>
