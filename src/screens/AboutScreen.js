@@ -70,6 +70,7 @@ class AboutScreen extends Component {
               </View>
               <Text style={GlobalStyles.bodyText}>App version: {Constants.nativeAppVersion}</Text>
               <Text style={GlobalStyles.bodyText}>Build version: {Constants.nativeBuildVersion}</Text>
+              <Text style={GlobalStyles.bodyText}>Release Channel: {Constants.manifest.releaseChannel}</Text>
               <Text style={GlobalStyles.bodyText}>Copyright {'\u00A9'} 2020 Campus Impact. All Rights Reserved.</Text>
             </View>
 	        </ScrollView>
