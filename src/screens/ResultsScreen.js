@@ -22,7 +22,8 @@ export default class ResultsScreen extends Component {
     var _this = this;
     API.getLatestBallotResults()
       .then(function(response) {
-        var headerTitle = "Results for " + moment.unix(response.data.date).tz("America/New_York").format("MMMM Do");
+        var dateStr = !!response.data ? (" for " + moment.unix(response.data.date).tz("America/New_York").format("MMMM Do")) : "";
+        var headerTitle = "Results" + dateStr;
         _this.props.navigation.setParams({headerTitle: headerTitle});
         const {numCorrect, score} = _this.calculateScore(response.data.response, response.data.winningAnswers);
         _this.setState({isLoading: false, ballotResult: response.data, numCorrect, score });
