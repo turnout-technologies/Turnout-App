@@ -11,7 +11,7 @@ const getEnvVars = (env = Constants.manifest.releaseChannel) => {
    		return Constants.manifest.extra.prod;
 	} else {
 		console.log("ERROR: Unrecognized Environment");
-		return "";
+		return Constants.manifest.extra.dev;
 	}
 };
 

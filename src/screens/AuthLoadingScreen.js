@@ -7,7 +7,7 @@ var moment = require('moment-timezone');
 
 import * as API from '../APIClient';
 import {getPushNotificationsTokenAsync, setupNotificationChannels} from '../Notifications';
-import {getUser, setUser, getLastRefreshUserTimestamp, setLastRefreshUserTimestamp, getLastVersionOpened} from '../AsyncStorage';
+import {getUser, setUser, getLastRefreshUserTimestamp, setLastRefreshUserTimestamp, getLastNoteVersionOpened} from '../AsyncStorage';
 
 class AuthLoadingScreen extends Component {
 
@@ -21,11 +21,10 @@ class AuthLoadingScreen extends Component {
   }
 
   advance() {
-    var curVersion = Constants.nativeAppVersion;
     var _this = this;
-    getLastVersionOpened()
+    getLastNoteVersionOpened()
       .then(function(lastVersionOpened) {
-        if (!lastVersionOpened || lastVersionOpened != curVersion) {
+        if (!lastVersionOpened || lastVersionOpened != Constants.manifest.extra.noteVersion) {
           _this.props.navigation.navigate('Note');
         } else {
           _this.props.navigation.navigate('Main');

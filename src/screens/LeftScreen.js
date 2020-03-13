@@ -28,8 +28,9 @@ const LIST_ITEM_IMAGE_SIZE=50;
 
 class LeftScreen extends Component {
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+
     this.state = {isLoading: true, peopleFilterSelected: "All", timeFilterSelected: "Today", leaderboardData: null, podiumSize: 0};
     if (!IOS && !!animationExperimental) {
       animationExperimental(true)

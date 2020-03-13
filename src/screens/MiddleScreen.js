@@ -18,7 +18,7 @@ class MiddleScreen extends Component {
   componentDidMount() {
     SplashScreen.hide();
     this.props.navigation.setParams({
-      header: (
+      header: () => (
         <SafeAreaView style={styles.customHeaderContainer} >
           <TouchableOpacity style={styles.headerPointsContainer} onPress={() => Alert.alert("Points", "This is the total number of points you have scored so far. They aren't good for anything besides bragging rights (yet 😅).")}>
             <MaterialCommunityIcons name="ticket" size={25} color={global.CURRENT_THEME.colors.accent} />

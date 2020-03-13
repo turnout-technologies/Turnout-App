@@ -6,8 +6,7 @@ import Constants from 'expo-constants';
 import { SplashScreen } from 'expo';
 
 import {GlobalStyles} from '../Globals';
-import {setLastVersionOpened} from '../AsyncStorage';
-
+import {setLastNoteVersionOpened} from '../AsyncStorage';
 
 class NoteScreen extends Component {
 
@@ -22,8 +21,7 @@ class NoteScreen extends Component {
   }
 
   doneButtonHandler() {
-    var curVersion = Constants.nativeAppVersion;
-    setLastVersionOpened(curVersion);
+    setLastNoteVersionOpened(Constants.manifest.extra.noteVersion);
     this.props.navigation.navigate('Main');
   }
 
@@ -78,7 +76,7 @@ class NoteScreen extends Component {
 
                 </Text>
                 <Text style={[GlobalStyles.bodyText, {fontSize: 16}]}>
-                  Finally, thanks again for helping us test and turn this into an actual thing. We appreciate all of you. ♥🙏 {"\n\n"}
+                  Thanks again for helping us test and turn this into an actual thing. We appreciate all of you. ♥🙏 {"\n\n"}
                   - Tyler and Jason
                 </Text>
               </View>
@@ -114,8 +112,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   doneButton: {
-    width: 300,
-    height: 75,
+    alignSelf: 'center',
+    minWidth: 325,
+    padding:10,
     justifyContent: "center",
     backgroundColor: global.CURRENT_THEME.colors.primary,
     borderRadius: global.CURRENT_THEME.roundness

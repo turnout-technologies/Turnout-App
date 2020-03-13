@@ -11,7 +11,7 @@ import getEnvVars from '../Environment';
 import * as API from '../APIClient';
 import StatusBarBackground from '../components/StatusBarBackground';
 import {getPushNotificationsTokenAsync} from '../Notifications';
-import {setUser, setLastRefreshUserTimestamp, getLastVersionOpened} from '../AsyncStorage';
+import {setUser, setLastRefreshUserTimestamp, getLastNoteVersionOpened} from '../AsyncStorage';
 
 YellowBox.ignoreWarnings(['Setting a timer']);
 const _console = { ...console };
@@ -33,11 +33,10 @@ class SignInScreen extends Component {
   }
 
   advance() {
-    var curVersion = Constants.nativeAppVersion;
     var _this = this;
-    getLastVersionOpened()
+    getLastNoteVersionOpened()
       .then(function(lastVersionOpened) {
-        if (!lastVersionOpened || lastVersionOpened != curVersion) {
+        if (!lastVersionOpened || lastVersionOpened != Constants.manifest.extra.noteVersion) {
           _this.props.navigation.navigate('Note');
         } else {
           _this.props.navigation.navigate('Main');

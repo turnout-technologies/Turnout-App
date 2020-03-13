@@ -45,18 +45,18 @@ export async function removeLastBallotTimestamp() {
   return AsyncStorage.removeItem(LAST_BALLOT_TIMESTAMP_KEY);
 }
 
-export async function getLastVersionOpened() {
+export async function getLastNoteVersionOpened() {
   return AsyncStorage.getItem(LAST_VERSION_OPENED_KEY);
 }
 
-export async function setLastVersionOpened(version) {
+export async function setLastNoteVersionOpened(noteVersion) {
   try {
-    await AsyncStorage.setItem(LAST_VERSION_OPENED_KEY, version);
+    await AsyncStorage.setItem(LAST_VERSION_OPENED_KEY, noteVersion.toString());
   } catch (error) {
     console.log(error);
   }
 }
 
-export async function removeLastVersionOpened() {
+export async function removeLastNoteVersionOpened() {
   return AsyncStorage.removeItem(LAST_VERSION_OPENED_KEY);
 }
