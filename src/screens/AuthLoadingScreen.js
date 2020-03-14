@@ -42,6 +42,7 @@ class AuthLoadingScreen extends Component {
     firebase.auth().onAuthStateChanged(
       function(user) {
         if (!!user && this.alreadySignedIn) {
+          Sentry.setUser({"id": user.uid, "email": user.email});
           var _this = this;
           getLastRefreshUserTimestamp()
             .then(function(lastRefreshUserTimestamp) {
@@ -76,7 +77,6 @@ class AuthLoadingScreen extends Component {
                     console.log(error);
                   });
               }
-              Sentry.setUser({"id": user.uid});
             })
             .catch(function (error) {
               firebase.auth().signOut();
