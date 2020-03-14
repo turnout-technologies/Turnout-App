@@ -57,16 +57,16 @@ class NoteScreen extends Component {
                 <Text style={[GlobalStyles.bodyText, {fontSize: 16}]}>
                   Turnout is a trivia-style game where the most popular answer is the correct one.
                   Answer the daily questions and earn points for being in the majority and for referring friends to ascend to the top of the leaderboard.
-                  For the 'real thing,' we will be incorporating rewards/events that can be unlocked by acrruing points. {"\n"}
+                  For the 'real thing,' we will be incorporating rewards/events that can be unlocked by accruing points. {"\n"}
                 </Text>
                 <Text style={[GlobalStyles.headerText, {fontSize: 18}]}>The Alpha{"\n"}(i.e. the part where you come in!)</Text>
                 <Text style={[GlobalStyles.bodyText, {fontSize: 16}]}>
-                  We are doing this early 'closed alpha' with friends and family as a very basic test to make sure our basic infrastructure works.
+                  We are doing this early 'closed alpha' with friends and family as a very basic test to make sure our core infrastructure works.
                   We want to make sure we can post daily questions, you can vote on them, and then we can tally the votes, distribute points, post the results, and then display rankings on the leaderboard.
-                  A number of things are missing at this point such as the actual TurboVote integration (kinda important), the referral and rewards system, etc. Like we said, this is just to test the basic system for now. {"\n\n"}
+                  A number of things are missing at this point, such as the actual TurboVote integration (kinda important), the referral and rewards system, etc. Like we said, this is just to test the basic system for now. {"\n\n"}
 
                   Here's how it will work: {"\n\n"}
-                  1) Polls will open at 6PM EST, meaining the daily quesitons will go live and, and stay open until 10PM EST. {"\n"}
+                  1) Polls will open at 6PM EST, meaining the daily questions will go live and and stay open until 10PM EST. {"\n"}
                   2) During that time, vote on the daily questions and submit your ballot. It's up to you whether you answer truthfully, try to throw things off and cause chaos, or try to predict the most popular answer to rack up points and chase that spot on the leaderboard podium.  {"\n"}
                   3) After polls close, we will tally the results and distribute points. {"\n"}
                   4) Once results are available, you can view the vote breakdown of each question, see how many points you earned, then go check out the updates on the leaderboard. {"\n\n"}
