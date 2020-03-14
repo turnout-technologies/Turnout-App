@@ -14,11 +14,6 @@ import AboutScreen from '../screens/AboutScreen';
 import LicensesScreen from '../screens/LicensesScreen';
 import DebugOptionsScreen from '../screens/DebugOptionsScreen';
 
-const config = Platform.select({
-  web: { headerMode: 'screen' },
-  default: {},
-});
-
 const LeftStack = createStackNavigator(
   {
     Left: LeftScreen,
@@ -35,15 +30,12 @@ LeftStack.navigationOptions = {
   )
 };
 
-LeftStack.path = '';
-
 const MiddleStack = createStackNavigator(
   {
     Middle: MiddleScreen,
     Question: QuestionScreen,
     Results: ResultsScreen
-  },
-  config
+  }
 );
 
 MiddleStack.navigationOptions = ({ navigation }) => {
@@ -58,8 +50,6 @@ MiddleStack.navigationOptions = ({ navigation }) => {
 
 };
 
-MiddleStack.path = '';
-
 const RightStack = createStackNavigator(
   {
     Right: RightScreen,
@@ -67,8 +57,7 @@ const RightStack = createStackNavigator(
     About: AboutScreen,
     Licenses: LicensesScreen,
     DebugOptions: DebugOptionsScreen
-  },
-  config
+  }
 );
 
 RightStack.navigationOptions = {
@@ -77,8 +66,6 @@ RightStack.navigationOptions = {
     <TabBarIcon focused={focused} name={'md-contact'} />
   ),
 };
-
-RightStack.path = '';
 
 const tabNavigator = createBottomTabNavigator(
   {
@@ -93,10 +80,5 @@ const tabNavigator = createBottomTabNavigator(
     }
   }
 );
-
-tabNavigator.path = '';
-
-const styles = StyleSheet.create({
-});
 
 export default tabNavigator;
