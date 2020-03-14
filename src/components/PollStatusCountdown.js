@@ -33,7 +33,7 @@ export default class PollStatusCountdown extends Component {
     DeviceEventEmitter.addListener('ballotSubmittedListener', (e)=>{this.onPollStatusCountdownShown()});
     var _this = this;
     this.onPollStatusCountdownShown();
-    setTimeout(function(){_this.onPollStatusCountdownShown()}, 1000)
+    setTimeout(function(){_this.onPollStatusCountdownShown()}, 1000);
     //removeLastBallotTimestamp()
   }
 
@@ -67,7 +67,7 @@ export default class PollStatusCountdown extends Component {
 
   setPollState() {
     var curMoment = moment();
-    //var curMoment = moment.tz("2020-03-12 18:59:50", "America/New_York");
+    var curMoment = moment.tz("2020-03-15 18:59:50", "America/New_York");
     var pollsOpenTimeEastern = moment.tz({y:curMoment.year(), M:curMoment.month(), date:curMoment.date(), h:18, m:0}, "America/New_York");
     var pollsCloseTimeEastern = moment.tz({y:curMoment.year(), M:curMoment.month(), date:curMoment.date(), h:22, m:0}, "America/New_York");
     if (curMoment <= pollsOpenTimeEastern) {

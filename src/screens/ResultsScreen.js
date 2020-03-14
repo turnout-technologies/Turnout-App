@@ -1,11 +1,9 @@
 import React, {Component} from 'react';
 import { ActivityIndicator, View, StyleSheet, ScrollView, Text, TouchableOpacity, Alert, SafeAreaView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-var moment = require('moment-timezone');
 
 import {GlobalStyles} from '../Globals';
 import QuestionResult from '../components/QuestionResult';
-import * as API from '../APIClient';
 import {setLastBallotTimestamp} from '../AsyncStorage';
 
 const RESULTS_HELP_TITLE = "About Scoring";
@@ -19,20 +17,13 @@ export default class ResultsScreen extends Component {
   }
 
   componentDidMount() {
-    var _this = this;
-    API.getLatestBallotResults()
-      .then(function(response) {
-        var dateStr = !!response.data ? (" for " + moment.unix(response.data.date).tz("America/New_York").format("MMMM Do")) : "";
-        var headerTitle = "Results" + dateStr;
-        _this.props.navigation.setParams({headerTitle: headerTitle});
-        const {numCorrect, score} = _this.calculateScore(response.data.response, response.data.winningAnswers);
-        _this.setState({isLoading: false, ballotResult: response.data, numCorrect, score });
-        _this.didVote = response.data.response != null;
-      })
-      .catch(function (error) {
-        _this.setState({isLoading: false});
-        console.log(error);
-      });
+    var resultsResponse = this.props.navigation.state.params.resultsResponse;
+    var dateStr = this.props.navigation.state.params.resultsDateStr;
+    var headerTitle = "Results for " + dateStr;
+    this.props.navigation.setParams({headerTitle: headerTitle});
+    const {numCorrect, score} = this.calculateScore(resultsResponse.response, resultsResponse.winningAnswers);
+    this.setState({isLoading: false, ballotResult: resultsResponse, numCorrect, score });
+    this.didVote = resultsResponse.response != null;
   }
 
   static navigationOptions = ({navigation}) => {
@@ -42,7 +33,7 @@ export default class ResultsScreen extends Component {
         title: navigation.state.params.headerTitle,
         headerStyle: GlobalStyles.headerStyle,
         headerTintColor: global.CURRENT_THEME.colors.accent,
-        headerRight: (
+        headerRight: () => (
           <TouchableOpacity style={{marginRight: 20}} onPress={() => Alert.alert(RESULTS_HELP_TITLE, RESULTS_HELP_MESSAGE)}>
             <Ionicons name="md-help-circle" size={25} color={global.CURRENT_THEME.colors.accent} />
           </TouchableOpacity>
@@ -91,10 +82,10 @@ export default class ResultsScreen extends Component {
             <Text style={styles.helloTitleContainer}>
               <Text style={[GlobalStyles.bodyText, styles.helloTitleText]}>Hey {global.user.name.split(" ")[0]}, </Text>
               { this.didVote &&
-                <Text style={[GlobalStyles.bodyText, styles.helloTitleText]}>you were in the majority for {this.state.numCorrect} question{this.state.numCorrect != 1 ? "s" : null}, earning you {this.state.score}  point{this.state.score != 1 ? "s" : null}.</Text>
+                <Text style={[GlobalStyles.bodyText, styles.helloTitleText]}>you were in the majority for {this.state.numCorrect} question{this.state.numCorrect != 1 ? "s" : null}, earning you {this.state.score} point{this.state.score != 1 ? "s" : null}.</Text>
               }
               { !this.didVote &&
-                <Text style={[GlobalStyles.bodyText, styles.helloTitleText]}>you didn't participate in the last poll. Make sure you turn out next time to get on the board!</Text>
+                <Text style={[GlobalStyles.bodyText, styles.helloTitleText]}>you didn't participate in the last poll. Make sure you turn out next time to earn points!</Text>
               }
             </Text>
             <SafeAreaView>

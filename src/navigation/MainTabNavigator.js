@@ -32,7 +32,7 @@ LeftStack.navigationOptions = {
 
 const MiddleStack = createStackNavigator(
   {
-    Middle: MiddleScreen,
+    Home: MiddleScreen,
     Question: QuestionScreen,
     Results: ResultsScreen
   }

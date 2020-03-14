@@ -33,7 +33,7 @@ export default class QuestionScreen extends Component {
 
   constructor (props) {
      super(props);
-     this.state = {isLoading: true, ballot: null};
+     this.state = {isLoading: true, ballot: null, ballotError: false};
      this.submitResponsesHandler = this.submitResponsesHandler.bind(this);
   }
 
@@ -41,13 +41,16 @@ export default class QuestionScreen extends Component {
     var _this = this;
     API.getBallotToday()
       .then(function(response) {
-        response.data.questions.forEach(function(element) {
-          _this.shuffle(element.answers);
-        });
-        _this.setState({ballot: response.data});
+        if (response.data) {
+          response.data.questions.forEach(function(element) {
+            _this.shuffle(element.answers);
+          });
+          _this.setState({ballot: response.data});
+        }
+        _this.setState({isLoading: false});
       })
       .catch(function (error) {
-        _this.setState({isLoading: false});
+        _this.setState({isLoading: false, ballotError: true});
         console.log(error);
       });
   }
@@ -67,9 +70,10 @@ export default class QuestionScreen extends Component {
   submitResponsesHandler(questionResponseObject) {
     console.log("Received responses submission");
     console.log(questionResponseObject);
+    var _this = this;
     API.submitBallot(this.state.ballot.id, global.user.id, questionResponseObject)
       .then(function(response) {
-        this.updateLastBallotTimestamp();
+        _this.updateLastBallotTimestamp();
       })
       .catch(function (error) {
         Alert.alert("Error submitting ballot", "We ran into an issue submitting your ballot 😔");
@@ -85,13 +89,19 @@ export default class QuestionScreen extends Component {
             <ActivityIndicator size={60} color={global.CURRENT_THEME.colors.accent} />
           </View>
         }
-        { !this.state.ballot && !this.state.isLoading &&
+        { this.state.ballotError && !this.state.isLoading &&
           <View style={styles.errorContainer}>
             <Ionicons name="md-warning" size={75} color={global.CURRENT_THEME.colors.accent} />
             <Text style={[GlobalStyles.bodyText, styles.errorText]}>Error getting ballot</Text>
           </View>
         }
-        {!!this.state.ballot && <Accordion questions={this.state.ballot.questions} onSubmitResponses={this.submitResponsesHandler}/>}
+        { !this.state.ballot && !this.state.isLoading && !this.state.ballotError &&
+          <View style={styles.errorContainer}>
+            <Text style={[GlobalStyles.bodyText, {fontSize: 125, marginBottom: 20}]}>🤪</Text>
+            <Text style={[GlobalStyles.bodyText, styles.errorText]}>No ballot for today, sorry.{"\n"}Check back tomorrow.</Text>
+          </View>
+        }
+        {!this.state.isLoading && !!this.state.ballot && <Accordion questions={this.state.ballot.questions} onSubmitResponses={this.submitResponsesHandler}/>}
       </View>
     );
   }
@@ -109,6 +119,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 22,
-    color: global.CURRENT_THEME.colors.accent
+    color: global.CURRENT_THEME.colors.accent,
+    textAlign: "center"
   },
 });

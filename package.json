@@ -14,6 +14,7 @@
   "dependencies": {
     "@expo/samples": "~36.0.0",
     "@expo/vector-icons": "^10.0.0",
+    "@react-native-community/masked-view": "0.1.5",
     "@react-navigation/web": "~1.0.0-alpha.9",
     "axios": "^0.19.2",
     "expo": "~36.0.0",
@@ -22,6 +23,7 @@
     "expo-font": "~8.0.0",
     "expo-google-app-auth": "^8.0.1",
     "expo-google-sign-in": "~8.0.0",
+    "expo-image-manipulator": "~8.0.0",
     "expo-image-picker": "~8.0.1",
     "expo-web-browser": "~8.0.0",
     "firebase": "^7.9.3",
@@ -34,15 +36,14 @@
     "react-native-paper": "^3.6.0",
     "react-native-reanimated": "^1.7.0",
     "react-native-redash": "^9.6.0",
+    "react-native-safe-area-context": "0.6.0",
     "react-native-screens": "^2.3.0",
+    "react-native-skeleton-content": "^1.0.13",
     "react-native-web": "~0.11.7",
     "react-navigation": "^4.2.2",
     "react-navigation-stack": "^2.2.3",
     "react-navigation-tabs": "^2.8.2",
-    "sentry-expo": "^2.0.1",
-    "expo-image-manipulator": "~8.0.0",
-    "react-native-safe-area-context": "0.6.0",
-    "@react-native-community/masked-view": "0.1.5"
+    "sentry-expo": "^2.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.8.6",
