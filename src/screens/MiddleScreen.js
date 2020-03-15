@@ -93,7 +93,7 @@ class MiddleScreen extends Component {
     return (
       <View style={GlobalStyles.backLayerContainer}>
         <StatusBar barStyle="light-content"/>
-        <ScrollView style={GlobalStyles.frontLayerContainer}>
+        <ScrollView style={GlobalStyles.frontLayerContainer} showsVerticalScrollIndicator={false}>
           <View style={{paddingBottom:20}}>
             <View style={styles.pollStatusContainer}>
               <PollStatusCountdown ref={(pollStatusCountdown) => {this.pollStatusCountdown=pollStatusCountdown}} onPressStart={this.handleStartPressed}/>
