@@ -150,6 +150,7 @@ class LeftScreen extends Component {
                     onRefresh={this.onRefresh}
                     colors={[global.CURRENT_THEME.colors.primary]} />
                 }
+                showsVerticalScrollIndicator={false}
                 ListHeaderComponent = { this.FlatListHeader }
                 data={this.state.leaderboardData.leaderboard.slice(this.state.podiumSize)}
                 renderItem={({ item, index, separators }) => (

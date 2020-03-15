@@ -102,7 +102,7 @@ export default class Accordion extends Component {
     const { questions } = this.props;
     return (
       <View style={styles.container}>
-        <ScrollView style={styles.scrollviewStyle} contentContainerStyle={{flexGrow: 1}} ref={(ref) => this.questionScrollView = ref}>
+        <ScrollView style={styles.scrollviewStyle} contentContainerStyle={{flexGrow: 1}} ref={(ref) => this.questionScrollView = ref} showsVerticalScrollIndicator={false}>
           {questions.map((item, index) => (
               <List key={item.id} question={item} questionIndex={index} openQuestion={this.state.openQuestion} questionResponseId={this.questionResponseObject[item.id]} onAnswerPressed={this.ballotHandleAnswerPressed} onQuestionPressed={this.ballotHandleQuestionPressed} onContentReady={this.handleContentReady} />
           ))}

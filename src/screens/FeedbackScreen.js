@@ -199,7 +199,7 @@ class FeedbackScreen extends Component {
     let { image } = this.state;
 		return (
 			<View style={GlobalStyles.backLayerContainer}>
-	        <ScrollView style={GlobalStyles.frontLayerContainer}>
+	        <ScrollView style={GlobalStyles.frontLayerContainer} showsVerticalScrollIndicator={false}>
             <View style={styles.container}>
               {/*<Text style={GlobalStyles.titleText}>Enter your feedback</Text>*/}
               <TextField

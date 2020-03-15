@@ -75,7 +75,7 @@ export default class ResultsScreen extends Component {
           </View>
         }
         { !!this.state.ballotResult &&
-          <ScrollView style={styles.scrollviewStyle} contentContainerStyle={{flexGrow: 1}}>
+          <ScrollView style={styles.scrollviewStyle} contentContainerStyle={{flexGrow: 1}} showsVerticalScrollIndicator={false}>
             <Text style={styles.helloTitleContainer}>
               <Text style={[GlobalStyles.bodyText, styles.helloTitleText]}>Hey {global.user.name.split(" ")[0]}, </Text>
               { this.didVote &&

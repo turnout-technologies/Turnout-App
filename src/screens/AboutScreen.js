@@ -24,7 +24,7 @@ class AboutScreen extends Component {
 	render() {
 		return (
 			<View style={GlobalStyles.backLayerContainer}>
-	        <ScrollView style={GlobalStyles.frontLayerContainer}>
+	        <ScrollView style={GlobalStyles.frontLayerContainer} showsVerticalScrollIndicator={false}>
             <View style={styles.container}>
               <Image source={require('../../assets/images/logo_text.png')} style={styles.logo} />
               <View style={[styles.messageContainer, {alignItems:"flex-start"}]}>

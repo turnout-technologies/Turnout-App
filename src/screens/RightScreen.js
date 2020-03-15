@@ -59,7 +59,7 @@ class RightScreen extends Component {
 		return (
 			<View style={GlobalStyles.backLayerContainer}>
         <StatusBar barStyle="light-content"/>
-	        <ScrollView style={GlobalStyles.frontLayerContainer}>
+	        <ScrollView style={GlobalStyles.frontLayerContainer} showsVerticalScrollIndicator={false}>
         		<View style={styles.profileContainer}>
               <Image
                   style={styles.profileImage}
