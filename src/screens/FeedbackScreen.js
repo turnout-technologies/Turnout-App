@@ -28,7 +28,7 @@ class FeedbackScreen extends Component {
 
   componentDidMount() {
     this.props.navigation.setParams({
-      headerRight: (
+      headerRight: () => (
         <TouchableOpacity style={{marginRight: 20}} onPress={this.submitFeedback}>
           <Ionicons name="md-send" size={25} color={global.CURRENT_THEME.colors.accent} />
         </TouchableOpacity>

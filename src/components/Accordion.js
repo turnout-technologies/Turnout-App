@@ -114,7 +114,9 @@ export default class Accordion extends Component {
                 onPress = { () => this.handleSubmitPressed()}>
               </AnimatedTouchableOpacity>
             </Animated.View>
-            <Animated.Text pointerEvents="none" style={[GlobalStyles.bodyText, styles.submitButtonText, {position: "absolute", fontSize: this.submitButtonFontSizeAnimationVal, color:this.submitButtonFontColorInterpolation}]}>Send It</Animated.Text>
+            <View pointerEvents="none" style={{position: "absolute"}}>
+              <Animated.Text style={[GlobalStyles.bodyText, styles.submitButtonText, {fontSize: this.submitButtonFontSizeAnimationVal, color:this.submitButtonFontColorInterpolation}]}>Send It</Animated.Text>
+            </View>
           </Animated.View>
         </TouchableWithoutFeedback>
         </ScrollView>

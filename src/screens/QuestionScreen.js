@@ -97,7 +97,7 @@ export default class QuestionScreen extends Component {
         }
         { !this.state.ballot && !this.state.isLoading && !this.state.ballotError &&
           <View style={styles.errorContainer}>
-            <Text style={[GlobalStyles.bodyText, {fontSize: 125, marginBottom: 20}]}>🤪</Text>
+            <Text style={[GlobalStyles.bodyText, {fontSize: 125, marginBottom: 20}]}>😐</Text>
             <Text style={[GlobalStyles.bodyText, styles.errorText]}>No ballot for today, sorry.{"\n"}Check back tomorrow.</Text>
           </View>
         }

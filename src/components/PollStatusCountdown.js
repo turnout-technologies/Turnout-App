@@ -30,7 +30,7 @@ export default class PollStatusCountdown extends Component {
 
   componentDidMount() {
     AppState.addEventListener('change', this._handleAppStateChange);
-    DeviceEventEmitter.addListener('ballotSubmittedListener', (e)=>{this.onPollStatusCountdownShown()});
+    this.ballotSubmittedListener = DeviceEventEmitter.addListener('ballotSubmittedListener', (e)=>{this.onPollStatusCountdownShown()});
     var _this = this;
     this.onPollStatusCountdownShown();
     setTimeout(function(){_this.onPollStatusCountdownShown()}, 1000);
@@ -40,6 +40,7 @@ export default class PollStatusCountdown extends Component {
   componentWillUnmount() {
     AppState.removeEventListener('change', this._handleAppStateChange);
     this.onPollStatusCountdownHidden();
+    this.ballotSubmittedListener.remove();
   }
 
   _handleAppStateChange = (nextAppState) => {

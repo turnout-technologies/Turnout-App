@@ -4,6 +4,7 @@ const USER_KEY = 'user';
 const LAST_REFRESH_USER_TIMESTAMP_KEY = 'lastRefreshUserTimestamp';
 const LAST_BALLOT_TIMESTAMP_KEY = 'lastBallotDate';
 const LAST_VERSION_OPENED_KEY = 'lastVersionOpened';
+const LAST_BALLOT_RESULTS_OPENED_ID = 'getLastBallotResultOpenedId';
 
 export async function getUser() {
   return AsyncStorage.getItem(USER_KEY);
@@ -59,4 +60,16 @@ export async function setLastNoteVersionOpened(noteVersion) {
 
 export async function removeLastNoteVersionOpened() {
   return AsyncStorage.removeItem(LAST_VERSION_OPENED_KEY);
+}
+
+export async function getLastBallotResultOpenedId() {
+  return AsyncStorage.getItem(LAST_BALLOT_RESULTS_OPENED_ID);
+}
+
+export async function setLastBallotResultOpenedId(id) {
+  try {
+    await AsyncStorage.setItem(LAST_BALLOT_RESULTS_OPENED_ID, id.toString());
+  } catch (error) {
+    console.log(error);
+  }
 }

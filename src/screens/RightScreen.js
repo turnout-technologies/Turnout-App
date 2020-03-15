@@ -22,7 +22,11 @@ class RightScreen extends Component {
   }
 
   componentDidMount() {
-    DeviceEventEmitter.addListener('notificationsEnabledChangedListener', (e)=>{this.setState({notificationsEnabled: e.enabled})});
+    this.notificationsEnabledChangedListener = DeviceEventEmitter.addListener('notificationsEnabledChangedListener', (e)=>{this.setState({notificationsEnabled: e.enabled})});
+  }
+
+  componentWillUnmount() {
+    this.notificationsEnabledChangedListener.remove();
   }
 
   static navigationOptions = ({navigation}) => {

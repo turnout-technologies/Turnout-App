@@ -4,7 +4,6 @@ import { Ionicons } from '@expo/vector-icons';
 
 import {GlobalStyles} from '../Globals';
 import QuestionResult from '../components/QuestionResult';
-import {setLastBallotTimestamp} from '../AsyncStorage';
 
 const RESULTS_HELP_TITLE = "About Scoring";
 const RESULTS_HELP_MESSAGE = "Remember, you only get points for choosing the most popular answer! Point values increase by 1 for each question you get right. For example, if you get 3 questions right, you score 1+2+3 = 6 points."
@@ -21,8 +20,8 @@ export default class ResultsScreen extends Component {
     var dateStr = this.props.navigation.state.params.resultsDateStr;
     var headerTitle = "Results for " + dateStr;
     this.props.navigation.setParams({headerTitle: headerTitle});
-    const {numCorrect, score} = this.calculateScore(resultsResponse.response, resultsResponse.winningAnswers);
-    this.setState({isLoading: false, ballotResult: resultsResponse, numCorrect, score });
+    const numCorrect = this.calculateNumCorrect(resultsResponse.response, resultsResponse.winningAnswers);
+    this.setState({isLoading: false, ballotResult: resultsResponse, numCorrect, score: resultsResponse.userPoints });
     this.didVote = resultsResponse.response != null;
   }
 
@@ -48,19 +47,17 @@ export default class ResultsScreen extends Component {
     }
   };
 
-  calculateScore(responses, winningAnswers) {
+  calculateNumCorrect(responses, winningAnswers) {
     if (responses == null) {
-      return {numCorrect: 0, score: 0};
+      return 0;
     }
     var numCorrect = 0;
-    var score = 0;
     for (var questionId in winningAnswers) {
       if (winningAnswers[questionId].includes(responses[questionId])) {
         numCorrect += 1;
-        score += numCorrect;
       }
     }
-    return {numCorrect, score};
+    return numCorrect;
   }
 
   render() {

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { ActivityIndicator, View, StyleSheet, Text, UIManager, FlatList, TouchableOpacity, Image } from 'react-native';
+import { ActivityIndicator, View, StyleSheet, Text, UIManager, FlatList, TouchableOpacity, Image, RefreshControl } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import {GlobalStyles} from '../Globals';
@@ -31,12 +31,19 @@ class LeftScreen extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {isLoading: true, peopleFilterSelected: "All", timeFilterSelected: "Today", leaderboardData: null, podiumSize: 0};
+    this.state = {
+      isLoading: true,
+      peopleFilterSelected: "All",
+      timeFilterSelected: "Today",
+      leaderboardData: null,
+      podiumSize: 0
+    };
     if (!IOS && !!animationExperimental) {
       animationExperimental(true)
     }
 
     this.fetchLeaderboardData = this.fetchLeaderboardData.bind(this);
+    this.onRefresh = this.onRefresh.bind(this);
   }
 
   componentDidMount() {
@@ -101,6 +108,11 @@ class LeftScreen extends Component {
     );
   }
 
+  onRefresh() {
+    this.setState({isLoading: true});
+    this.fetchLeaderboardData();
+  }
+
   render() {
     return (
       <View style={GlobalStyles.backLayerContainer} >
@@ -116,7 +128,7 @@ class LeftScreen extends Component {
           frontLayerStyle={styles.frontLayerStyle}>
 
           <View style={GlobalStyles.frontLayerContainer}>
-            { !this.state.leaderboardData && this.state.isLoading &&
+            { this.state.isLoading &&
               <View style={styles.loadingSpinnerContainer}>
                 <ActivityIndicator size={60} color={global.CURRENT_THEME.colors.primary} animating={!this.state.leaderboardData} />
               </View>
@@ -132,6 +144,12 @@ class LeftScreen extends Component {
             }
             { !!this.state.leaderboardData &&
               <FlatList
+                refreshControl={
+                  <RefreshControl
+                    refreshing={this.state.isLoading}
+                    onRefresh={this.onRefresh}
+                    colors={[global.CURRENT_THEME.colors.primary]} />
+                }
                 ListHeaderComponent = { this.FlatListHeader }
                 data={this.state.leaderboardData.leaderboard.slice(this.state.podiumSize)}
                 renderItem={({ item, index, separators }) => (

@@ -112,7 +112,8 @@ const styles = StyleSheet.create({
   },
   aboutHeaderText: {
     marginLeft: 20,
-    fontSize: 16
+    fontSize: 16,
+    marginBottom: 10
   },
   aboutSeparator: {
     borderBottomColor: global.CURRENT_THEME.colors.text_opacity3,
