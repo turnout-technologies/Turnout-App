@@ -117,7 +117,7 @@ export default class PollStatusCountdown extends Component {
   render() {
     if (this.state.pollsOpen && this.state.ballotSubmittedToday) {
       return (
-        <View>
+        <View style={styles.container}>
           <Ionicons
             name="md-checkmark-circle-outline"
             size={125}
@@ -137,7 +137,7 @@ export default class PollStatusCountdown extends Component {
       const minutesText = sprintf('%02d', minutes);
       const secondsText = sprintf('%02d', seconds);
       return (
-        <View>
+        <View style={styles.container}>
           <Text style={[GlobalStyles.bodyText,styles.pollStatusText]}>{this.state.pollStatusText}</Text>
           <View style={styles.pollCountdownContainer}>
             { days > 0 &&
@@ -195,6 +195,9 @@ export default class PollStatusCountdown extends Component {
 }
 
 const styles = StyleSheet.create({
+  container: {
+  	flex: 1
+  },
   pollStatusText: {
     textAlign: "center",
     fontSize: 20,

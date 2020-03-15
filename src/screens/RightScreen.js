@@ -127,20 +127,6 @@ class RightScreen extends Component {
                 <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>About</Text>
               </View>
             </TouchableHighlight>
-        		{/*<View style={styles.statsRowContainer}>
-      				<View style={styles.statContainer}>
-      					<Text style={[GlobalStyles.headerText, styles.statNumber]}>10</Text>
-      					<Text style={[GlobalStyles.bodyText, styles.statSubtitle]}>Questions Answered</Text>
-      				</View>
-      				<View style={styles.statContainer}>
-      					<Text style={[GlobalStyles.headerText, styles.statNumber]}>200</Text>
-      					<Text style={[GlobalStyles.bodyText, styles.statSubtitle]}>Points</Text>
-      				</View>
-      				<View style={styles.statContainer}>
-      					<Text style={[GlobalStyles.headerText, styles.statNumber]}>3</Text>
-      					<Text style={[GlobalStyles.bodyText, styles.statSubtitle]}>Friend Invites</Text>
-      				</View>
-      			</View>*/}
 	        </ScrollView>
           <Snackbar
             visible={this.state.snackbarVisible}
@@ -201,7 +187,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 25
   },
   settingsItemText: {
-    fontSize: 18
+    fontSize: 18,
+    flexShrink: 1
   },
   settingsSwitch: {
     justifyContent: "flex-end",

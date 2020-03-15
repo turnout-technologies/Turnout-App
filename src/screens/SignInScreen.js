@@ -7,7 +7,7 @@ import { SplashScreen } from 'expo';
 
 var moment = require('moment-timezone');
 
-import getEnvVars from '../Environment';
+import {GlobalStyles} from '../Globals';
 import * as API from '../APIClient';
 import StatusBarBackground from '../components/StatusBarBackground';
 import {getPushNotificationsTokenAsync} from '../Notifications';
@@ -160,16 +160,24 @@ class SignInScreen extends Component {
         <StatusBarBackground backgroundColor="white"/>
         <SafeAreaView style={styles.topContainer}>
           <Image source={require('../../assets/images/logo_text.png')} style={styles.logoText} />
-          <View style={{flex:1, alignItems: 'center', justifyContent: 'center'}}>
-            <Text>Carousel goes here</Text>
+          <View style={styles.welcomeContainer}>
+            <Text>
+              <Text style={[GlobalStyles.titleText, styles.welcomeText]}>It takes a </Text>
+              <Text style={[GlobalStyles.titleText, styles.welcomeText, {color: global.CURRENT_THEME.colors.primary}]}>friend</Text>
+              <Text style={[GlobalStyles.titleText, styles.welcomeText]}> to get a </Text>
+              <Text style={[GlobalStyles.titleText, styles.welcomeText, {color: "#EE3738"}]}>friend</Text>
+              <Text style={[GlobalStyles.titleText, styles.welcomeText]}> to </Text>
+              <Text style={[GlobalStyles.titleText, styles.welcomeText, {color: global.CURRENT_THEME.colors.primary}]}>vote</Text>
+              <Text style={[GlobalStyles.titleText, styles.welcomeText]}>.</Text>
+            </Text>
           </View>
         </SafeAreaView>
         <View style={styles.bottomContainer}>
-          <Text style={styles.bottomContainerTitle}>Let's get started.</Text>
+          <Text style={[GlobalStyles.bodyText, styles.bottomContainerTitle]}>Let's get started.</Text>
           <View style={styles.signInButtonContainer}>
             <TouchableOpacity style={styles.signInButton} onPress={this.onPress}>
               <Image source={require('../../assets/images/google_logo.png')} style={styles.signInButtonLogo} />
-              <Text style={[styles.signInButtonText]}>Sign in with Google</Text>
+              <Text style={[GlobalStyles.bodyText, styles.signInButtonText]}>Sign in with Google</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -187,7 +195,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     height: '10%',
     resizeMode: 'contain',
-    marginTop: 20
+    marginTop: 50
   },
   topContainer: {
     flex:1
@@ -199,7 +207,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: global.CURRENT_THEME.roundness
   },
   bottomContainerTitle: {
-    fontFamily: 'circularstd-book',
     color: global.CURRENT_THEME.colors.accent,
     fontSize: 30,
     paddingTop: 20,
@@ -223,7 +230,6 @@ const styles = StyleSheet.create({
     paddingHorizontal:20,
   },
   signInButtonText: {
-    fontFamily: 'circularstd-book',
     color: global.CURRENT_THEME.colors.text,
     textAlign: "center",
     fontSize: 18
@@ -231,6 +237,17 @@ const styles = StyleSheet.create({
   signInButtonLogo: {
     height: '45%',
     resizeMode: 'contain',
+  },
+  welcomeContainer: {
+    flex:1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 15
+  },
+  welcomeText: {
+    color: global.CURRENT_THEME.colors.text,
+    textAlign: "center",
+    fontSize: 50
   },
 });
 

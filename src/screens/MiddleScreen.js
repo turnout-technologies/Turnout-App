@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
     marginLeft: 5
   },
   pollStatusContainer: {
-    marginVertical: 115
+    paddingVertical: '25%'
   },
   announcementButtonContainer: {
     width:82,
