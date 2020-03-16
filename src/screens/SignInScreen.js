@@ -86,7 +86,7 @@ class SignInScreen extends Component {
               .then(function(token) {
                 if (result.additionalUserInfo.isNewUser) {
                   console.log("NEW USER! Adding to DB...")
-                  API.addUser(result.user.displayName, result.user.email, result.user.photoURL, token)
+                  API.addUser(result.user.displayName, result.user.email, result.user.photoURL, !!token ? token : "")
                     .then(function(response) {
                       console.log(response.data);
                       if (response.data) {
