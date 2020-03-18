@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cp app.prod.json app.json
+cp auth/google-services.prod.json auth/google-services.json
+expo ba --release-channel alpha -t app-bundle
+

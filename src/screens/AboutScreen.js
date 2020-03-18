@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
   aboutItem: {
     flexDirection: "row",
     alignItems: "center",
-    minHeight: 60,
+    minHeight: 50,
   },
   aboutItemText: {
     fontSize: 18,

@@ -16,7 +16,7 @@ export async function getPushNotificationsTokenAsync() {
 
   // Stop here if the user did not grant permissions
   if (status !== 'granted') {
-    alert('No notification permissions!');
+    alert("You need to grant notification permissions first.");
     return;
   }
 
@@ -38,28 +38,39 @@ export async function getPushNotificationsTokenAsync() {
     }
   }
 
-  function sendPushToken(enable, token) {
-    API.putPushToken(global.user.id, token)
-      .then(function(response) {
-        global.user.pushToken=token;
-        setUser();
-        DeviceEventEmitter.emit('notificationsEnabledChangedListener',  {enabled: enable});
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+  async function sendPushToken(enable, token) {
+    try {
+      var response = await API.putPushToken(global.user.id, token);
+      global.user.pushToken=token;
+      setUser();
+      DeviceEventEmitter.emit('notificationsEnabledChangedListener',  {enabled: enable});
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+    return true;
   }
 
   export async function setNotificationsEnabled(enable) {
+    var token = "";
     if (enable) {
-      getPushNotificationsTokenAsync()
-        .then(function(token) {
-          sendPushToken(enable, token);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    }  else {
-      sendPushToken(enable, "");
+      try {
+        token = await getPushNotificationsTokenAsync();
+        if (!token) {
+          return false;
+        }
+      } catch (error) {
+        console.log(error);
+        return false;
+      }
+    }
+    if (!enable || (enable && !!token)) {
+      var success = await sendPushToken(enable, token);
+      if (!success) {
+        alert("Error updating push notifications settings");
+      }
+      return success;
+    } else {
+      return enable;
     }
   }

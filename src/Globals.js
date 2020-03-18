@@ -1,6 +1,10 @@
-import {StyleSheet, Platform} from 'react-native';
+import {StyleSheet, Platform, Alert} from 'react-native';
 import { DefaultTheme } from 'react-native-paper';
 import * as firebase from 'firebase';
+var moment = require('moment-timezone');
+
+import {setUser, setLastRefreshUserTimestamp} from './AsyncStorage';
+import * as API from './APIClient';
 
 //constants
 global.IOS = Platform.OS === 'ios';
@@ -81,6 +85,25 @@ const GlobalStyles = StyleSheet.create({
 
 });
 export {GlobalStyles}
+
+export async function refreshUser() {
+    try {
+        var response = await API.getUser(global.user.id);
+        if (response.data) {
+            global.user = response.data;
+            console.log(global.user)
+            setUser();
+            setLastRefreshUserTimestamp(moment().unix());
+        }
+    } catch(error) {
+        //firebase.auth().signOut();
+        Alert.alert("Error", "You've been signed out. Please sign in again.");
+        console.log(error);
+    }
+}
+
+
+//Dummy Data
 
 //Sample Questions
 global.SAMPLE_QUESTIONS =

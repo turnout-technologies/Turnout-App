@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, AppState, DeviceEventEmitter } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, DeviceEventEmitter, ActivityIndicator } from 'react-native';
 import PropTypes from 'prop-types';
 import { Ionicons } from '@expo/vector-icons';
 import {sprintf} from 'sprintf-js';
@@ -12,7 +12,8 @@ import {setNotificationsEnabled} from '../Notifications';
 export default class PollStatusCountdown extends Component {
 
   static propTypes = {
-    onPressStart: PropTypes.func
+    onPressStart: PropTypes.func,
+    appState:  PropTypes.string
   }
 
   constructor(props) {
@@ -21,15 +22,13 @@ export default class PollStatusCountdown extends Component {
       timer: null,
       pollStatusText: "",
       pollsOpen: false,
-      appState: AppState.currentState,
       ballotSubmittedToday: false,
-      getNotifiedPressed: false
+      getNotifiedDisabled: false
     };
     this.getNotifiedHandler = this.getNotifiedHandler.bind(this);
   }
 
   componentDidMount() {
-    AppState.addEventListener('change', this._handleAppStateChange);
     this.ballotSubmittedListener = DeviceEventEmitter.addListener('ballotSubmittedListener', (e)=>{this.onPollStatusCountdownShown()});
     var _this = this;
     this.onPollStatusCountdownShown();
@@ -38,18 +37,19 @@ export default class PollStatusCountdown extends Component {
   }
 
   componentWillUnmount() {
-    AppState.removeEventListener('change', this._handleAppStateChange);
     this.onPollStatusCountdownHidden();
     this.ballotSubmittedListener.remove();
   }
 
-  _handleAppStateChange = (nextAppState) => {
-    if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
-      this.onPollStatusCountdownShown();
-    } else {
-      this.onPollStatusCountdownHidden();
-    }
-    this.setState({appState: nextAppState});
+  componentDidUpdate(oldProps) {
+  	const newProps = this.props
+  	if(oldProps.appState !== newProps.appState) {
+	  if (newProps.appState === 'active') {
+	    this.onPollStatusCountdownShown();
+	  } else {
+	    this.onPollStatusCountdownHidden();
+	  }
+	}
   }
 
   onPollStatusCountdownShown() {
@@ -68,7 +68,7 @@ export default class PollStatusCountdown extends Component {
 
   setPollState() {
     var curMoment = moment();
-    //var curMoment = moment.tz("2020-03-15 18:59:50", "America/New_York");
+    //var curMoment = moment.tz("2020-03-18 18:59:50", "America/New_York");
     var pollsOpenTimeEastern = moment.tz({y:curMoment.year(), M:curMoment.month(), date:curMoment.date(), h:18, m:0}, "America/New_York");
     var pollsCloseTimeEastern = moment.tz({y:curMoment.year(), M:curMoment.month(), date:curMoment.date(), h:22, m:0}, "America/New_York");
     if (curMoment <= pollsOpenTimeEastern) {
@@ -110,8 +110,11 @@ export default class PollStatusCountdown extends Component {
   };
 
   getNotifiedHandler() {
-    this.setState({getNotifiedPressed: true});
-    setNotificationsEnabled(true);
+    this.setState({getNotifiedDisabled: true});
+    setNotificationsEnabled(true)
+      .then(function(success) {
+        this.setState({getNotifiedDisabled: false});
+      }.bind(this));
   }
 
   render() {
@@ -167,8 +170,9 @@ export default class PollStatusCountdown extends Component {
               <Text style={[GlobalStyles.bodyText,styles.startButtonText]}>Start</Text>
             </TouchableOpacity>
           }
-          { !this.state.pollsOpen && !global.user.pushToken &&
-            <TouchableOpacity style={styles.getNotifiedButton} onPress={this.getNotifiedHandler}>
+          {this.state.getNotifiedDisabled && <ActivityIndicator color={global.CURRENT_THEME.colors.primary} animating={this.state.getNotifiedDisabled} />}
+          { !this.state.pollsOpen && !global.user.pushToken && !this.state.getNotifiedDisabled &&
+            <TouchableOpacity style={styles.getNotifiedButton} disabled={this.state.getNotifiedDisabled} onPress={this.getNotifiedHandler}>
               <Ionicons
                 name="md-notifications"
                 size={18}

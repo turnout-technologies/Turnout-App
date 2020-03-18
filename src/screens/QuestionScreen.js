@@ -55,30 +55,26 @@ export default class QuestionScreen extends Component {
       });
   }
 
-  updateLastBallotTimestamp() {
-    setLastBallotTimestamp(moment().unix().toString())
-      .then(function() {
-        DeviceEventEmitter.emit('ballotSubmittedListener',  {});
-        this.props.navigation.goBack();
-      }.bind(this))
-      .catch(function (error) {
-        console.log(error);
-        this.props.navigation.goBack();
-      });
+  async updateLastBallotTimestamp() {
+    try {
+      await setLastBallotTimestamp(moment().unix().toString());
+      DeviceEventEmitter.emit('ballotSubmittedListener',  {});
+    } catch (error) {
+      console.log(error);
+    }
+    this.props.navigation.goBack();
   }
 
-  submitResponsesHandler(questionResponseObject) {
+  async submitResponsesHandler(questionResponseObject) {
     console.log("Received responses submission");
     console.log(questionResponseObject);
-    var _this = this;
-    API.submitBallot(this.state.ballot.id, global.user.id, questionResponseObject)
-      .then(function(response) {
-        _this.updateLastBallotTimestamp();
-      })
-      .catch(function (error) {
-        Alert.alert("Error submitting ballot", "We ran into an issue submitting your ballot 😔");
-        console.log(error);
-      });
+    try {
+      var response = await API.submitBallot(this.state.ballot.id, global.user.id, questionResponseObject);
+      this.updateLastBallotTimestamp();
+    } catch (error) {
+      Alert.alert("Error submitting ballot", "We ran into an issue submitting your ballot 😔. Maybe try again? ");
+      console.log(error);
+    }
   }
 
   render() {

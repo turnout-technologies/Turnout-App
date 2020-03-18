@@ -15,7 +15,8 @@ class RightScreen extends Component {
     super(props);
     this.state = {
       notificationsEnabled: !!global.user.pushToken,
-      snackbarVisible: false
+      snackbarVisible: false,
+      notificationSwitchDisabled: false
     };
 
     this.notificationSwitchHandler = this.notificationSwitchHandler.bind(this);
@@ -51,8 +52,14 @@ class RightScreen extends Component {
   }
 
   notificationSwitchHandler(enable) {
-    this.setState({notificationsEnabled: enable});
-    setNotificationsEnabled(enable);
+    this.setState({notificationSwitchDisabled: true});
+    setNotificationsEnabled(enable)
+      .then(function(success) {
+        this.setState({notificationSwitchDisabled: false});
+        if (success) {
+          this.setState({notificationsEnabled: enable});
+        }
+      }.bind(this));
   }
 
 	render() {
@@ -105,7 +112,7 @@ class RightScreen extends Component {
             </TouchableHighlight>
             <View style={styles.settingsSeparator} />
             <Text style={[GlobalStyles.titleText, styles.settingHeaderText]}>Notifications</Text>
-            <TouchableHighlight underlayColor={global.CURRENT_THEME.colors.text_opacity3} onPress={ () => this.notificationSwitchHandler(!this.state.notificationsEnabled)}>
+            <TouchableHighlight underlayColor={global.CURRENT_THEME.colors.text_opacity3} disabled={this.state.notificationSwitchDisabled} onPress={ () => this.notificationSwitchHandler(!this.state.notificationsEnabled)}>
               <View style={[styles.settingsItem, {justifyContent: "space-between"}]}>
                 <View style={{flexDirection: "row"}}>
                   <Ionicons name="md-notifications" size={25} color={global.CURRENT_THEME.colors.primary} style={styles.settingsItemIcon} />
@@ -117,7 +124,8 @@ class RightScreen extends Component {
                   trackColor={{true: Platform.OS == "android" ? global.CURRENT_THEME.colors.primary_75 : global.CURRENT_THEME.colors.primary}}
                   style={styles.settingsSwitch}
                   ios_backgroundColor="#F4F4F4"
-                  onValueChange={v => {this.notificationSwitchHandler(v)}} />
+                  onValueChange={v => {this.notificationSwitchHandler(v)}}
+                  disabled={this.state.notificationSwitchDisabled} />
               </View>
             </TouchableHighlight>
             <View style={styles.settingsSeparator} />

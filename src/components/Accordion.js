@@ -1,11 +1,12 @@
 import React, {Component} from "react";
-import { Animated, View, StyleSheet, Text, ScrollView, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
+import { Animated, View, StyleSheet, Text, ScrollView, TouchableOpacity, TouchableWithoutFeedback, ActivityIndicator } from "react-native";
 import PropTypes from 'prop-types';
 
 import List, { List as ListModel } from "./List";
 import {GlobalStyles} from '../Globals';
 
 const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
+const AnimatedActivityIndicator = Animated.createAnimatedComponent(ActivityIndicator);
 
 export default class Accordion extends Component {
 
@@ -21,6 +22,7 @@ export default class Accordion extends Component {
      this.questionResponseObject = {};
      this.state = {
        openQuestion: -1,
+       submitButtonDisabled: false
      };
      this.ballotHandleAnswerPressed = this.ballotHandleAnswerPressed.bind(this);
      this.ballotHandleQuestionPressed = this.ballotHandleQuestionPressed.bind(this);
@@ -95,7 +97,11 @@ export default class Accordion extends Component {
   }
 
   handleSubmitPressed() {
-    this.props.onSubmitResponses(this.questionResponseObject);
+    this.setState({submitButtonDisabled: true});
+    this.props.onSubmitResponses(this.questionResponseObject)
+      .then(function(response) {
+        this.setState({submitButtonDisabled: false});
+      }.bind(this));
   }
 
   render() {
@@ -111,11 +117,13 @@ export default class Accordion extends Component {
             <Animated.View style={{transform:[{scale: this.submitButtonScaleInterpolation}]}}>
               <AnimatedTouchableOpacity
                 style={[styles.submitButton, {backgroundColor: this.submitButtonColorInterpolation, borderWidth: this.submitButtonBorderWidthInterpolation}]}
-                onPress = { () => this.handleSubmitPressed()}>
+                onPress = { () => this.handleSubmitPressed()}
+                disabled={this.state.submitButtonDisabled} >
               </AnimatedTouchableOpacity>
             </Animated.View>
             <View pointerEvents="none" style={{position: "absolute"}}>
-              <Animated.Text style={[GlobalStyles.bodyText, styles.submitButtonText, {fontSize: this.submitButtonFontSizeAnimationVal, color:this.submitButtonFontColorInterpolation}]}>Send It</Animated.Text>
+              {this.state.submitButtonDisabled && <AnimatedActivityIndicator color={this.submitButtonFontColorInterpolation} animating={this.state.submitButtonDisabled} />}
+              {!this.state.submitButtonDisabled && <Animated.Text style={[GlobalStyles.bodyText, styles.submitButtonText, {fontSize: this.submitButtonFontSizeAnimationVal, color:this.submitButtonFontColorInterpolation}]}>Send It</Animated.Text>}
             </View>
           </Animated.View>
         </TouchableWithoutFeedback>

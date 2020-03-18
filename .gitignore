@@ -14,3 +14,5 @@ web-report/
 .DS_Store
 auth/
 app.json
+app.prod.json
+app.dev.json

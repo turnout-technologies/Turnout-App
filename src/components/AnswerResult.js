@@ -36,17 +36,24 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginHorizontal: 15
+    marginHorizontal: 15,
+  },
+  answerText: {
+    fontSize: 16,
+    flex: 1,
+    padding: 5
+  },
+  answerResultRightContainer: {
+    flexDirection: "row",
+  },
+  percentageText: {
+    fontSize: 16,
   },
   answerColorContainer: {
     position: 'absolute',
     height: '100%',
     width: '100%',
     borderRadius: global.CURRENT_THEME.roundness
-  },
-  answerText: {
-    textAlign: "left",
-    fontSize: 16,
   },
    profileImage: {
     width: 25,
@@ -67,12 +74,10 @@ export default ({ answer, count, totalCount, isCorrectAnswer, isUserResponse }: 
         {<LinearGradient colors={[color, color, 'rgba(0,0,0,0)']} start={[0, 0]} end={[1, 0]} locations={[0, percentageDecimal, percentageDecimal]} style={styles.answerColorContainer}/>}
         <View style={styles.answerContentContainer}>
           <Text style={[GlobalStyles.titleText, styles.answerText]}>{answer.text}</Text>
-          <View style={{flexDirection: "row"}}>
+          <View style={styles.answerResultRightContainer}>
             {isUserResponse && <Image style={styles.profileImage} source={{uri: global.user.avatarURL.replace("s96-c", "s384-c")}}/>}
-            <Text style={[GlobalStyles.titleText, styles.answerText]}> {percentageStr}%</Text>
+            <Text style={[GlobalStyles.titleText, styles.percentageText]}> {percentageStr}%</Text>
           </View>
-          {/*{isUserResponse && isCorrectAnswer && <MaterialIcons style={{marginLeft: 10}} name="check" size={25} color={CORRECT_ANSWER_COLOR} />}
-          {isIncorrectAnswer && <MaterialIcons style={{marginLeft: 10}} name="close" size={25} color={INCORRECT_ANSWER_COLOR} />}*/}
         </View>
       </View>
     </View>

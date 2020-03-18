@@ -3,7 +3,6 @@ import { ActivityIndicator, StatusBar, View, StyleSheet, Alert } from 'react-nat
 import firebase from 'firebase';
 import * as Sentry from 'sentry-expo';
 import Constants from 'expo-constants';
-var moment = require('moment-timezone');
 
 import * as API from '../APIClient';
 import {getPushNotificationsTokenAsync, setupNotificationChannels} from '../Notifications';
@@ -44,43 +43,15 @@ class AuthLoadingScreen extends Component {
         if (!!user && this.alreadySignedIn) {
           Sentry.setUser({"id": user.uid, "email": user.email});
           var _this = this;
-          getLastRefreshUserTimestamp()
-            .then(function(lastRefreshUserTimestamp) {
-              var shouldRefreshUser = !lastRefreshUserTimestamp || !moment.unix(lastRefreshUserTimestamp).tz("America/New_York").isSame(moment().tz("America/New_York"), 'day');
-              if (shouldRefreshUser) {
-                API.getUser(user.uid)
-                  .then(function(response) {
-                    console.log(response);
-                    if (response.data) {
-                      global.user = response.data;
-                      console.log(global.user)
-                      setUser();
-                      setLastRefreshUserTimestamp(moment().unix());
-                      _this.advance()
-                    }
-                  })
-                  .catch(function (error) {
-                    firebase.auth().signOut();
-                    Alert.alert("Error", "There was a problem fetching your user info. Please sign in again.");
-                    console.log(error);
-                  });
-              } else {
-                getUser()
-                  .then(function(user) {
-                    global.user = JSON.parse(user);
-                    console.log(global.user);
-                    _this.advance();
-                  })
-                  .catch(function (error) {
-                    firebase.auth().signOut();
-                    Alert.alert("Error", "There was a problem reading your user info. Please sign in again.");
-                    console.log(error);
-                  });
-              }
+          getUser()
+            .then(function(user) {
+              global.user   = JSON.parse(user);
+              console.log(global.user);
+              _this.advance();
             })
             .catch(function (error) {
               firebase.auth().signOut();
-              Alert.alert("Error", "There was a problem reading the last refresh timestamp. Please sign in again.");
+              Alert.alert("Error", "There was a problem reading your user info. Please sign in again.");
               console.log(error);
             });
         } else {

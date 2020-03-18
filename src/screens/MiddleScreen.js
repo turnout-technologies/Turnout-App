@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
-import { View, StyleSheet, Text, Button, Alert, ScrollView, TouchableOpacity, SafeAreaView, StatusBar } from 'react-native';
+import { View, StyleSheet, Text, Button, Alert, ScrollView, TouchableOpacity, SafeAreaView, StatusBar, RefreshControl, AppState } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { SplashScreen, Linking } from 'expo';
 var moment = require('moment-timezone');
 
-import {GlobalStyles} from '../Globals';
+import {GlobalStyles, refreshUser} from '../Globals';
 import AnnouncementCard from '../components/AnnouncementCard';
 import PollStatusCountdown from '../components/PollStatusCountdown';
-import {getLastBallotResultOpenedId, setLastBallotResultOpenedId} from '../AsyncStorage';
+import {getLastBallotResultOpenedId, setLastBallotResultOpenedId, getLastRefreshUserTimestamp} from '../AsyncStorage';
 import * as API from '../APIClient';
 
 class MiddleScreen extends Component {
@@ -15,17 +15,19 @@ class MiddleScreen extends Component {
   constructor (props) {
     super(props);
 
-    this.state = {cardsLoading: true, showResultsCard: false, resultAnnouncementTitleText: "", resultAnnouncementBodyText: ""};
+    this.state = {userRefreshing: false, cardsLoading: true, showResultsCard: false, resultAnnouncementTitleText: "", resultAnnouncementBodyText: "", appState: AppState.currentState};
 
     this.resultsDateStr = "";
 
     this.handleStartPressed = this.handleStartPressed.bind(this);
     this.handleResultsPressed = this.handleResultsPressed.bind(this);
     this.fetchLatestResults = this.fetchLatestResults.bind(this);
+    this.onRefresh = this.onRefresh.bind(this);
   }
 
   componentDidMount() {
     SplashScreen.hide();
+    AppState.addEventListener('change', this._handleAppStateChange);
     this.fetchLatestResults();
     this.props.navigation.setParams({
       header: () => (
@@ -37,6 +39,18 @@ class MiddleScreen extends Component {
         </SafeAreaView>
       )
     })
+  }
+
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this._handleAppStateChange);
+  }
+
+  _handleAppStateChange = (nextAppState) => {
+    if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
+      //when app is brought to foreground, check if it's time to refresh the user
+      this.maybeRefreshUser();
+    }
+    this.setState({appState: nextAppState});
   }
 
   setResultsCardContent() {
@@ -69,6 +83,19 @@ class MiddleScreen extends Component {
       }.bind(this));
   }
 
+  maybeRefreshUser() {
+    getLastRefreshUserTimestamp()
+      .then(function(lastRefreshUserTimestamp) {
+        var shouldRefreshUser = !lastRefreshUserTimestamp || !moment.unix(lastRefreshUserTimestamp).tz("America/New_York").isSame(moment().tz("America/New_York"), 'day');
+        if (shouldRefreshUser) {
+          refreshUser();
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
   handleStartPressed() {
     this.pollStatusCountdown.onPollStatusCountdownHidden();
     this.props.navigation.navigate('Question');
@@ -78,6 +105,14 @@ class MiddleScreen extends Component {
     setLastBallotResultOpenedId(this.resultsResponse.id);
     this.setResultsCardContent();
     this.props.navigation.navigate('Results', {resultsResponse: this.resultsResponse, resultsDateStr: this.resultsDateStr})
+  }
+
+  onRefresh() {
+    this.setState({userRefreshing: true});
+    refreshUser()
+      .then(function(user) {
+        this.setState({userRefreshing: false});
+      }.bind(this));
   }
 
   static navigationOptions = ({navigation}) => {
@@ -93,10 +128,18 @@ class MiddleScreen extends Component {
     return (
       <View style={GlobalStyles.backLayerContainer}>
         <StatusBar barStyle="light-content"/>
-        <ScrollView style={GlobalStyles.frontLayerContainer} showsVerticalScrollIndicator={false}>
+        <ScrollView style={GlobalStyles.frontLayerContainer}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.userRefreshing}
+              onRefresh={this.onRefresh}
+              colors={[global.CURRENT_THEME.colors.primary]} />
+          }
+          showsVerticalScrollIndicator={false} >
+
           <View style={{paddingBottom:20}}>
             <View style={styles.pollStatusContainer}>
-              <PollStatusCountdown ref={(pollStatusCountdown) => {this.pollStatusCountdown=pollStatusCountdown}} onPressStart={this.handleStartPressed}/>
+              <PollStatusCountdown ref={(pollStatusCountdown) => {this.pollStatusCountdown=pollStatusCountdown}} onPressStart={this.handleStartPressed} appState={this.state.appState}/>
             </View>
             { (this.state.cardsLoading || this.state.showResultsCard) &&
               <AnnouncementCard
