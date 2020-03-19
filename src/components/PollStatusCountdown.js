@@ -44,12 +44,12 @@ export default class PollStatusCountdown extends Component {
   componentDidUpdate(oldProps) {
   	const newProps = this.props
   	if(oldProps.appState !== newProps.appState) {
-	  if (newProps.appState === 'active') {
-	    this.onPollStatusCountdownShown();
-	  } else {
-	    this.onPollStatusCountdownHidden();
-	  }
-	}
+	   if (newProps.appState === 'active') {
+	     this.onPollStatusCountdownShown();
+	   } else {
+	     this.onPollStatusCountdownHidden();
+	   }
+  	}
   }
 
   onPollStatusCountdownShown() {

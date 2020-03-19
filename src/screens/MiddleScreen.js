@@ -97,7 +97,6 @@ class MiddleScreen extends Component {
   }
 
   handleStartPressed() {
-    this.pollStatusCountdown.onPollStatusCountdownHidden();
     this.props.navigation.navigate('Question');
   }
 
