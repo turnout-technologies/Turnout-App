@@ -135,6 +135,12 @@ class RightScreen extends Component {
                 <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>About</Text>
               </View>
             </TouchableHighlight>
+            <TouchableHighlight underlayColor={global.CURRENT_THEME.colors.text_opacity3} onPress={() => this.props.navigation.navigate('TurboVote')}>
+              <View style={styles.settingsItem}>
+                <Ionicons name="md-information-circle" size={25} color={global.CURRENT_THEME.colors.primary} style={styles.settingsItemIcon} />
+                <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>TurboVote Test</Text>
+              </View>
+            </TouchableHighlight>
 	        </ScrollView>
           <Snackbar
             visible={this.state.snackbarVisible}

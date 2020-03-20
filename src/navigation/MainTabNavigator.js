@@ -13,6 +13,7 @@ import FeedbackScreen from '../screens/FeedbackScreen';
 import AboutScreen from '../screens/AboutScreen';
 import LicensesScreen from '../screens/LicensesScreen';
 import DebugOptionsScreen from '../screens/DebugOptionsScreen';
+import TurboVoteScreen from '../screens/TurboVoteScreen';
 
 const LeftStack = createStackNavigator(
   {
@@ -56,7 +57,8 @@ const RightStack = createStackNavigator(
     Feedback: FeedbackScreen,
     About: AboutScreen,
     Licenses: LicensesScreen,
-    DebugOptions: DebugOptionsScreen
+    DebugOptions: DebugOptionsScreen,
+    TurboVote: TurboVoteScreen,
   }
 );
 
