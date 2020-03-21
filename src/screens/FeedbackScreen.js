@@ -76,17 +76,15 @@ class FeedbackScreen extends Component {
       Alert.alert("", "Enter feedback and/or attach a screenshot before submitting.");
     } else {
       var filename = "";
+      //check whether there is a screenshot to send
       if (this.state.image) {
-        console.log('yes screenshot');
         //set filename to uid_curTimestamp
         var filename = global.user.id + "_" + Math.round(new Date().getTime() / 1000) + ".png";
         //upload the screenshot
         this.uploadScreenshot(filename);
-      } else {
-        console.log('no screenshot');
       }
       const { navigation } = this.props;
-      API.sendFeedback(this.type, message, filename, global.user.id)
+      API.sendFeedback(this.type, message, filename, global.user.name, global.user.email)
       .then(function(response) {
         navigation.goBack();
         navigation.state.params.onFeedbackSubmitted({ snackbarVisible: true });
