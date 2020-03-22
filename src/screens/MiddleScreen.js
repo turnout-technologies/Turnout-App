@@ -29,7 +29,7 @@ class MiddleScreen extends Component {
     SplashScreen.hide();
     AppState.addEventListener('change', this._handleAppStateChange);
     this.fetchLatestResults();
-    this.updateHeader();
+    this.maybeRefreshUser();
   }
 
   updateHeader() {
@@ -91,13 +91,13 @@ class MiddleScreen extends Component {
     getLastRefreshUserTimestamp()
       .then(function(lastRefreshUserTimestamp) {
         var shouldRefreshUser = !lastRefreshUserTimestamp || !moment.unix(lastRefreshUserTimestamp).tz("America/New_York").isSame(moment().tz("America/New_York"), 'day');
-        if (shouldRefreshUser) {
+        if (!shouldRefreshUser) {
           refreshUser()
             .then(function() {
               this.updateHeader();
             }.bind(this));
         }
-      })
+      }.bind(this))
       .catch(function (error) {
         console.log(error);
       });
