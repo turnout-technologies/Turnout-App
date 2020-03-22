@@ -96,7 +96,7 @@ export async function refreshUser() {
             setLastRefreshUserTimestamp(moment().unix());
         }
     } catch(error) {
-        //firebase.auth().signOut();
+        firebase.auth().signOut();
         Alert.alert("Error", "You've been signed out. Please sign in again.");
         console.log(error);
     }

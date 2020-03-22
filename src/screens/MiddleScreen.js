@@ -29,6 +29,10 @@ class MiddleScreen extends Component {
     SplashScreen.hide();
     AppState.addEventListener('change', this._handleAppStateChange);
     this.fetchLatestResults();
+    this.updateHeader();
+  }
+
+  updateHeader() {
     this.props.navigation.setParams({
       header: () => (
         <SafeAreaView style={styles.customHeaderContainer} >
@@ -38,7 +42,7 @@ class MiddleScreen extends Component {
           </TouchableOpacity>
         </SafeAreaView>
       )
-    })
+    });
   }
 
   componentWillUnmount() {
@@ -88,7 +92,10 @@ class MiddleScreen extends Component {
       .then(function(lastRefreshUserTimestamp) {
         var shouldRefreshUser = !lastRefreshUserTimestamp || !moment.unix(lastRefreshUserTimestamp).tz("America/New_York").isSame(moment().tz("America/New_York"), 'day');
         if (shouldRefreshUser) {
-          refreshUser();
+          refreshUser()
+            .then(function() {
+              this.updateHeader();
+            }.bind(this));
         }
       })
       .catch(function (error) {
@@ -110,6 +117,7 @@ class MiddleScreen extends Component {
     this.setState({userRefreshing: true});
     refreshUser()
       .then(function(user) {
+        this.updateHeader();
         this.setState({userRefreshing: false});
       }.bind(this));
   }
