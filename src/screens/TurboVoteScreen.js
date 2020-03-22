@@ -37,7 +37,7 @@ class TurboVoteScreen extends Component {
     this.INJECTED_JS = `
       //CONSTANTS
       var DELAY_MS = 200; //200 seems to work well
-      var AUTO_ADVANCE = true;
+      var AUTO_ADVANCE = false;
 
       //DATA
       var firstName = 'first'; //${this.nameSplit[0]}
