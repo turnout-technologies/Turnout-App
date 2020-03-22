@@ -12,6 +12,8 @@ export default class FormTextField extends Component {
     this.state = {};
 
     this.onFocus = this.onFocus.bind(this);
+    this.validateText = this.validateText.bind(this);
+    this.onChangeText = this.onChangeText.bind(this);
   }
 
   static propTypes = {
@@ -21,19 +23,30 @@ export default class FormTextField extends Component {
   }
 
   getValue() {
-    return this.textFieldRef.value();
+    return this.textFieldRef.value().trim();
   }
 
   validateText(text) {
-    if (!text) {
+    if (!this.getValue()) {
       this.setState({error: "This field cannot be blank"});
       return false;
     }
     return true;
   }
 
+  focus() {
+    console.log("HERE");
+    this.textFieldRef.focus();
+  }
+
   onFocus() {
     this.setState({ error: "" });
+  }
+
+  onChangeText(text) {
+    if(!this.getValue() && text) {
+      this.setState({ error: "" });
+    }
   }
 
   render() {
@@ -52,11 +65,12 @@ export default class FormTextField extends Component {
         labelOffset={{y1: -15}}
         labelTextStyle={GlobalStyles.bodyText}
         style={[GlobalStyles.bodyText, {color: "black"}]}
-        //value={defaultValue}
+        value={defaultValue}
         autoCorrect={false}
         enablesReturnKeyAutomatically={true}
+        onChangeText={this.onChangeText}
         onFocus={this.onFocus}
-        onEndEditing={(e) => this.validateText(e.nativeEvent.text)}
+        onBlur={this.validateText}
         onSubmitEditing={onSubmitEditing}
         returnKeyType='next'
       />

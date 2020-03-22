@@ -1,11 +1,10 @@
 import React, {Component} from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity} from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, KeyboardAvoidingView} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { TextField } from 'react-native-material-textfield';
 
 import {GlobalStyles} from '../Globals';
 import FormTextField from '../components/FormTextField'
-
 
 class NameScreen extends Component {
 
@@ -14,17 +13,11 @@ class NameScreen extends Component {
 
     this.state = {};
 
-    var nameSplit = global.user.name.split(' ');
-    this.defaultFirstName = nameSplit[0];
-    this.defaultLastName = nameSplit[1];
-
-    this.onFocus = this.onFocus.bind(this);
-    this.onSubmit = this.onSubmit.bind(this);
-    this.onChangeText = this.onChangeText.bind(this);
-    this.onSubmitFirstName = this.onSubmitFirstName.bind(this);
-
+    this.fieldsArr = ['firstname', 'lastname']
     this.firstnameRef = this.updateRef.bind(this, 'firstname');
     this.lastnameRef = this.updateRef.bind(this, 'lastname');
+
+    this.onContinue = this.onContinue.bind(this);
   }
 
   static navigationOptions = ({navigation}) => {
@@ -39,91 +32,72 @@ class NameScreen extends Component {
     this[name] = ref;
   }
 
-  onFocus() {
-    let { errors = {} } = this.state;
-
-    for (let name in errors) {
-      let ref = this[name];
-
-      if (ref && ref.isFocused()) {
-        delete errors[name];
-      }
-    }
-
-    this.setState({ errors });
-  }
-
-  onChangeText(text) {
-    ['firstname', 'lastname']
-      .map((name) => ({ name, ref: this[name] }))
-      .forEach(({ name, ref }) => {
-        if (ref && ref.isFocused()) {
-          this.setState({ [name]: text });
-        }
-      });
-      console.log(this.state);
-  }
-
-  onSubmitFirstName() {
-    this.lastname.focus();
-  }
-
-  onSubmit() {
+  onContinue() {
     var error = false;
-    ['firstname', 'lastname']
+    this.fieldsArr
       .forEach((name) => {
-        if (!this[name].validateText()) {
-          error = true;
-        } else {
+        if (this[name].validateText()) {
           let value = this[name].getValue();
-          console.log(value);
+          console.log(name + ": " + value);
+        } else {
+          error = true;
         }
       });
-
   }
 
 	render() {
-    let { errors = {} } = this.state;
 		return (
-			<View style={GlobalStyles.backLayerContainer}>
-        <ScrollView style={GlobalStyles.frontLayerContainer} showsVerticalScrollIndicator={false}>
+			<KeyboardAvoidingView style={GlobalStyles.backLayerContainer} behavior="height" keyboardVerticalOffset={75}>
+        <ScrollView
+          style={GlobalStyles.frontLayerContainer}
+          showsVerticalScrollIndicator={false}
+        >
           <View style={styles.container}>
             <FormTextField
               ref={this.firstnameRef}
               label='First Name'
               defaultValue={global.user.name.split(' ')[0]}
-              onSubmitEditing={this.onSubmitFirstName}
+              onSubmitEditing={() => {this['lastname'].focus()}}
             />
 
             <FormTextField
               ref={this.lastnameRef}
               label='Last Name'
               defaultValue={global.user.name.split(' ')[1]}
-              onSubmitEditing={this.onSubmitLastName}
+              onSubmitEditing={this.onContinue}
             />
-
-            <TouchableOpacity style={styles.continueButton} onPress={this.onSubmit}>
-              <Ionicons name="md-arrow-forward" size={45} color={global.CURRENT_THEME.colors.accent} />
-            </TouchableOpacity>
           </View>
         </ScrollView>
-	    </View>
+        <View style={styles.continueButtonContainer}>
+          <TouchableOpacity style={styles.continueButton} onPress={this.onContinue}>
+            <Ionicons name="md-arrow-forward" size={45} color={global.CURRENT_THEME.colors.accent} />
+          </TouchableOpacity>
+        </View>
+	    </KeyboardAvoidingView>
 		);
 	}
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     marginHorizontal: 20,
     marginTop: 20
   },
+  continueButtonContainer: {
+    position: "absolute",
+    bottom: 0,
+    right: 20,
+    justifyContent: "flex-end",
+  },
   continueButton: {
-    width: 75,
-    height: 75,
-    borderRadius: 75/2,
-    justifyContent: "center",
-    alignSelf: "center",
+    width: 65,
+    height: 65,
+    borderRadius: 65/2,
+    alignSelf: "flex-end",
     alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 20,
     backgroundColor: global.CURRENT_THEME.colors.primary,
   },
 });
