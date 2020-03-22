@@ -29,6 +29,7 @@ class MiddleScreen extends Component {
     SplashScreen.hide();
     AppState.addEventListener('change', this._handleAppStateChange);
     this.fetchLatestResults();
+    this.updateHeader();
     this.maybeRefreshUser();
   }
 
