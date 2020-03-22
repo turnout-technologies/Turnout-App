@@ -91,7 +91,7 @@ class MiddleScreen extends Component {
     getLastRefreshUserTimestamp()
       .then(function(lastRefreshUserTimestamp) {
         var shouldRefreshUser = !lastRefreshUserTimestamp || !moment.unix(lastRefreshUserTimestamp).tz("America/New_York").isSame(moment().tz("America/New_York"), 'day');
-        if (!shouldRefreshUser) {
+        if (shouldRefreshUser) {
           refreshUser()
             .then(function() {
               this.updateHeader();
