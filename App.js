@@ -37,7 +37,7 @@ const _handleNotification = notification => {
 const _notificationSubscription = Notifications.addListener(_handleNotification);
 
 export default function App(props) {
-  if (!__DEV__) {
+  if (!__DEV__ && Constants.manifest.releaseChannel != "dev") {
     console.log = () => {};
   } else {
     console.log("DEV Mode")
