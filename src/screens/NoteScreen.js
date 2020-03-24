@@ -20,6 +20,14 @@ class NoteScreen extends Component {
     SplashScreen.hide();
   }
 
+  static navigationOptions = ({navigation}) => {
+    return {
+        title: 'An Announcement',
+        headerStyle: GlobalStyles.headerStyle,
+        headerTintColor: global.CURRENT_THEME.colors.accent,
+      };
+  }
+
   doneButtonHandler() {
     setLastNoteVersionOpened(Constants.manifest.extra.noteVersion);
     this.props.navigation.navigate('Main');
@@ -35,55 +43,37 @@ class NoteScreen extends Component {
               <View style={[styles.messageContainer, {alignItems:"flex-start"}]}>
                 <Text style={[GlobalStyles.headerText, styles.messageText]}>Hey {global.user.name.split(" ")[0]},</Text>
                 <Text style={[GlobalStyles.bodyText, {fontSize: 16}]}>
-                  Welcome to the Turnout closed alpha and thank you for helping out! In case you're one of those people that doesn't read, here's the short version (but you really should read. It's a good message): {"\n"}
+                  Thanks so much for helping us test out Turnout over the past week! We really appreciate every vote, every bug filed, every piece of feedback submitted, and every donation. {"\n\n"}
+                  We are closing the alpha for a bit while we incorporate feedback and continue developing. {"\n"}
                 </Text>
-                <Text style={[GlobalStyles.headerText, {fontSize: 20, color: global.CURRENT_THEME.colors.primary}]}>the tl;dr</Text>
-                <Text style={[GlobalStyles.bodyText, {fontSize: 18}]}>
-                  1) Purpose: Help test basic functionality for serving/answering/scoring questions.{"\n"}
-                  2) Your job #1: Play the game! Answer questions, earn points, and climb the leaderboard. {"\n"}
-                  3) Your job #2: Give feedback! Bugs, ideas, question suggestions, etc. are all welcome. Submit feedback from the 'Profile' tab in the bottom right. {"\n"}
+                <Text style={[GlobalStyles.headerText, {fontSize: 20, color: global.CURRENT_THEME.colors.primary}]}>What do I do now?</Text>
+                <Text>
+                  <Text style={[GlobalStyles.bodyText, {fontSize: 18, color: "red"}]}>Please leave the app installed! </Text>
+                  <Text style={[GlobalStyles.bodyText, {fontSize: 16}]}>
+                    We still have a lot of work to do and will ask you to test new things every so often (e.g. when we finish something new like the TurboVote flow or if we make a risky change).
+                    By leaving the app installed, we'll be able to send out a push notification when there's something ready for you to test. {"\n"}
+                  </Text>
+                </Text>
+                <Text style={[GlobalStyles.headerText, {fontSize: 20, color: global.CURRENT_THEME.colors.primary}]}>What's next for Turnout?</Text>
+                <Text style={[GlobalStyles.bodyText, {fontSize: 16}]}>
+                  Our plan was to next roll out a full beta test (with TurboVote and rewards) at Brown as a test campus in April.
+                  However, obviously the coronavirus has affected our plans just a little bit, so we've had to regroup.
+                  We still plan to use Brown as a test in April, but we are revising our strategy to be online-only and not require any presence on campus
+                  (this means swapping local businesses out for a food delivery service and switching our marketing strategy to digital only). {"\n"}
                 </Text>
                 <Text style={[GlobalStyles.bodyText, {fontSize: 16}]}>
-                  Ok and here's the full message 🙌 {"\n"}
-                </Text>
-                <Text style={[GlobalStyles.headerText]}>The Mission</Text>
-                <Text style={[GlobalStyles.bodyText, {fontSize: 16}]}>
-                  As you probably already know, our goal is to help get college students civically engaged by fostering an on-campus community of voters.
-                  Turnout is centered on our belief that it takes a friend to get a friend to vote. Instead of going the traditional route and creating a
-                  voter 'facilitation' tool, we are creating a game that requires students to register with TurboVote and then incentivizes them to get their
-                  friends to sign up. {"\n"}
-                </Text>
-                <Text style={[GlobalStyles.headerText]}>The Game</Text>
-                <Text style={[GlobalStyles.bodyText, {fontSize: 16}]}>
-                  Turnout is a trivia-style game where the most popular answer is the correct one.
-                  Answer the daily questions and earn points for being in the majority and for referring friends to ascend to the top of the leaderboard.
-                  For the 'real thing,' we will be incorporating rewards/events that can be unlocked by accruing points. {"\n"}
-                </Text>
-                <Text style={[GlobalStyles.headerText, {fontSize: 18}]}>The Alpha{"\n"}(i.e. the part where you come in!)</Text>
-                <Text style={[GlobalStyles.bodyText, {fontSize: 16}]}>
-                  We are doing this early 'closed alpha' with friends and family as a very basic test to make sure our core infrastructure works.
-                  We want to make sure we can post daily questions, you can vote on them, and then we can tally the votes, distribute points, post the results, and then display rankings on the leaderboard.
-                  A number of things are missing at this point, such as the actual TurboVote integration (kinda important), the referral and rewards system, etc. Like we said, this is just to test the basic system for now. {"\n\n"}
-
-                  Here's how it will work: {"\n\n"}
-                  1) Polls will open at 6PM EST, meaning the daily questions will go live and and stay open until 10PM EST. {"\n"}
-                  2) During that time, vote on the daily questions and submit your ballot. It's up to you whether you answer truthfully, try to throw things off and cause chaos, or try to predict the most popular answer to rack up points and chase that spot on the leaderboard podium.  {"\n"}
-                  3) After polls close, we will tally the results and distribute points. {"\n"}
-                  4) Once results are available, you can view the vote breakdown of each question, see how many points you earned, then go check out the updates on the leaderboard. {"\n\n"}
-
-                  Finally, please send feedback!! Whether you found a bug, have an idea, want to suggest a question, or just want to say that you like/don't like something, we want to know!
-                  There are several options for sending us feedback on the 'Profile' tab in the bottom right. {"\n"}
-
-                </Text>
-                <Text style={[GlobalStyles.bodyText, {fontSize: 16}]}>
-                  Thanks again for helping us test and turn this into an actual thing. We appreciate all of you. ♥🙏 {"\n\n"}
+                  Once again, thanks for being a part of Turnout. We appreciate all of you and will be in touch soon. ♥🙏🔥💯etc. {"\n\n"}
                   - Tyler and Jason
+                  {"\n"}
                 </Text>
-              </View>
-              <View style={styles.messageContainer}>
-                <TouchableOpacity style={styles.doneButton} onPress={this.doneButtonHandler}>
-                  <Text style={[GlobalStyles.bodyText,styles.doneButtonText]}>I read the message.{"\n"}It was good. 🔥</Text>
-                </TouchableOpacity>
+                <Text>
+                  <Text style={[GlobalStyles.bodyText, {fontSize: 16}]}>P.S. In the meantime, feel free to still send us feedback if you have thoughts or ideas: </Text>
+                  <Text
+                    style={[GlobalStyles.bodyText, styles.emailUsText, {color: global.CURRENT_THEME.colors.primary}]}
+                    onPress={() => Linking.openURL('mailto: contact@turnout.us?subject=[App Feedback]')}>
+                    contact@turnout.us
+                  </Text>
+                </Text>
               </View>
             </View>
 	        </ScrollView>
@@ -123,7 +113,10 @@ const styles = StyleSheet.create({
     color: global.CURRENT_THEME.colors.accent,
     textAlign: "center",
     fontSize: 25
-  }
+  },
+  emailUsText: {
+    fontSize: 18
+  },
 });
 
 module.exports= NoteScreen
