@@ -35,7 +35,6 @@ export default class FormTextField extends Component {
   }
 
   focus() {
-    console.log("HERE");
     this.textFieldRef.focus();
   }
 
@@ -79,14 +78,4 @@ export default class FormTextField extends Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center"
-  },
-  text: {
-    fontSize: 16,
-    color: global.CURRENT_THEME.colors.accent,
-    marginLeft: 5,
-  },
 });

@@ -5,6 +5,7 @@ import { TextField } from 'react-native-material-textfield';
 
 import {GlobalStyles} from '../Globals';
 import FormTextField from '../components/FormTextField'
+import FormButtonsSelect from '../components/FormButtonsSelect'
 
 class NameScreen extends Component {
 
@@ -12,6 +13,7 @@ class NameScreen extends Component {
     super(props);
 
     this.state = {};
+    this.items = [{icon: "md-checkmark", text: "Yes"}, {icon: "md-close", text: "No"}, {icon: "md-help", text: "Maybe"}];
 
     this.fieldsArr = ['firstname', 'lastname']
     this.firstnameRef = this.updateRef.bind(this, 'firstname');
@@ -45,6 +47,10 @@ class NameScreen extends Component {
       });
   }
 
+  buttonPressedHandler(buttonText) {
+    console.log(buttonText);
+  }
+
 	render() {
 		return (
 			<KeyboardAvoidingView style={GlobalStyles.backLayerContainer} behavior="height" keyboardVerticalOffset={75}>
@@ -66,11 +72,14 @@ class NameScreen extends Component {
               defaultValue={global.user.name.split(' ')[1]}
               onSubmitEditing={this.onContinue}
             />
+
+            <FormButtonsSelect items={this.items} onButtonPressed={this.buttonPressedHandler}/>
+
           </View>
         </ScrollView>
         <View style={styles.continueButtonContainer}>
           <TouchableOpacity style={styles.continueButton} onPress={this.onContinue}>
-            <Ionicons name="md-arrow-forward" size={45} color={global.CURRENT_THEME.colors.accent} />
+            <Ionicons name="md-arrow-forward" size={35} color={global.CURRENT_THEME.colors.accent} />
           </TouchableOpacity>
         </View>
 	    </KeyboardAvoidingView>
