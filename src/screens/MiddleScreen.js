@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View, StyleSheet, Text, Button, Alert, ScrollView, TouchableOpacity, SafeAreaView, StatusBar, RefreshControl, AppState } from 'react-native';
+import { View, StyleSheet, Text, Button, Alert, ScrollView, TouchableOpacity, SafeAreaView, RefreshControl, AppState } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { SplashScreen, Linking } from 'expo';
 var moment = require('moment-timezone');
@@ -135,7 +135,6 @@ class MiddleScreen extends Component {
   render() {
     return (
       <View style={GlobalStyles.backLayerContainer}>
-        <StatusBar barStyle="light-content"/>
         <ScrollView style={GlobalStyles.frontLayerContainer}
           refreshControl={
             <RefreshControl
