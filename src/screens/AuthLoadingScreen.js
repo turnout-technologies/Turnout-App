@@ -8,32 +8,6 @@ import * as API from '../APIClient';
 import {getPushNotificationsTokenAsync, setupNotificationChannels} from '../Notifications';
 import {getUser, setUser, getLastRefreshUserTimestamp, setLastRefreshUserTimestamp, getLastNoteVersionOpened} from '../AsyncStorage';
 
-(async function(){
-  if (Constants.appOwnership === 'standalone') {
-    const ExpoBranch = await import('expo-branch');
-    const Branch = ExpoBranch.default;
-      Branch.subscribe((bundle) => {
-        if (bundle) {
-          if (bundle.params) {
-            console.log(bundle.params);
-          } else if (bundle.error) {
-            console.log(bundle.error);
-            Sentry.captureException(bundle.error);
-          } else {
-            Sentry.withScope(function(scope) {
-              scope.setExtra("branchBundle", bundle);
-              Sentry.captureException(new Error("Branch params null"));
-            });
-          }
-        } else {
-          Sentry.withScope(function(scope) {
-            Sentry.captureException(new Error("Branch bundle null"));
-          });
-       }
-     });
-  }
-})()
-
 class AuthLoadingScreen extends Component {
 
   constructor(props) {
@@ -43,6 +17,23 @@ class AuthLoadingScreen extends Component {
   componentDidMount() {
     this.checkIfLoggedIn();
     setupNotificationChannels();
+    this.checkForBranchLink();
+  }
+
+  async checkForBranchLink(){
+    if (Constants.appOwnership === 'standalone') {
+      const ExpoBranch = await import('expo-branch');
+      const Branch = ExpoBranch.default;
+      Branch.subscribe(({ error, params }) => {
+        if (error) {
+          console.log(bundle.error);
+          Sentry.captureException(error);
+          return;
+        }
+
+        console.log(bundle.params);
+      });
+    }
   }
 
   advance() {

@@ -33,6 +33,8 @@ class MiddleScreen extends Component {
     this.maybeRefreshUser();
   }
 
+
+
   updateHeader() {
     this.props.navigation.setParams({
       header: () => (

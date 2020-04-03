@@ -11,6 +11,7 @@ import QuestionScreen from '../screens/QuestionScreen';
 import ResultsScreen from '../screens/ResultsScreen';
 import FeedbackScreen from '../screens/FeedbackScreen';
 import AboutScreen from '../screens/AboutScreen';
+import InviteScreen from '../screens/InviteScreen';
 import LicensesScreen from '../screens/LicensesScreen';
 import DebugOptionsScreen from '../screens/DebugOptionsScreen';
 
@@ -55,6 +56,7 @@ const RightStack = createStackNavigator(
     Right: RightScreen,
     Feedback: FeedbackScreen,
     About: AboutScreen,
+    Invite: InviteScreen,
     Licenses: LicensesScreen,
     DebugOptions: DebugOptionsScreen
   }
