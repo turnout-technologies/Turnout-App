@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { ActivityIndicator, StatusBar, View, StyleSheet, Alert } from 'react-native';
+import { ActivityIndicator, View, StyleSheet, Alert } from 'react-native';
 import firebase from 'firebase';
 import * as Sentry from 'sentry-expo';
 import Constants from 'expo-constants';

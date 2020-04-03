@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View, Text, Image, Button, ScrollView, StyleSheet, TouchableHighlight, TouchableOpacity, Switch, StatusBar, DeviceEventEmitter } from 'react-native';
+import { View, Text, Image, Button, ScrollView, StyleSheet, TouchableHighlight, TouchableOpacity, Switch, DeviceEventEmitter } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Snackbar } from 'react-native-paper';
 
@@ -65,7 +65,6 @@ class RightScreen extends Component {
 	render() {
 		return (
 			<View style={GlobalStyles.backLayerContainer}>
-        <StatusBar barStyle="light-content"/>
 	        <ScrollView style={GlobalStyles.frontLayerContainer} showsVerticalScrollIndicator={false}>
         		<View style={styles.profileContainer}>
               <Image
