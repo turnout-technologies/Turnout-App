@@ -26,12 +26,11 @@ class AuthLoadingScreen extends Component {
       const Branch = ExpoBranch.default;
       Branch.subscribe(({ error, params }) => {
         if (error) {
-          console.log(bundle.error);
+          console.log(error);
           Sentry.captureException(error);
           return;
         }
-
-        console.log(bundle.params);
+        console.log(params);
       });
     }
   }
