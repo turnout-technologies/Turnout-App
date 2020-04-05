@@ -521,6 +521,7 @@ const styles = StyleSheet.create({
   sendInvitesButtonContainer: {
     alignSelf: "center",
     justifyContent: "flex-end",
+    marginBottom: 10
   },
   snackbar: {
     backgroundColor: global.CURRENT_THEME.colors.primary,
