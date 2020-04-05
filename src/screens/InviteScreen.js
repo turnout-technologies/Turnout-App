@@ -1,5 +1,5 @@
 import React, {Component, PureComponent} from 'react';
-import { View, SafeAreaView, Text, StyleSheet, TouchableOpacity, SectionList, Image, TouchableHighlight, Alert, AppState} from 'react-native';
+import { View, SafeAreaView, Text, StyleSheet, TouchableOpacity, SectionList, Image, TouchableHighlight, Alert, AppState, KeyboardAvoidingView} from 'react-native';
 import Constants from 'expo-constants';
 import * as Contacts from 'expo-contacts';
 import PropTypes from 'prop-types';
@@ -8,6 +8,7 @@ import SearchBar from "react-native-dynamic-search-bar";
 import * as SMS from 'expo-sms';
 import { Linking } from 'expo';
 import * as IntentLauncher from 'expo-intent-launcher';
+import { Snackbar } from 'react-native-paper';
 
 import {GlobalStyles} from '../Globals';
 
@@ -21,7 +22,9 @@ class InviteScreen extends Component {
       contactsData: null,
       numContactsSelected: 0,
       contactPermissionGranted: true,
-      appState: AppState.currentState
+      appState: AppState.currentState,
+      snackbarVisible: false,
+      invitesSent: 0
     };
     this.selectedContacts = [];
 
@@ -175,7 +178,7 @@ class InviteScreen extends Component {
     for (var i = 0; i < this.contactsDataFull.length; i++) {
       if (this.contactsDataFull[i].title === contact.name.charAt(0)) {
         var curDataArr = this.contactsDataFull[i].data;
-        for (var j = 0; curDataArr.length; j++) {
+        for (var j = 0; j < curDataArr.length; j++) {
           if (curDataArr[j] === contact) {
             this.contactsDataFull[i].data[j].checked = selected;
             return;
@@ -227,19 +230,20 @@ class InviteScreen extends Component {
         "Invite Didnt Send",
         "Looks like the invite to " + name + " didn't send.",
         [
-          {text: "Skip", onPress: () => resolve("sent"), style: "cancel"},
+          {text: "Skip", onPress: () => resolve("skipped"), style: "cancel"},
           {text: "Try Again", onPress: () => resolve("")}
         ],
         { cancelable: false }
       )
     })
-}
+  }
 
-  async sendInvites() {
+  async sendInvites(url) {
     //send the messages via SMS
+    var invitesSent = 0;
     for (var i = 0; i < this.selectedContacts.length; i++) {
       var smsResult = "";
-      while (smsResult != "sent" && smsResult != "unknown") {
+      while (smsResult != "sent" && smsResult != "unknown" & smsResult != "skipped") {
         const {result} = await SMS.sendSMSAsync(
           this.selectedContacts[i].phoneNumber,
           'Join Turnout using my link: ' + url
@@ -248,47 +252,57 @@ class InviteScreen extends Component {
         if (smsResult == "cancelled") {
           smsResult = await this.checkForSMSRetry(this.selectedContacts[i].name);
         }
+        if (smsResult == "sent" || smsResult == "unknown") {
+          invitesSent++;
+        }
       }
     }
+    this.setState({invitesSent}, () => this.setState({snackbarVisible: true}));
+    //cleaer invites sent count after snackbar disappears
+    setTimeout(function(){this.setState({invitesSent: 0})}.bind(this), 6000)
+    //clear list now that invites are sent
+    for (let i = 0; i < this.selectedContacts.length; i++) {
+      this[this.selectedContacts[i].id].setState({checked: false});
+    }
+    this.selectedContacts = [];
+    this.setState({contactsData: this.contactsDataFull, numContactsSelected: 0});
   }
 
   async sendInvitesHandler() {
-    if (Constants.appOwnership !== 'standalone') {
-      alert("branch doesn't work in the dev environment :(");
-      return;
-    }
     const isAvailable = await SMS.isAvailableAsync();
     if (isAvailable) {
-      //get branch link
-      let linkProperties = {
-        feature: 'contactlist',
-        channel: 'sms'
+      if (Constants.appOwnership == 'standalone') {
+        //get branch link
+        let linkProperties = {
+          feature: 'contactlist',
+          channel: 'sms'
+        }
+        const {url} = await this._branchUniversalObject.generateShortUrl(linkProperties, {});
+      } else {
+        var url = "https://example.com"
       }
-      const {url} = await this._branchUniversalObject.generateShortUrl(linkProperties, {});
-      Alert.alert(
-        "Sending Invites",
-        "Invites will be sent one at a time. After you press send on each message, return to the Turnout app and we'll queue up the next one!",
-        [
-          {text: "I promise I actually read this", onPress: () => (this.sendInvites())}
-        ],
-        { cancelable: false }
-      )
+      if (Platform.OS == "android" && this.selectedContacts.length > 1) {
+        Alert.alert(
+          "Sending Invites",
+          "Invites will be sent one at a time. After you press send on each message, return to the Turnout app and we'll queue up the next one!",
+          [
+            {text: "I promise I actually read this", onPress: () => (this.sendInvites(url))}
+          ],
+          { cancelable: false }
+        )
+      } else {
+        this.sendInvites(url);
+      }
     } else {
       //sms not available on this device
       Alert.alert("SMS Unavailable", "SMS is unavailable on this device. Use the 'Share Link' button instead.")
     }
   }
 
-  contactListFooter = () => {
-    return (
-      <View style={{height: this.state.numContactsSelected > 0 ? 78 : 0}}/>
-    );
-  }
-
 	render() {
 		return (
 			<View style={GlobalStyles.backLayerContainer}>
-        <SafeAreaView style={[GlobalStyles.frontLayerContainer]}>
+        <View style={[GlobalStyles.frontLayerContainer]}>
           <View style={styles.shareLinkContainer}>
             <Text style={[GlobalStyles.bodyText, styles.inviteText]}>Earn a bonus when you sign friends up!</Text>
             <TouchableOpacity style={styles.shareLinkButton} onPress={this.onShareLinkPress}>
@@ -305,7 +319,7 @@ class InviteScreen extends Component {
               </View>
             }
             {this.state.contactPermissionGranted && this.state.contactsData &&
-              <View style={styles.contactsListContainer}>
+              <KeyboardAvoidingView style={styles.contactsListContainer} behavior="height" keyboardVerticalOffset={75}>
                 <SearchBar
                   placeholder="Search for a name or number"
                   onChangeText={searchText => this.searchFilterFunction(searchText)}
@@ -323,20 +337,28 @@ class InviteScreen extends Component {
                   keyboardShouldPersistTaps="handled"
                   sections={this.state.contactsData}
                   keyExtractor={(item, index) => item.id}
-                  renderItem={({ item }) => <ContactItem contact={item} onPress={this.contactSelectedHandler} />}
+                  renderItem={({ item }) => <ContactItem ref={(contactItem) => this[item.id] = contactItem} contact={item} onPress={this.contactSelectedHandler} />}
                   renderSectionHeader={({ section: { title } }) => (
                     <Text style={[GlobalStyles.headerText, styles.sectionHeader]}>{title}</Text>
                   )}
-                  ListFooterComponent = { this.contactListFooter }
                 />
-              </View>
+                { this.state.numContactsSelected > 0 &&
+                  <View style={styles.sendInvitesButtonContainer}>
+                    <TouchableOpacity style={styles.sendInvitesButton} onPress={this.sendInvitesHandler}>
+                      <Text style={[GlobalStyles.bodyText,styles.sendInvitesButtonText]}>Send Invites ({this.state.numContactsSelected})</Text>
+                    </TouchableOpacity>
+                  </View>
+                }
+              </KeyboardAvoidingView>
             }
-          { this.state.numContactsSelected > 0 &&
-            <TouchableOpacity style={styles.sendInvitesButton} onPress={this.sendInvitesHandler}>
-              <Text style={[GlobalStyles.bodyText,styles.sendInvitesButtonText]}>Send Invites ({this.state.numContactsSelected})</Text>
-            </TouchableOpacity>
-          }
-        </SafeAreaView>
+          <Snackbar
+            visible={this.state.snackbarVisible}
+            style={styles.snackbar}
+            duration={5000}
+            onDismiss={() => this.setState({ snackbarVisible: false })} >
+            {this.state.invitesSent} invite{this.state.invitesSent > 1 ? "s" : ""} sent!
+          </Snackbar>
+        </View>
 	    </View>
 		);
 	}
@@ -462,10 +484,7 @@ const styles = StyleSheet.create({
   sendInvitesButton: {
     width: 375,
     height: 60,
-    position: "absolute",
-    bottom: 10,
     justifyContent: "center",
-    alignSelf: "center",
     backgroundColor: global.CURRENT_THEME.colors.primary,
     borderRadius: global.CURRENT_THEME.roundness
   },
@@ -498,6 +517,16 @@ const styles = StyleSheet.create({
   },
   sectionList: {
     marginTop: 10
+  },
+  sendInvitesButtonContainer: {
+    alignSelf: "center",
+    justifyContent: "flex-end",
+  },
+  snackbar: {
+    backgroundColor: global.CURRENT_THEME.colors.primary,
+    borderRadius: 0,
+    width: '100%',
+    margin: 0,
   }
 });
 
