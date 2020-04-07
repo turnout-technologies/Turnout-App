@@ -74,7 +74,7 @@ class RightScreen extends Component {
               <View style={styles.profileInfoContainer}>
           			<Text style={[GlobalStyles.headerText, styles.nameText]}>{global.user.name}</Text>
           			<Text style={[GlobalStyles.bodyText, styles.emailText]}>{global.user.email}</Text>
-                <Text style={[GlobalStyles.titleText, styles.pointsText]}>{global.user.points} point{global.user.points != 1 ? "s" : null}</Text>
+                <Text style={[GlobalStyles.titleText, styles.pointsText]}>{global.user.points.total} point{global.user.points.total != 1 ? "s" : null}</Text>
           		</View>
             </View>
             <View style={styles.settingsSeparator} />
@@ -132,6 +132,12 @@ class RightScreen extends Component {
               <View style={styles.settingsItem}>
                 <Ionicons name="md-information-circle" size={25} color={global.CURRENT_THEME.colors.primary} style={styles.settingsItemIcon} />
                 <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>About</Text>
+              </View>
+            </TouchableHighlight>
+            <TouchableHighlight underlayColor={global.CURRENT_THEME.colors.text_opacity3} onPress={() => this.props.navigation.navigate('Invite')}>
+              <View style={styles.settingsItem}>
+                <Ionicons name="md-information-circle" size={25} color={global.CURRENT_THEME.colors.primary} style={styles.settingsItemIcon} />
+                <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>Invite</Text>
               </View>
             </TouchableHighlight>
 	        </ScrollView>

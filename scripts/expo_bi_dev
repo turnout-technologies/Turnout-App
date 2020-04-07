@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cp app.dev.json app.json
+cp auth/google-services.dev.json auth/google-services.json
+expo bi --release-channel dev
+

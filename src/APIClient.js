@@ -28,17 +28,12 @@ turnoutAPIInstance.interceptors.response.use(
   error => errorHandler(error)
 )
 
-export function addUser(name, email, avatarURL, pushToken) {
-	return turnoutAPIInstance.post("/users", {
-	    name: name,
-	    email: email,
-	    avatarURL: avatarURL,
-	    pushToken: pushToken
-	 });
+export function addUser(user) {
+	return turnoutAPIInstance.post("/users", user);
 }
 
-export function getUser(uid) {
-	return turnoutAPIInstance.get("/users/"+uid);
+export function getUser() {
+	return turnoutAPIInstance.get("/users/self");
 }
 
 export function putPushToken(uid, token) {

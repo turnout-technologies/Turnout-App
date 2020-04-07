@@ -19,7 +19,7 @@ class AuthLoadingScreen extends Component {
     setupNotificationChannels();
   }
 
-  advance() {
+  advancePastSignIn() {
     var _this = this;
     getLastNoteVersionOpened()
       .then(function(lastVersionOpened) {
@@ -45,9 +45,12 @@ class AuthLoadingScreen extends Component {
           var _this = this;
           getUser()
             .then(function(user) {
-              global.user   = JSON.parse(user);
+              if (!user) {
+                throw "Retrieved user was null";
+              }
+              global.user = JSON.parse(user);
               console.log(global.user);
-              _this.advance();
+              _this.advancePastSignIn();
             })
             .catch(function (error) {
               firebase.auth().signOut();
