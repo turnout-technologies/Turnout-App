@@ -88,8 +88,9 @@ export {GlobalStyles}
 
 export async function refreshUser() {
     try {
-        var response = await API.getUser(global.user.id);
+        var response = await API.getUser();
         if (response.data) {
+            response.data.name = response.data.firstName + " " + response.data.lastName;
             global.user = response.data;
             console.log(global.user)
             setUser();
@@ -97,7 +98,7 @@ export async function refreshUser() {
         }
     } catch(error) {
         firebase.auth().signOut();
-        Alert.alert("Error", "You've been signed out. Please sign in again.");
+        Alert.alert("Error Getting User Data", "You've been signed out. Please sign in again.");
         console.log(error);
     }
 }

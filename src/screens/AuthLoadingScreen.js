@@ -17,22 +17,6 @@ class AuthLoadingScreen extends Component {
   componentDidMount() {
     this.checkIfLoggedIn();
     setupNotificationChannels();
-    this.checkForBranchLink();
-  }
-
-  async checkForBranchLink(){
-    if (Constants.appOwnership === 'standalone') {
-      const ExpoBranch = await import('expo-branch');
-      const Branch = ExpoBranch.default;
-      Branch.subscribe(({ error, params }) => {
-        if (error) {
-          console.log(error);
-          Sentry.captureException(error);
-          return;
-        }
-        console.log(params);
-      });
-    }
   }
 
   advancePastSignIn() {

@@ -41,7 +41,7 @@ class MiddleScreen extends Component {
         <SafeAreaView style={styles.customHeaderContainer} >
           <TouchableOpacity style={styles.headerPointsContainer} onPress={() => Alert.alert("Points", "This is the total number of points you have scored so far. They aren't good for anything besides bragging rights (yet 😅).")}>
             <MaterialCommunityIcons name="ticket" size={25} color={global.CURRENT_THEME.colors.accent} />
-            <Text style={[GlobalStyles.bodyText, styles.headerPointsText]}>{global.user.points}</Text>
+            <Text style={[GlobalStyles.bodyText, styles.headerPointsText]}>{global.user.points.total}</Text>
           </TouchableOpacity>
         </SafeAreaView>
       )

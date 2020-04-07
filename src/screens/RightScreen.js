@@ -74,7 +74,7 @@ class RightScreen extends Component {
               <View style={styles.profileInfoContainer}>
           			<Text style={[GlobalStyles.headerText, styles.nameText]}>{global.user.name}</Text>
           			<Text style={[GlobalStyles.bodyText, styles.emailText]}>{global.user.email}</Text>
-                <Text style={[GlobalStyles.titleText, styles.pointsText]}>{global.user.points} point{global.user.points != 1 ? "s" : null}</Text>
+                <Text style={[GlobalStyles.titleText, styles.pointsText]}>{global.user.points.total} point{global.user.points.total != 1 ? "s" : null}</Text>
           		</View>
             </View>
             <View style={styles.settingsSeparator} />

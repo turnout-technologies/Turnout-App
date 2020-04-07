@@ -277,14 +277,14 @@ class InviteScreen extends Component {
           feature: 'contactlist',
           channel: 'sms'
         }
-        const {url} = await this._branchUniversalObject.generateShortUrl(linkProperties, {});
+        var {url} = await this._branchUniversalObject.generateShortUrl(linkProperties, {});
       } else {
-        var url = "https://example.com"
+        var url = "https://example.com";
       }
       if (Platform.OS == "android" && this.selectedContacts.length > 1) {
         Alert.alert(
           "Sending Invites",
-          "Invites will be sent one at a time. After you press send on each message, return to the Turnout app and we'll queue up the next one!",
+          "Invites will be sent one at a time. After you press send on each message, press the back button return to the Turnout app and we'll queue up the next one!",
           [
             {text: "I promise I actually read this", onPress: () => (this.sendInvites(url))}
           ],
