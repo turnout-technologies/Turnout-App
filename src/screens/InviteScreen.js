@@ -1,5 +1,5 @@
 import React, {Component, PureComponent} from 'react';
-import { View, SafeAreaView, Text, StyleSheet, TouchableOpacity, SectionList, Image, TouchableHighlight, Alert, AppState, KeyboardAvoidingView} from 'react-native';
+import { View, SafeAreaView, Text, StyleSheet, TouchableOpacity, SectionList, Image, TouchableHighlight, Alert, AppState, KeyboardAvoidingView, Share, ActivityIndicator} from 'react-native';
 import Constants from 'expo-constants';
 import * as Contacts from 'expo-contacts';
 import PropTypes from 'prop-types';
@@ -8,7 +8,8 @@ import SearchBar from "react-native-dynamic-search-bar";
 import * as SMS from 'expo-sms';
 import { Linking } from 'expo';
 import * as IntentLauncher from 'expo-intent-launcher';
-import { Snackbar } from 'react-native-paper';
+import { MaterialDialog } from 'react-native-material-dialog';
+import { Ionicons } from '@expo/vector-icons';
 
 import {GlobalStyles} from '../Globals';
 
@@ -23,8 +24,10 @@ class InviteScreen extends Component {
       numContactsSelected: 0,
       contactPermissionGranted: true,
       appState: AppState.currentState,
-      snackbarVisible: false,
-      invitesSent: 0
+      invitesSent: 0,
+      preparingInviteDialogVisible: false,
+      invitesSentDialogVisible: false,
+      preparingInviteName: ""
     };
     this.selectedContacts = [];
 
@@ -80,16 +83,40 @@ class InviteScreen extends Component {
   }
 
   async onShareLinkPress() {
-    if (Constants.appOwnership !== 'standalone') {
-      alert("branch doesn't work in the dev environment :(");
-      return;
-    }
     const shareOptions = {
       messageHeader: 'testtitle',
       messageBody: `Checkout my new article!`,
     };
-    console.log(this._branchUniversalObject);
-    await this._branchUniversalObject.showShareSheet(shareOptions);
+    if (Platform.OS == "ios") {
+      if (Constants.appOwnership !== 'standalone') {
+        alert("branch doesn't work in the dev environment :(");
+        return;
+      }
+      //show branch sharesheet on ios
+      let linkProperties = {
+        feature: 'ios_sharesheet',
+      }
+      await this._branchUniversalObject.showShareSheet(shareOptions, linkProperties);
+    } else {
+      //branch sharesheet is ugly on android so use native sharesheet API instead
+      if (Constants.appOwnership !== 'standalone') {
+        var url = "https://example.com"
+      } else {
+        let linkProperties = {
+          feature: 'android_sharesheet',
+          channel: 'android_sharesheet'
+        }
+        var {url} = await this._branchUniversalObject.generateShortUrl(linkProperties, {});
+      }
+      try {
+        await Share.share({
+          title: "Join Turnout",
+          message: "Join Turnout using my link: " + url,
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    }
   };
 
 
@@ -163,7 +190,7 @@ class InviteScreen extends Component {
         let phoneNumber = this.getPhoneNumber(contact.phoneNumbers);
         let firstLetter = name.slice(0, 1).toUpperCase();
         let listItem = list.find((item) => item.title && item.title === firstLetter);
-        let newItem = {name, imageURL, phoneNumber, id: contact.id, checked: false};
+        let newItem = {firstName: contact.firstName, name, imageURL, phoneNumber, id: contact.id, checked: false};
         if (!listItem) {
           list.push({title: firstLetter, data: [newItem]});
         } else {
@@ -238,12 +265,24 @@ class InviteScreen extends Component {
     })
   }
 
+  sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
   async sendInvites(url) {
+    this.preparingInviteCancelled = false;
     //send the messages via SMS
     var invitesSent = 0;
     for (var i = 0; i < this.selectedContacts.length; i++) {
+      console.log(this.selectedContacts[i]);
+      this.setState({preparingInviteDialogVisible: true, preparingInviteName: this.selectedContacts[i].firstName});
       var smsResult = "";
       while (smsResult != "sent" && smsResult != "unknown" & smsResult != "skipped") {
+        await this.sleep(500);
+        this.setState({preparingInviteDialogVisible: false});
+        if (this.preparingInviteCancelled) {
+          return;
+        }
         const {result} = await SMS.sendSMSAsync(
           this.selectedContacts[i].phoneNumber,
           'Join Turnout using my link: ' + url
@@ -257,15 +296,16 @@ class InviteScreen extends Component {
         }
       }
     }
-    this.setState({invitesSent}, () => this.setState({snackbarVisible: true}));
-    //cleaer invites sent count after snackbar disappears
-    setTimeout(function(){this.setState({invitesSent: 0})}.bind(this), 6000)
+    this.setState({invitesSent, preparingInviteDialogVisible: false}, () => this.setState({invitesSentDialogVisible: true}));
+  }
+
+  clearContactsListAfterInvitesSent() {
     //clear list now that invites are sent
     for (let i = 0; i < this.selectedContacts.length; i++) {
       this[this.selectedContacts[i].id].setState({checked: false});
     }
     this.selectedContacts = [];
-    this.setState({contactsData: this.contactsDataFull, numContactsSelected: 0});
+    this.setState({contactsData: this.contactsDataFull, numContactsSelected: 0, invitesSent: 0});
   }
 
   async sendInvitesHandler() {
@@ -274,7 +314,7 @@ class InviteScreen extends Component {
       if (Constants.appOwnership == 'standalone') {
         //get branch link
         let linkProperties = {
-          feature: 'contactlist',
+          feature: 'contact_list',
           channel: 'sms'
         }
         var {url} = await this._branchUniversalObject.generateShortUrl(linkProperties, {});
@@ -296,6 +336,20 @@ class InviteScreen extends Component {
     } else {
       //sms not available on this device
       Alert.alert("SMS Unavailable", "SMS is unavailable on this device. Use the 'Share Link' button instead.")
+    }
+  }
+
+  cancelPreparingInvites() {
+    this.preparingInviteCancelled = true;
+    this.setState({ preparingInviteDialogVisible: false });
+    this.clearContactsListAfterInvitesSent();
+  }
+
+  onInvitesSentDialogButtonPressed(sharePressed) {
+    this.setState({ invitesSentDialogVisible: false });
+    this.clearContactsListAfterInvitesSent();
+    if (sharePressed) {
+      this.onShareLinkPress();
     }
   }
 
@@ -351,13 +405,36 @@ class InviteScreen extends Component {
                 }
               </KeyboardAvoidingView>
             }
-          <Snackbar
-            visible={this.state.snackbarVisible}
-            style={styles.snackbar}
-            duration={5000}
-            onDismiss={() => this.setState({ snackbarVisible: false })} >
-            {this.state.invitesSent} invite{this.state.invitesSent > 1 ? "s" : ""} sent!
-          </Snackbar>
+          <MaterialDialog
+            visible={this.state.preparingInviteDialogVisible}
+            onOk={() => this.cancelPreparingInvites()}
+            onCancel={() => false}
+            cancelLabel=""
+            okLabel="Cancel"
+            colorAccent={global.CURRENT_THEME.colors.primary}
+            backgroundColor={global.CURRENT_THEME.colors.backgroundColor}>
+            <ActivityIndicator size="large" color={global.CURRENT_THEME.colors.primary}/>
+            <Text style={styles.preparingInviteText}>Preparing {this.state.preparingInviteName}'s Invite...</Text>
+          </MaterialDialog>
+          <MaterialDialog
+            visible={this.state.invitesSentDialogVisible}
+            onOk={() => this.onInvitesSentDialogButtonPressed(true)}
+            onCancel={() => this.onInvitesSentDialogButtonPressed(false)}
+            okLabel="Share"
+            cancelLabel="Close"
+            colorAccent={global.CURRENT_THEME.colors.primary}
+            backgroundColor={global.CURRENT_THEME.colors.backgroundColor}>
+            <Ionicons
+              name="md-checkmark-circle-outline"
+              size={100}
+              style={{ alignSelf: "center" }}
+              color={global.CURRENT_THEME.colors.primary}
+            />
+            <Text style={[GlobalStyles.headerText, styles.invitesSentDialogTitle]}>Invites Sent</Text>
+            <Text style={[GlobalStyles.bodyText, styles.invitesSentDialogText]}>
+              {this.state.invitesSent} invite{this.state.invitesSent > 1 ? "s" : ""} sent! Share your link on social media to reach even more people.
+            </Text>
+          </MaterialDialog>
         </View>
 	    </View>
 		);
@@ -528,6 +605,24 @@ const styles = StyleSheet.create({
     borderRadius: 0,
     width: '100%',
     margin: 0,
+  },
+  preparingInviteText: {
+    marginTop: 10,
+    fontSize: 20,
+    textAlign: "center",
+    color: global.CURRENT_THEME.colors.text
+  },
+  invitesSentDialogText: {
+    marginTop: 10,
+    fontSize: 18,
+    textAlign: "left",
+    color: global.CURRENT_THEME.colors.text
+  },
+  invitesSentDialogTitle: {
+    marginTop: 10,
+    fontSize: 20,
+    textAlign: "left",
+    color: global.CURRENT_THEME.colors.text
   }
 });
 

@@ -118,7 +118,14 @@ class SignInScreen extends Component {
               .then(function(token) {
                 if (result.additionalUserInfo.isNewUser) {
                   console.log("NEW USER! Adding to DB...")
-                  API.addUser(result.additionalUserInfo.profile.given_name, result.additionalUserInfo.profile.family_name, result.user.email, result.user.photoURL, !!token ? token : "", _this.state.branchInfo.referringUserId)
+                  API.addUser({
+                    firstName: result.additionalUserInfo.profile.given_name,
+                    lastName: result.additionalUserInfo.profile.family_name,
+                    email: result.user.email,
+                    avatarURL: result.user.photoURL,
+                    pushToken: !!token ? token : "",
+                    referringUserId: (!!_this.state.branchInfo && !!_this.state.branchInfo.referringUserId) ? _this.state.branchInfo.referringUserId : ""
+                  })
                     .then(function(response) {
                       if (response.data) {
                         response.data.name = response.data.firstName + " " + response.data.lastName;
