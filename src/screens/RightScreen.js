@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View, Text, Image, Button, ScrollView, StyleSheet, TouchableHighlight, TouchableOpacity, Switch, StatusBar, DeviceEventEmitter } from 'react-native';
+import { View, Text, Image, Button, ScrollView, StyleSheet, TouchableHighlight, TouchableOpacity, Switch, DeviceEventEmitter } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Snackbar } from 'react-native-paper';
 
@@ -65,7 +65,6 @@ class RightScreen extends Component {
 	render() {
 		return (
 			<View style={GlobalStyles.backLayerContainer}>
-        <StatusBar barStyle="light-content"/>
 	        <ScrollView style={GlobalStyles.frontLayerContainer} showsVerticalScrollIndicator={false}>
         		<View style={styles.profileContainer}>
               <Image
@@ -75,7 +74,7 @@ class RightScreen extends Component {
               <View style={styles.profileInfoContainer}>
           			<Text style={[GlobalStyles.headerText, styles.nameText]}>{global.user.name}</Text>
           			<Text style={[GlobalStyles.bodyText, styles.emailText]}>{global.user.email}</Text>
-                <Text style={[GlobalStyles.titleText, styles.pointsText]}>{global.user.points} point{global.user.points != 1 ? "s" : null}</Text>
+                <Text style={[GlobalStyles.titleText, styles.pointsText]}>{global.user.points.total} point{global.user.points.total != 1 ? "s" : null}</Text>
           		</View>
             </View>
             <View style={styles.settingsSeparator} />
@@ -145,6 +144,10 @@ class RightScreen extends Component {
               <View style={styles.settingsItem}>
                 <Ionicons name="md-information-circle" size={25} color={global.CURRENT_THEME.colors.primary} style={styles.settingsItemIcon} />
                 <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>Voter Info Flow</Text>
+            <TouchableHighlight underlayColor={global.CURRENT_THEME.colors.text_opacity3} onPress={() => this.props.navigation.navigate('Invite')}>
+              <View style={styles.settingsItem}>
+                <Ionicons name="md-information-circle" size={25} color={global.CURRENT_THEME.colors.primary} style={styles.settingsItemIcon} />
+                <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>Invite</Text>
               </View>
             </TouchableHighlight>
 	        </ScrollView>

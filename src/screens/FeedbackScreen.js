@@ -7,9 +7,11 @@ import * as Permissions from 'expo-permissions';
 import { Linking } from 'expo';
 import * as firebase from 'firebase';
 import * as ImageManipulator from 'expo-image-manipulator';
+import * as Sentry from 'sentry-expo';
+import Constants from 'expo-constants';
+import axios from 'axios';
 
 import {GlobalStyles} from '../Globals';
-import * as API from '../APIClient';
 
 
 class FeedbackScreen extends Component {
@@ -21,15 +23,16 @@ class FeedbackScreen extends Component {
     };
     this.type = props.navigation.state.params.type;
     this.placeholderText = this.getPlaceholderText(this.type);
+    this.screenshotURL = "";
 
     this.removeScreenshot = this.removeScreenshot.bind(this);
-    this.submitFeedback = this.submitFeedback.bind(this);
+    this.submitHandler = this.submitHandler.bind(this);
   }
 
   componentDidMount() {
     this.props.navigation.setParams({
       headerRight: () => (
-        <TouchableOpacity style={{marginRight: 20}} onPress={this.submitFeedback}>
+        <TouchableOpacity style={{marginRight: 20}} onPress={this.submitHandler}>
           <Ionicons name="md-send" size={25} color={global.CURRENT_THEME.colors.accent} />
         </TouchableOpacity>
       )
@@ -69,38 +72,84 @@ class FeedbackScreen extends Component {
     }
   }
 
-  submitFeedback() {
-    var message = this.textField.value();
+  async postToSlackWebhook() {
+    var payload =
+      {
+        blocks: [
+          {
+            type: "section",
+            text: {
+              type: "mrkdwn",
+              text: "*User:* "+global.user.name+"\n*Email:* "+global.user.email+"\n*Type:* "+this.type+"\n*Message:* "+this.message
+            }
+          },
+          {
+            type: "actions",
+            elements: [
+              {
+                type: "button",
+                text: {
+                  type: "plain_text",
+                  emoji: true,
+                  text: "View In Sentry"
+                },
+                url: Constants.manifest.extra.sentryURLPrefix + this.eventId
+              }
+            ]
+          }
+        ]
+      }
+    if (!!this.screenshotURL) {
+      payload.blocks[1].elements.push({
+        type: "button",
+        text: {
+          type: "plain_text",
+          emoji: true,
+          text: "View Screenshot"
+        },
+        url: this.screenshotURL
+      });
+    }
+    try {
+      var response = await axios.post(Constants.manifest.extra.slackWebhookURL, payload);
+      console.log(response.data);
+    } catch (error) {
+      console.log(error.response);
+      Sentry.captureException(error);
+    }
+  }
 
-    if (!this.state.image && !message) {
+  submitFeedback() {
+    const { navigation } = this.props;
+    Sentry.withScope(function(scope) {
+      scope.setTag("type", this.type);
+      scope.setExtra("screenshotURL", this.screenshotURL);
+      this.eventId = Sentry.captureMessage(this.message);
+      this.postToSlackWebhook();
+      navigation.goBack();
+      navigation.state.params.onFeedbackSubmitted({ snackbarVisible: true });
+    }.bind(this));
+  }
+
+  submitHandler() {
+    this.message = this.textField.value();
+
+    if (!this.state.image && !this.message) {
       Alert.alert("", "Enter feedback and/or attach a screenshot before submitting.");
     } else {
-      var filename = "";
+      //check whether there is a screenshot to send
       if (this.state.image) {
-        console.log('yes screenshot');
         //set filename to uid_curTimestamp
         var filename = global.user.id + "_" + Math.round(new Date().getTime() / 1000) + ".png";
         //upload the screenshot
         this.uploadScreenshot(filename);
       } else {
-        console.log('no screenshot');
+        this.submitFeedback();
       }
-      const { navigation } = this.props;
-      API.sendFeedback(this.type, message, filename, global.user.id)
-      .then(function(response) {
-        navigation.goBack();
-        navigation.state.params.onFeedbackSubmitted({ snackbarVisible: true });
-      })
-      .catch(function (error) {
-        navigation.goBack();
-        navigation.state.params.onFeedbackSubmitted({ snackbarVisible: true });
-        console.log(error.response);
-      });
-      //this.props.navigation.goBack();
     }
   }
 
-  //uplaods screenshot to firebase storage and returns the filename
+  //uplaods screenshot to firebase storage
   uploadScreenshot = async (filename) => {
     if (!this.state.image) {
       //return if there is no screenshot
@@ -139,29 +188,15 @@ class FeedbackScreen extends Component {
           }
         }, function(error) {
           console.log(error);
-          // A full list of error codes is available at
-          // https://firebase.google.com/docs/storage/web/handle-errors
-          /*switch (error.code) {
-            case 'storage/unauthorized':
-              // User doesn't have permission to access the object
-              break;
-
-            case 'storage/canceled':
-              // User canceled the upload
-              break;
-
-            ...
-
-            case 'storage/unknown':
-              // Unknown error occurred, inspect error.serverResponse
-              break;
-          }*/
+          Alert.alert("Error", "Screenshot upload failed.");
         }, function() {
           // Upload completed successfully, now we can get the download URL
           uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
             console.log('File available at', downloadURL);
-          });
-      });
+            this.screenshotURL = downloadURL;
+            this.submitFeedback();
+          }.bind(this));
+      }.bind(this));
     } catch (error) {
       console.log(error);
     }

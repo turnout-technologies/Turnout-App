@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { ActivityIndicator, StatusBar, View, StyleSheet, Alert } from 'react-native';
+import { ActivityIndicator, View, StyleSheet, Alert } from 'react-native';
 import firebase from 'firebase';
 import * as Sentry from 'sentry-expo';
 import Constants from 'expo-constants';
@@ -19,7 +19,7 @@ class AuthLoadingScreen extends Component {
     setupNotificationChannels();
   }
 
-  advance() {
+  advancePastSignIn() {
     var _this = this;
     getLastNoteVersionOpened()
       .then(function(lastVersionOpened) {
@@ -45,9 +45,12 @@ class AuthLoadingScreen extends Component {
           var _this = this;
           getUser()
             .then(function(user) {
-              global.user   = JSON.parse(user);
+              if (!user) {
+                throw "Retrieved user was null";
+              }
+              global.user = JSON.parse(user);
               console.log(global.user);
-              _this.advance();
+              _this.advancePastSignIn();
             })
             .catch(function (error) {
               firebase.auth().signOut();

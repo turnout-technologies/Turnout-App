@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View, StyleSheet, Text, Button, Alert, ScrollView, TouchableOpacity, SafeAreaView, StatusBar, RefreshControl, AppState } from 'react-native';
+import { View, StyleSheet, Text, Button, Alert, ScrollView, TouchableOpacity, SafeAreaView, RefreshControl, AppState } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { SplashScreen, Linking } from 'expo';
 var moment = require('moment-timezone');
@@ -29,16 +29,23 @@ class MiddleScreen extends Component {
     SplashScreen.hide();
     AppState.addEventListener('change', this._handleAppStateChange);
     this.fetchLatestResults();
+    this.updateHeader();
+    this.maybeRefreshUser();
+  }
+
+
+
+  updateHeader() {
     this.props.navigation.setParams({
       header: () => (
         <SafeAreaView style={styles.customHeaderContainer} >
           <TouchableOpacity style={styles.headerPointsContainer} onPress={() => Alert.alert("Points", "This is the total number of points you have scored so far. They aren't good for anything besides bragging rights (yet 😅).")}>
             <MaterialCommunityIcons name="ticket" size={25} color={global.CURRENT_THEME.colors.accent} />
-            <Text style={[GlobalStyles.bodyText, styles.headerPointsText]}>{global.user.points}</Text>
+            <Text style={[GlobalStyles.bodyText, styles.headerPointsText]}>{global.user.points.total}</Text>
           </TouchableOpacity>
         </SafeAreaView>
       )
-    })
+    });
   }
 
   componentWillUnmount() {
@@ -88,9 +95,12 @@ class MiddleScreen extends Component {
       .then(function(lastRefreshUserTimestamp) {
         var shouldRefreshUser = !lastRefreshUserTimestamp || !moment.unix(lastRefreshUserTimestamp).tz("America/New_York").isSame(moment().tz("America/New_York"), 'day');
         if (shouldRefreshUser) {
-          refreshUser();
+          refreshUser()
+            .then(function() {
+              this.updateHeader();
+            }.bind(this));
         }
-      })
+      }.bind(this))
       .catch(function (error) {
         console.log(error);
       });
@@ -110,6 +120,7 @@ class MiddleScreen extends Component {
     this.setState({userRefreshing: true});
     refreshUser()
       .then(function(user) {
+        this.updateHeader();
         this.setState({userRefreshing: false});
       }.bind(this));
   }
@@ -126,7 +137,6 @@ class MiddleScreen extends Component {
   render() {
     return (
       <View style={GlobalStyles.backLayerContainer}>
-        <StatusBar barStyle="light-content"/>
         <ScrollView style={GlobalStyles.frontLayerContainer}
           refreshControl={
             <RefreshControl

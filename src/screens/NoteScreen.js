@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableHighlight, Image, TouchableOpacity, StatusBar} from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableHighlight, Image, TouchableOpacity} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Linking } from 'expo';
 import Constants from 'expo-constants';
@@ -28,7 +28,6 @@ class NoteScreen extends Component {
 	render() {
 		return (
 			<View style={GlobalStyles.backLayerContainer}>
-          <StatusBar barStyle="light-content"/>
 	        <ScrollView style={[GlobalStyles.frontLayerContainer, {marginTop: Platform.OS == "ios" ? 88: 80,}]}>
             <View style={styles.container}>
               <Image source={require('../../assets/images/logo_icon.png')} style={styles.logo} />

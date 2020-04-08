@@ -37,7 +37,7 @@ const _handleNotification = notification => {
 const _notificationSubscription = Notifications.addListener(_handleNotification);
 
 export default function App(props) {
-  if (!__DEV__) {
+  if (!__DEV__ && Constants.manifest.releaseChannel != "dev") {
     console.log = () => {};
   } else {
     console.log("DEV Mode")
@@ -58,7 +58,7 @@ export default function App(props) {
     return (
         <PaperProvider theme={global.CURRENT_THEME}>
           <View style={styles.container}>
-            {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
+            <StatusBar barStyle="light-content" backgroundColor="#00000080" translucent={true} />
             <AppNavigator />
           </View>
         </PaperProvider>
