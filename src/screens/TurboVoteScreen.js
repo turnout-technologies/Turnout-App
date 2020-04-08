@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { WebView } from 'react-native-webview';
+import * as WebBrowser from 'expo-web-browser';
 
 import {GlobalStyles} from '../Globals';
 
@@ -42,9 +43,19 @@ class TurboVoteScreen extends Component {
       //DATA
       var firstName = 'first'; //${this.nameSplit[0]}
       var lastName = 'last'; //${this.nameSplit[1]}
-      var mobileNumber = '555-555-5555';
-      var registrationStatus = 'yes' //yes or no. String in case we want to add 'cantvote'
+      var mobileNumber = '';
       var email = 'test@test.com'; //${global.user.email}
+      /*var street = '';
+      var street2 = '';
+      var city = '';
+      var state = '';
+      var zip = '';
+      var party = '';
+      var dobMonth = '';
+      var dobDay = '';
+      var dobYear = '';*/
+
+      var registrationStatus = 'yes' //yes or no. String in case we want to add 'cantvote'
       var street = '100 test';
       var street2 = 'apt. 100';
       var city = 'testcity';
@@ -53,6 +64,9 @@ class TurboVoteScreen extends Component {
       var hasMoved = false;
       var party = 'democratic';
       var isAbsentee = true;
+      var dobMonth = '04';
+      var dobDay = '01';
+      var dobYear = '1980';
 
       //UTIL FUNCTIONS
 
@@ -146,7 +160,7 @@ class TurboVoteScreen extends Component {
         }
       }
 
-      function getWhereAreYouRegisteredElements() {
+      function getAddressElements() {
         return {
           streetInput: document.getElementById('street'),
           street2Input: document.getElementById('street-2'),
@@ -173,6 +187,15 @@ class TurboVoteScreen extends Component {
         return {
           bymailButtonArr: document.getElementsByClassName('by-mail-button'),
           inpersonButtonArr: document.getElementsByClassName('in-person-button')
+        }
+      }
+
+      function getDobElements() {
+        let dobDivChildrenArr = document.getElementsByClassName('input-row date-row')[0].children;
+        return {
+          dobMonthInput: dobDivChildrenArr[0],
+          dobDayInput: dobDivChildrenArr[2],
+          dobYearInput: dobDivChildrenArr[4]
         }
       }
 
@@ -208,6 +231,7 @@ class TurboVoteScreen extends Component {
           case '/communication-pref':
             pollWithRetry(getCommunicationPrefElements).then(function(elementsObject){
               const {mobileNumberInput, emailInput, smsCheckbox, emailCheckbox} = elementsObject;
+              mobileNumberInput.setAttribute("inputmode", "tel");
               if (mobileNumber) {
                 smsCheckbox.click();
                 changeValue(mobileNumberInput, mobileNumber);
@@ -247,9 +271,12 @@ class TurboVoteScreen extends Component {
             }
             break;
 
+          case '/where-do-you-want-to-register':
           case '/where-are-you-registered':
-            pollWithRetry(getWhereAreYouRegisteredElements).then(function(elementsObject){
+          case '/mailing-address':
+            pollWithRetry(getAddressElements).then(function(elementsObject){
               const {streetInput, street2Input, cityInput, stateSelect, zipInput} = elementsObject;
+              zipInput.setAttribute("inputmode", "numeric");
               changeValue(streetInput, street);
               changeValue(street2Input, street2);
               changeValue(cityInput, city);
@@ -297,9 +324,31 @@ class TurboVoteScreen extends Component {
                 const {bymailButtonArr, inpersonButtonArr} = elementsObject;
                 //alert(bymailButtonArr.length);
                 var button = isAbsentee ? bymailButtonArr[0] : inpersonButtonArr[0];
-                button.click()
+                button.click();
               });
             }
+            break;
+
+          case '/dob':
+            pollWithRetry(getDobElements).then(function(elementsObject){
+                const {dobMonthInput, dobDayInput, dobYearInput} = elementsObject;
+                changeValue(dobMonthInput, dobMonth);
+                changeValue(dobDayInput, dobDay);
+                changeValue(dobYearInput, dobYear);
+                //changeValue(lastnameInput, lastName);
+                if (AUTO_ADVANCE) {
+                  setTimeout(function(){
+                    pollWithRetry(getContinueButton).then(function(elementsObject){
+                      const {continueButton} = elementsObject;
+                      continueButton.click();
+                    });
+                  }, DELAY_MS);
+                }
+              });
+            break;
+
+          case '/done':
+            window.ReactNativeWebView.postMessage('FINISHED');
             break;
         }
       }
@@ -356,12 +405,23 @@ class TurboVoteScreen extends Component {
 			<View style={GlobalStyles.backLayerContainer}>
 	        <View style={[GlobalStyles.frontLayerContainer, {overflow: 'hidden'}]}>
             <WebView
+              ref={ (ref) => { this.webview = ref; } }
               style={{ flex: 1, marginTop: -10 }}
               showsVerticalScrollIndicator={false}
               source={{ uri: 'https://turbovote.org/' }}
               injectedJavaScript={this.INJECTED_JS}
+              useWebKit={true}
               onMessage={event => {
                 console.log(event.nativeEvent.data)
+              }}
+              onShouldStartLoadWithRequest={request => {
+                let url = request.url;
+                if (!url.includes('turbovote.org')) {
+                  WebBrowser.openBrowserAsync(url);
+                  return false
+                } else {
+                  return true
+                }
               }}
             />
           </View>
