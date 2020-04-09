@@ -67,17 +67,7 @@ class SignInScreen extends Component {
   }
 
   async advance() {
-    try {
-      var lastVersionOpened = await getLastNoteVersionOpened();
-      if (!lastVersionOpened || lastVersionOpened != Constants.manifest.extra.noteVersion) {
-        this.props.navigation.navigate('Note');
-      } else {
-        this.props.navigation.navigate('Main');
-      }
-    } catch (error) {
-      console.log(error);
-      this.props.navigation.navigate('Main');
-    }
+    this.props.navigation.navigate('Main');
   }
 
   isUserEqual(googleUser, firebaseUser) {
