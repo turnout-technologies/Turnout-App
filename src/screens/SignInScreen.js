@@ -30,6 +30,8 @@ class SignInScreen extends Component {
     this.state = {user: null, branchInfo: null, bottomContainerOpen: false};
 
     this.bottomContainerHeightAnimationVal = new Animated.Value(0);
+
+    this.signInAsyncWeb = this.signInAsyncWeb.bind(this);
   }
 
   componentDidMount() {
@@ -64,23 +66,21 @@ class SignInScreen extends Component {
     this.toggleBottomContainer(true, true);
   }
 
-  advance() {
-    var _this = this;
-    getLastNoteVersionOpened()
-      .then(function(lastVersionOpened) {
-        if (!lastVersionOpened || lastVersionOpened != Constants.manifest.extra.noteVersion) {
-          _this.props.navigation.navigate('Note');
-        } else {
-          _this.props.navigation.navigate('Main');
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-        _this.props.navigation.navigate('Main');
-      });
+  async advance() {
+    try {
+      var lastVersionOpened = await getLastNoteVersionOpened();
+      if (!lastVersionOpened || lastVersionOpened != Constants.manifest.extra.noteVersion) {
+        this.props.navigation.navigate('Note');
+      } else {
+        this.props.navigation.navigate('Main');
+      }
+    } catch (error) {
+      console.log(error);
+      this.props.navigation.navigate('Main');
+    }
   }
 
-  isUserEqual = (googleUser, firebaseUser) => {
+  isUserEqual(googleUser, firebaseUser) {
     if (firebaseUser) {
       var providerData = firebaseUser.providerData;
       for (var i = 0; i < providerData.length; i++) {
@@ -94,75 +94,48 @@ class SignInScreen extends Component {
     return false;
   }
 
-  onSignIn = googleUser => {
+  async onSignIn(googleUser) {
     //console.log('Google Auth Response', googleUser);
     // We need to register an Observer on Firebase Auth to make sure auth is initialized.
-    var unsubscribe = firebase.auth().onAuthStateChanged(
-      function(firebaseUser) {
-        unsubscribe();
-        // Check if we are already signed-in Firebase with the correct user.
-        if (!this.isUserEqual(googleUser, firebaseUser)) {
-          // Build Firebase credential with the Google ID token.
-          var credential = firebase.auth.GoogleAuthProvider.credential(
-            googleUser.idToken,
-            googleUser.accessToken
-          );
-          // Sign in with credential from the Google user.
-          var _this = this;
-          firebase
-            .auth()
-            .signInWithCredential(credential)
-            .then(function(result) {
-              console.log('user signed in');
-              getPushNotificationsTokenAsync()
-              .then(function(token) {
-                if (result.additionalUserInfo.isNewUser) {
-                  console.log("NEW USER! Adding to DB...")
-                  API.addUser({
-                    firstName: result.additionalUserInfo.profile.given_name,
-                    lastName: result.additionalUserInfo.profile.family_name,
-                    email: result.user.email,
-                    avatarURL: result.user.photoURL,
-                    pushToken: !!token ? token : "",
-                    referringUserId: (!!_this.state.branchInfo && !!_this.state.branchInfo.referringUserId) ? _this.state.branchInfo.referringUserId : ""
-                  })
-                    .then(function(response) {
-                      if (response.data) {
-                        response.data.name = response.data.firstName + " " + response.data.lastName;
-                        global.user = response.data;
-                        console.log(global.user);
-                        setUser();
-                        setLastRefreshUserTimestamp(moment().unix());
-                        _this.advance();
-                      }
-                    })
-                    .catch(function (error) {
-                      console.log(error);
-                      firebase.auth().signOut();
-                      alert("Error signing in. Please try again")
-                    });
-                } else {
-                  refreshUser()
-                    .then(function() {
-                      _this.advance();
-                    }.bind(this));
-                }
-              })
-              .catch(function (error) {
-                console.log(error);
-              });
-            })
-            .catch(function(error) {
-              console.log(error);
-            });
+    var unsubscribe = firebase.auth().onAuthStateChanged(async firebaseUser => {
+      unsubscribe();
+      // Check if we are already signed-in Firebase with the correct user.
+      if (!this.isUserEqual(googleUser, firebaseUser)) {
+        // Build Firebase credential with the Google ID token.
+        var credential = firebase.auth.GoogleAuthProvider.credential(googleUser.idToken, googleUser.accessToken);
+        // Sign in with credential from the Google user.
+        var firebaseResult = await firebase.auth().signInWithCredential(credential);
+        console.log('signed to firebase');
+        var pushToken = await getPushNotificationsTokenAsync();
+        if (firebaseResult.additionalUserInfo.isNewUser) {
+          console.log("NEW USER! Adding to DB...")
+          var addUserResponse = await API.addUser({
+            firstName: firebaseResult.additionalUserInfo.profile.given_name,
+            lastName: firebaseResult.additionalUserInfo.profile.family_name,
+            email: firebaseResult.user.email,
+            avatarURL: firebaseResult.user.photoURL,
+            pushToken: !!pushToken ? pushToken : "",
+            referringUserId: (!!this.state.branchInfo && !!this.state.branchInfo.referringUserId) ? this.state.branchInfo.referringUserId : ""
+          });
+          if (addUserResponse.data) {
+            addUserResponse.data.name = addUserResponse.data.firstName + " " + addUserResponse.data.lastName;
+            global.user = addUserResponse.data;
+            console.log(global.user);
+            setUser();
+            setLastRefreshUserTimestamp(moment().unix());
+            this.advance();
+          }
         } else {
-          console.log('User already signed-in Firebase.');
+          await refreshUser();
+          this.advance();
         }
-      }.bind(this)
-    );
-  };
+      } else {
+        console.log('User already signed-in Firebase.');
+      }
+    });
+  }
 
-  signInAsyncWeb = async () => {
+  async signInAsyncWeb() {
     try {
       const result = await Google.logInAsync(Constants.manifest.extra.googleLogInConfig);
 
@@ -171,15 +144,11 @@ class SignInScreen extends Component {
         this.onSignIn(result);
         return result.accessToken;
       } else {
-        return null;
+        Sentry.captureException(new Error(result));
       }
     } catch ({ message }) {
       alert('login: Error:' + message);
     }
-  };
-
-  onPress = () => {
-    this.signInAsyncWeb();
   };
 
   toggleBottomContainer(open, clickedBranchLink) {
@@ -249,7 +218,7 @@ class SignInScreen extends Component {
             </View>
           }
           <View style={styles.signInButtonContainer}>
-            <TouchableOpacity style={[styles.signInButton, {height: this.bottomContainerHeightAnimationVal == 0 ? 0 : 55}]} onPress={this.onPress}>
+            <TouchableOpacity style={[styles.signInButton, {height: this.bottomContainerHeightAnimationVal == 0 ? 0 : 55}]} onPress={this.signInAsyncWeb}>
               <Image source={require('../../assets/images/google_logo.png')} style={styles.signInButtonLogo} />
               <Text style={[GlobalStyles.bodyText, styles.signInButtonText]}>Sign in with Google</Text>
             </TouchableOpacity>
