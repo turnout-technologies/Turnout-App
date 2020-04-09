@@ -45,7 +45,7 @@ class TurboVoteScreen extends Component {
       var lastName = 'last'; //${this.nameSplit[1]}
       var mobileNumber = '';
       var email = 'test@test.com'; //${global.user.email}
-      /*var street = '';
+      var street = '';
       var street2 = '';
       var city = '';
       var state = '';
@@ -53,9 +53,9 @@ class TurboVoteScreen extends Component {
       var party = '';
       var dobMonth = '';
       var dobDay = '';
-      var dobYear = '';*/
+      var dobYear = '';
 
-      var registrationStatus = 'yes' //yes or no. String in case we want to add 'cantvote'
+      /*var registrationStatus = 'yes' //yes or no. String in case we want to add 'cantvote'
       var street = '100 test';
       var street2 = 'apt. 100';
       var city = 'testcity';
@@ -66,7 +66,7 @@ class TurboVoteScreen extends Component {
       var isAbsentee = true;
       var dobMonth = '04';
       var dobDay = '01';
-      var dobYear = '1980';
+      var dobYear = '1980';*/
 
       //UTIL FUNCTIONS
 
@@ -409,8 +409,9 @@ class TurboVoteScreen extends Component {
               style={{ flex: 1, marginTop: -10 }}
               showsVerticalScrollIndicator={false}
               source={{ uri: 'https://turbovote.org/' }}
-              injectedJavaScript={this.INJECTED_JS}
               useWebKit={true}
+              scalesPageToFit={false}
+              injectedJavaScript={this.INJECTED_JS}
               onMessage={event => {
                 console.log(event.nativeEvent.data)
               }}
