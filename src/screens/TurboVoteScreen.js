@@ -1,40 +1,35 @@
 import React, {Component} from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { WebView } from 'react-native-webview';
 import * as WebBrowser from 'expo-web-browser';
+import Constants from 'expo-constants';
 
 import {GlobalStyles} from '../Globals';
 
-//const INJECTED_JS = 'const meta = document.createElement(\'meta\'); meta.setAttribute(\'content\', \'initial-scale=1, maximum-scale=0.8, user-scalable=0\'); meta.setAttribute(\'name\', \'viewport\'); document.getElementsByTagName(\'head\')[0].appendChild(meta); '
+//only use the referral parameter in standalone so we don't spam it during development
+const turboVoteURL = "https://turbovote.org/" + ((Constants.appOwnership === 'standalone') ? "?r=TurnoutApp" : "");
 
 class TurboVoteScreen extends Component {
 
 	constructor(props) {
     super(props);
-
-    this.nameSplit = global.user.name.split(" ");
+    this.state = {doneReached: false};
+    this.doneButtonHandler = this.doneButtonHandler.bind(this);
 
     this.setInjectedJS();
   }
 
+  static navigationOptions = ({navigation}) => {
+    return {
+      title: 'TurboVote',
+      headerStyle: GlobalStyles.headerStyle,
+      headerTintColor: global.CURRENT_THEME.colors.accent,
+    };
+  }
+
   setInjectedJS() {
-    /*cont INJECTED_JS = `
-      (function() {
-        function wrap(fn) {
-          return function wrapper() {
-            var res = fn.apply(this, arguments);
-            window.ReactNativeWebView.postMessage(window.location.href);
-            return res;
-          }
-        }
-        history.pushState = wrap(history.pushState);
-        history.replaceState = wrap(history.replaceState);
-        window.addEventListener('popstate', function() {
-          window.ReactNativeWebView.postMessage(window.location.href);
-        });
-      })();
-      true;
-    `;*/
+    this.nameSplit = global.user.name.split(" ");
+
     this.INJECTED_JS = `
       //CONSTANTS
       var DELAY_MS = 200; //200 seems to work well
@@ -96,7 +91,6 @@ class TurboVoteScreen extends Component {
         });
       }
 
-      // For React <=15.5
       const changeValue = (element, value) => {
         const event = new Event('input', { bubbles: true });
         element.value = value;
@@ -107,11 +101,6 @@ class TurboVoteScreen extends Component {
         element.value = value;
         element.dispatchEvent(event);
       }
-      // For React 16 and React >=15.6
-      /*const changeValueV2 = (element, value) => {
-        var setValue = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set;
-        setValue.call(element, value);
-      }*/
 
       (function() {
         function wrap(fn) {
@@ -348,7 +337,6 @@ class TurboVoteScreen extends Component {
             break;
 
           case '/done':
-            window.ReactNativeWebView.postMessage('FINISHED');
             break;
         }
       }
@@ -359,79 +347,78 @@ class TurboVoteScreen extends Component {
     `
   }
 
-  static navigationOptions = ({navigation}) => {
-    return {
-        title: 'TurboVote',
-        headerStyle: GlobalStyles.headerStyle,
-        headerTintColor: global.CURRENT_THEME.colors.accent,
-      };
-  }
-
   handleWebViewNavigationStateChange(newNavState) {
     console.log(newNavState);
-    // newNavState looks something like this:
-    // {
-    //   url?: string;
-    //   title?: string;
-    //   loading?: boolean;
-    //   canGoBack?: boolean;
-    //   canGoForward?: boolean;
-    // }
-    /*const { url } = newNavState;
-    if (!url) return;
+  }
 
-    // one way to handle a successful form submit is via query strings
-    if (url.includes('?message=success')) {
-      this.webview.stopLoading();
-      // maybe close this view?
-    }
-
-    // one way to handle errors is via query string
-    if (url.includes('?errors=true')) {
-      this.webview.stopLoading();
-    }
-
-    // redirect somewhere else
-    if (url.includes('google.com')) {
-      const newURL = 'https://logrocket.com/';
-      const redirectTo = 'window.location = "' + newURL + '"';
-      this.webview.injectJavaScript(redirectTo);
-    }
-  };*/
-}
+  doneButtonHandler() {
+    Alert.alert(
+      "TuroVote Signup Complete!",
+      "Did you read the info on this last page so you know what comes next? There's some important stuff here.",
+      [
+        {text: "Oops, I'll go read that real quick", style: "cancel"},
+        {text: "I read it and know what to do", onPress: () => this.props.navigation.navigate('Main')}
+      ],
+      { cancelable: false }
+    );
+  }
 
 	render() {
 		return (
 			<View style={GlobalStyles.backLayerContainer}>
-	        <View style={[GlobalStyles.frontLayerContainer, {overflow: 'hidden'}]}>
-            <WebView
-              ref={ (ref) => { this.webview = ref; } }
-              style={{ flex: 1, marginTop: -10 }}
-              showsVerticalScrollIndicator={false}
-              source={{ uri: 'https://turbovote.org/' }}
-              useWebKit={true}
-              scalesPageToFit={false}
-              injectedJavaScript={this.INJECTED_JS}
-              onMessage={event => {
-                console.log(event.nativeEvent.data)
-              }}
-              onShouldStartLoadWithRequest={request => {
-                let url = request.url;
-                if (!url.includes('turbovote.org')) {
-                  WebBrowser.openBrowserAsync(url);
-                  return false
-                } else {
-                  return true
-                }
-              }}
-            />
-          </View>
+        <View style={[GlobalStyles.frontLayerContainer, {overflow: 'hidden'}]}>
+          <WebView
+            ref={ (ref) => { this.webview = ref; } }
+            style={{ flex: 1, marginTop: -10 }}
+            showsVerticalScrollIndicator={false}
+            source={{ uri: turboVoteURL }}
+            useWebKit={true}
+            scalesPageToFit={false}
+            injectedJavaScript={this.INJECTED_JS}
+            onMessage={event => {
+              console.log(event.nativeEvent.data);
+              if (event.nativeEvent.data.includes("turbovote.org/done")) {
+                this.setState({doneReached: true});
+              }
+            }}
+            onShouldStartLoadWithRequest={request => {
+              let url = request.url;
+              if (!url.includes('turbovote.org')) {
+                //open external sites like state.gov online registration in a separate window)
+                WebBrowser.openBrowserAsync(url);
+                return false
+              } else {
+                return true
+              }
+            }}
+          />
+          {this.state.doneReached &&
+            <TouchableOpacity style={styles.doneButton} onPress={this.doneButtonHandler}>
+              <Text style={[GlobalStyles.bodyText,styles.doneButtonText]}>Finished ✔</Text>
+            </TouchableOpacity>
+          }
+        </View>
 	    </View>
 		);
 	}
 }
 
 const styles = StyleSheet.create({
+  doneButton: {
+    position: "absolute",
+    bottom: 10,
+    alignSelf: 'center',
+    minWidth: 325,
+    padding: 15,
+    justifyContent: "center",
+    backgroundColor: "#21e870",
+    borderRadius: global.CURRENT_THEME.roundness
+  },
+  doneButtonText: {
+    color: global.CURRENT_THEME.colors.accent,
+    textAlign: "center",
+    fontSize: 25
+  }
 });
 
 module.exports= TurboVoteScreen
