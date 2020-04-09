@@ -22,7 +22,7 @@ class NoteScreen extends Component {
 
   doneButtonHandler() {
     setLastNoteVersionOpened(Constants.manifest.extra.noteVersion);
-    this.props.navigation.navigate('Main');
+    this.props.navigation.navigate('AuthLoading');
   }
 
 	render() {
@@ -32,7 +32,7 @@ class NoteScreen extends Component {
             <View style={styles.container}>
               <Image source={require('../../assets/images/logo_icon.png')} style={styles.logo} />
               <View style={[styles.messageContainer, {alignItems:"flex-start"}]}>
-                <Text style={[GlobalStyles.headerText, styles.messageText]}>Hey {global.user.name.split(" ")[0]},</Text>
+                <Text style={[GlobalStyles.headerText, styles.messageText]}>Hey!</Text>
                 <Text style={[GlobalStyles.bodyText, {fontSize: 16}]}>
                   Welcome to the Turnout closed alpha and thank you for helping out! In case you're one of those people that doesn't read, here's the short version (but you really should read. It's a good message): {"\n"}
                 </Text>

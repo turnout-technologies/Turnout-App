@@ -19,67 +19,52 @@ class AuthLoadingScreen extends Component {
     setupNotificationChannels();
   }
 
-  advancePastSignIn() {
-    var _this = this;
-    getLastNoteVersionOpened()
-      .then(function(lastVersionOpened) {
-        if (!lastVersionOpened || lastVersionOpened != Constants.manifest.extra.noteVersion) {
-          _this.props.navigation.navigate('Note');
-        } else {
-          _this.props.navigation.navigate('Main');
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-        _this.props.navigation.navigate('Main');
-      });
+  async checkForNewNote() {
+    try {
+      var lastVersionOpened = await getLastNoteVersionOpened();
+      return !lastVersionOpened || lastVersionOpened != Constants.manifest.extra.noteVersion;
+    } catch (error) {
+      return false;
+    }
   }
 
   alreadySignedIn = true;
 
-  checkIfLoggedIn = () => {
-    firebase.auth().onAuthStateChanged(
-      function(user) {
-        if (!!user && this.alreadySignedIn) {
-          Sentry.setUser({"id": user.uid, "email": user.email});
-          var _this = this;
-          getUser()
-            .then(function(user) {
-              if (!user) {
-                throw "Retrieved user was null";
-              }
-              global.user = JSON.parse(user);
-              console.log(global.user);
-              _this.advancePastSignIn();
-            })
-            .catch(function (error) {
-              firebase.auth().signOut();
-              Alert.alert("Error", "There was a problem reading your user info. Please sign in again.");
-              console.log(error);
-            });
-        } else {
-          this.alreadySignedIn = false;
-          this.props.navigation.navigate('Auth');
+  async checkIfLoggedIn() {
+    if (await this.checkForNewNote()) {
+      this.props.navigation.navigate('Note');
+      return;
+    }
+
+    firebase.auth().onAuthStateChanged(async firebaseUser => {
+      if (!!firebaseUser && this.alreadySignedIn) {
+        Sentry.setUser({"id": firebaseUser.uid, "email": firebaseUser.email});
+        try {
+          var user = await getUser();
+          if (!user) {
+            throw "Retrieved user was null";
+          }
+          global.user = JSON.parse(user);
+          console.log(global.user);
+          this.props.navigation.navigate('Main');
+        } catch (error) {
+          firebase.auth().signOut();
+          Alert.alert("Error", "There was a problem reading your user info. Please sign in again.");
+          console.log(error);
         }
-      }.bind(this)
-    );
-  };
+      } else {
+        this.alreadySignedIn = false;
+        this.props.navigation.navigate('Auth');
+      }
+    });
+  }
 
   // Render any loading content that you like here
   render() {
     return (
-      <View style={styles.loadingSpinnerContainer}>
-        <ActivityIndicator size={60} color={global.CURRENT_THEME.colors.primary} />
-      </View>
+      <View/>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  loadingSpinnerContainer: {
-    flex: 1,
-    justifyContent: "center"
-  }
-});
 
 module.exports= AuthLoadingScreen
