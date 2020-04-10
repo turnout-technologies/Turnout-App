@@ -75,12 +75,18 @@ class LeftScreen extends Component {
     return 0;
   }
 
+  getFullName(leaderBoardElement) {
+    return leaderBoardElement.firstName + " " + leaderBoardElement.lastName;
+  }
+
   processLeaderboardData(leaderboardData) {
+    leaderboardData.leaderboard[0].name = this.getFullName(leaderboardData.leaderboard[0]);
     leaderboardData.leaderboard[0].position = 1;
     var prevPoints = -1;
     var curPosition = 1;
     for (var i = 1; i < leaderboardData.leaderboard.length; i++) {
-      if (leaderboardData.leaderboard[i].points == leaderboardData.leaderboard[i-1].points) {
+      leaderboardData.leaderboard[i].name = this.getFullName(leaderboardData.leaderboard[i]);
+      if (leaderboardData.leaderboard[i].points.total == leaderboardData.leaderboard[i-1].points.total) {
         leaderboardData.leaderboard[i].position = curPosition;
       } else {
         leaderboardData.leaderboard[i].position = i+1;
@@ -167,7 +173,7 @@ class LeftScreen extends Component {
                         {/*<Text style={[GlobalStyles.bodyText, styles.listItemSubtitle]}>{item.schoolName}</Text>*/}
                       </View>
                     </View>
-                    <Text style={[GlobalStyles.bodyText, styles.listItemTitle, {textAlign: 'right'}]}>{item.points}</Text>
+                    <Text style={[GlobalStyles.bodyText, styles.listItemTitle, {textAlign: 'right'}]}>{item.points.total}</Text>
                   </View>
                 )}
                 keyExtractor={(item, index) => index.toString()}

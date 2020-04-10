@@ -48,7 +48,7 @@ export default class Podium extends Component {
               />
             </View>
             <Text style={[GlobalStyles.titleText, styles.secondPlaceText]}>{leaders[1].name}</Text>
-            <Text style={[GlobalStyles.bodyText, styles.secondPlaceText]}>{leaders[1].points}</Text>
+            <Text style={[GlobalStyles.bodyText, styles.secondPlaceText]}>{leaders[1].points.total}</Text>
           </View>
         }
         { podiumSize >= 1 &&
@@ -64,7 +64,7 @@ export default class Podium extends Component {
               />
             </View>
             <Text style={[GlobalStyles.titleText, styles.firstPlaceText]}>{leaders[0].name}</Text>
-            <Text style={[GlobalStyles.bodyText, styles.firstPlaceText]}>{leaders[0].points}</Text>
+            <Text style={[GlobalStyles.bodyText, styles.firstPlaceText]}>{leaders[0].points.total}</Text>
           </View>
         }
         { podiumSize >= 3 &&
@@ -80,7 +80,7 @@ export default class Podium extends Component {
               />
             </View>
             <Text style={[GlobalStyles.titleText, styles.thirdPlaceText]}>{leaders[2].name}</Text>
-            <Text style={[GlobalStyles.bodyText, styles.thirdPlaceText]}>{leaders[2].points}</Text>
+            <Text style={[GlobalStyles.bodyText, styles.thirdPlaceText]}>{leaders[2].points.total}</Text>
           </View>
         }
       </View>
