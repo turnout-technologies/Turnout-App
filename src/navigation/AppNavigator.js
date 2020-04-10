@@ -5,6 +5,7 @@ import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import AuthLoadingScreen from '../screens/AuthLoadingScreen';
 import NoteScreen from '../screens/NoteScreen';
 import AuthStackNavigator from './AuthStackNavigator';
+import VoterInfoStackNavigator from './VoterInfoStackNavigator';
 import MainTabNavigator from './MainTabNavigator';
 
 export default createAppContainer(
@@ -14,6 +15,7 @@ export default createAppContainer(
     AuthLoading: AuthLoadingScreen,
     Note: NoteScreen,
     Auth: AuthStackNavigator,
+    VoterInfo: VoterInfoStackNavigator,
     Main: MainTabNavigator,
   })
 );

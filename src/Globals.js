@@ -21,12 +21,15 @@ global.IOS = Platform.OS === 'ios';
 
 };*/
 
+global.LOGO_BLUE = "#0CBAE3";
+global.LOGO_RED = "#EE3738";
+
 //THEMES
 const MainTheme = {
 	...DefaultTheme,
   	colors: {
     	...DefaultTheme.colors,
-    	primary: "#0CBAE3",
+    	primary: global.LOGO_BLUE,
         primary_75: "#86e4f9",
     	accent: "#FFFFFF",
     	background: "#FFFFFF",

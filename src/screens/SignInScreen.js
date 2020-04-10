@@ -66,10 +66,6 @@ class SignInScreen extends Component {
     this.toggleBottomContainer(true, true);
   }
 
-  async advance() {
-    this.props.navigation.navigate('Main');
-  }
-
   isUserEqual(googleUser, firebaseUser) {
     if (firebaseUser) {
       var providerData = firebaseUser.providerData;
@@ -113,11 +109,11 @@ class SignInScreen extends Component {
             console.log(global.user);
             setUser();
             setLastRefreshUserTimestamp(moment().unix());
-            this.advance();
+            this.props.navigation.navigate('TurboVote');
           }
         } else {
           await refreshUser();
-          this.advance();
+          this.props.navigation.navigate('Main');
         }
       } else {
         console.log('User already signed-in Firebase.');
