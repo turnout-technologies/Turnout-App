@@ -9,10 +9,17 @@ const FIRST_PLACE_SIZE=110;
 const SECOND_PLACE_SIZE=100;
 const THIRD_PLACE_SIZE=95;
 
+const FRIENDS_LABEL="Friends";
+const SCHOOL_LABEL="School";
+const ALL_LABEL="All";
+const CURRENTDROP_LABEL="Current Drop";
+const ALLTIME_LABEL="All Time";
+
 export default class Podium extends Component {
 
   static propTypes = {
-    leaders: PropTypes.array
+    leaders: PropTypes.array,
+    timeFilterSelected: PropTypes.string
   }
 
   getCircleBackgroundColor(position) {
@@ -28,6 +35,14 @@ export default class Podium extends Component {
 
   formatAvatarURL(avatarURL, imageSize) {
     return avatarURL.replace("=s96", "=s"+imageSize).replace("/thumb", "");
+  }
+
+  getPoints(user) {
+    if (this.props.timeFilterSelected == CURRENTDROP_LABEL) {
+      return user.points.live;
+    } else {
+      return user.points.total;
+    }
   }
 
   render() {
@@ -48,7 +63,7 @@ export default class Podium extends Component {
               />
             </View>
             <Text style={[GlobalStyles.titleText, styles.secondPlaceText]}>{leaders[1].name}</Text>
-            <Text style={[GlobalStyles.bodyText, styles.secondPlaceText]}>{leaders[1].points.total}</Text>
+            <Text style={[GlobalStyles.bodyText, styles.secondPlaceText]}>{this.getPoints(leaders[1])}</Text>
           </View>
         }
         { podiumSize >= 1 &&
@@ -64,7 +79,7 @@ export default class Podium extends Component {
               />
             </View>
             <Text style={[GlobalStyles.titleText, styles.firstPlaceText]}>{leaders[0].name}</Text>
-            <Text style={[GlobalStyles.bodyText, styles.firstPlaceText]}>{leaders[0].points.total}</Text>
+            <Text style={[GlobalStyles.bodyText, styles.firstPlaceText]}>{this.getPoints(leaders[0])}</Text>
           </View>
         }
         { podiumSize >= 3 &&
@@ -80,7 +95,7 @@ export default class Podium extends Component {
               />
             </View>
             <Text style={[GlobalStyles.titleText, styles.thirdPlaceText]}>{leaders[2].name}</Text>
-            <Text style={[GlobalStyles.bodyText, styles.thirdPlaceText]}>{leaders[2].points.total}</Text>
+            <Text style={[GlobalStyles.bodyText, styles.thirdPlaceText]}>{this.getPoints(leaders[2])}</Text>
           </View>
         }
       </View>

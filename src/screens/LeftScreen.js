@@ -14,13 +14,12 @@ const animationExperimental = UIManager.setLayoutAnimationEnabledExperimental;
 const FRIENDS_LABEL="Friends";
 const SCHOOL_LABEL="School";
 const ALL_LABEL="All";
-const TODAY_LABEL="Today";
-const THISWEEK_LABEL="This Week";
+const CURRENTDROP_LABEL="Current Drop";
 const ALLTIME_LABEL="All Time";
 const FRIENDS_ICON_LABEL="people";
 const SCHOOL_ICON_LABEL="school";
 const ALL_ICON_LABEL="public";
-const TODAY_ICON_LABEL="view-day";
+const CURRENTDROP_ICON_LABEL="view-day";
 const THISWEEK_ICON_LABEL="view-week";
 const ALLTIME_ICON_LABEL="view-module";
 
@@ -33,8 +32,8 @@ class LeftScreen extends Component {
 
     this.state = {
       isLoading: true,
-      peopleFilterSelected: "All",
-      timeFilterSelected: "Today",
+      peopleFilterSelected: ALL_LABEL,
+      timeFilterSelected: CURRENTDROP_LABEL,
       leaderboardData: null,
       podiumSize: 0
     };
@@ -50,25 +49,25 @@ class LeftScreen extends Component {
     this.fetchLeaderboardData();
   }
 
-  fetchLeaderboardData() {
+  async fetchLeaderboardData() {
     this.setState({isLoading: true});
-    var _this = this;
-    API.getLeaderboard()
-      .then(function(response) {
-        _this.setState({isLoading: false, leaderboardData: _this.processLeaderboardData(response.data), podiumSize: _this.getPodiumSize(response.data)});
-      })
-      .catch(function (error) {
-        _this.setState({isLoading: false});
-        console.log(error);
-      });
+    try {
+      var leaderboardResponse = await API.getLeaderboard();
+      this.leaderboardDataFull = leaderboardResponse.data.leaderboard;
+      this.processLeaderboardData();
+      this.setState({isLoading: false});
+    } catch (error) {
+      this.setState({isLoading: false});
+      console.log(error);
+    }
   }
 
   getPodiumSize(leaderboardData) {
-    if (leaderboardData.leaderboard.length <= 3) {
-      return leaderboardData.leaderboard.length;
+    if (leaderboardData.length <= 3) {
+      return leaderboardData.length;
     }
     for (var i = 2; i >= 0; i--) {
-      if (leaderboardData.leaderboard[i].position < leaderboardData.leaderboard[i+1].position) {
+      if (leaderboardData[i].position < leaderboardData[i+1].position) {
         return i+1;
       }
     }
@@ -79,21 +78,46 @@ class LeftScreen extends Component {
     return leaderBoardElement.firstName + " " + leaderBoardElement.lastName;
   }
 
-  processLeaderboardData(leaderboardData) {
-    leaderboardData.leaderboard[0].name = this.getFullName(leaderboardData.leaderboard[0]);
-    leaderboardData.leaderboard[0].position = 1;
+  checkPointsEquality(a, b) {
+    if (this.state.timeFilterSelected == CURRENTDROP_LABEL) {
+      return (!!a.points.live ? a.points.live : 0) == (!!b.points.live ? b.points.live : 0);
+    } else {
+      return (!!a.points.total ? a.points.total : 0) == (!!b.points.total ? b.points.total : 0);
+    }
+  }
+
+  sortLeaderboard() {
+    if (this.state.timeFilterSelected == CURRENTDROP_LABEL) {
+      return this.leaderboardDataFull.sort(function(a,b) {return (a.points.live > b.points.live) ? -1 : ((b.points.live > a.points.live) ? 1 : 0);} );
+    } else {
+      return this.leaderboardDataFull.sort(function(a,b) {return (a.points.total > b.points.total) ? -1 : ((b.points.total > a.points.total) ? 1 : 0);} );
+    }
+  }
+
+  processLeaderboardData() {
+    var leaderboardData = this.sortLeaderboard();
+    leaderboardData[0].name = this.getFullName(leaderboardData[0]);
+    leaderboardData[0].position = 1;
     var prevPoints = -1;
     var curPosition = 1;
-    for (var i = 1; i < leaderboardData.leaderboard.length; i++) {
-      leaderboardData.leaderboard[i].name = this.getFullName(leaderboardData.leaderboard[i]);
-      if (leaderboardData.leaderboard[i].points.total == leaderboardData.leaderboard[i-1].points.total) {
-        leaderboardData.leaderboard[i].position = curPosition;
+    for (var i = 1; i < leaderboardData.length; i++) {
+      leaderboardData[i].name = this.getFullName(leaderboardData[i]);
+      if (this.checkPointsEquality(leaderboardData[i], leaderboardData[i-1])) {
+        leaderboardData[i].position = curPosition;
       } else {
-        leaderboardData.leaderboard[i].position = i+1;
+        leaderboardData[i].position = i+1;
         curPosition = i+1;
       }
     }
-    return leaderboardData;
+    this.setState({leaderboardData, podiumSize: this.getPodiumSize(leaderboardData)});
+  }
+
+  getPoints(user) {
+    if (this.state.timeFilterSelected == CURRENTDROP_LABEL) {
+      return !!user.points.live ? user.points.live : 0;
+    } else {
+      return !!user.points.total ? user.points.total : 0;
+    }
   }
 
   renderSeparator = () => (
@@ -108,7 +132,7 @@ class LeftScreen extends Component {
   FlatListHeader = () => {
     return (
       <View>
-        <Podium leaders={this.state.leaderboardData.leaderboard.slice(0,this.state.podiumSize)}/>
+        <Podium timeFilterSelected={this.state.timeFilterSelected} leaders={this.state.leaderboardData.slice(0,this.state.podiumSize)}/>
         {this.renderSeparator()}
       </View>
     );
@@ -158,9 +182,9 @@ class LeftScreen extends Component {
                 }
                 showsVerticalScrollIndicator={false}
                 ListHeaderComponent = { this.FlatListHeader }
-                data={this.state.leaderboardData.leaderboard.slice(this.state.podiumSize)}
+                data={this.state.leaderboardData.slice(this.state.podiumSize)}
                 renderItem={({ item, index, separators }) => (
-                  <View style={styles.listItemContainer} >
+                  <View style={[styles.listItemContainer, {backgroundColor: item.id == global.user.id ? global.CURRENT_THEME.colors.primary_75 : null}]} >
                     <View style={styles.listItemsLeftAlignContainer}>
                       <Text style={[GlobalStyles.bodyText, styles.listItemTitle]}>{item.position}</Text>
                       <Image
@@ -173,7 +197,7 @@ class LeftScreen extends Component {
                         {/*<Text style={[GlobalStyles.bodyText, styles.listItemSubtitle]}>{item.schoolName}</Text>*/}
                       </View>
                     </View>
-                    <Text style={[GlobalStyles.bodyText, styles.listItemTitle, {textAlign: 'right'}]}>{item.points.total}</Text>
+                    <Text style={[GlobalStyles.bodyText, styles.listItemTitle, {textAlign: 'right'}]}>{this.getPoints(item)}</Text>
                   </View>
                 )}
                 keyExtractor={(item, index) => index.toString()}
@@ -194,10 +218,8 @@ class LeftScreen extends Component {
         return SCHOOL_ICON_LABEL;
       case ALL_LABEL:
         return ALL_ICON_LABEL;
-      case TODAY_LABEL:
-        return TODAY_ICON_LABEL;
-      case THISWEEK_LABEL:
-        return THISWEEK_ICON_LABEL;
+      case CURRENTDROP_LABEL:
+        return CURRENTDROP_ICON_LABEL;
       case ALLTIME_LABEL:
         return ALLTIME_ICON_LABEL;
     }
@@ -209,7 +231,7 @@ class LeftScreen extends Component {
   }
 
   selectTimeFilter(timeFilterLabel) {
-    this.setState({timeFilterSelected: timeFilterLabel});
+    this.setState({timeFilterSelected: timeFilterLabel}, () => {this.processLeaderboardData()});
     this.backdrop.toggleLayout();
   }
 
@@ -223,7 +245,7 @@ class LeftScreen extends Component {
             color={global.CURRENT_THEME.colors.accent}
           />
         </TouchableOpacity>*/}
-        <TouchableOpacity style={styles.backdropHeader} onPress = { () => alert('Leaderboard filters coming soon. Wait on it🙏') /*this.backdrop.toggleLayout()*/}>
+        <TouchableOpacity style={styles.backdropHeader} onPress = { () => this.backdrop.toggleLayout()}>
           <LeaderboardFilter icon={this.getIconName(this.state.peopleFilterSelected)} text={this.state.peopleFilterSelected} selected={true}/>
           <View style={{marginHorizontal: 10, borderLeftColor:'white',borderLeftWidth:1,height:'50%'}}/>
           <LeaderboardFilter icon={this.getIconName(this.state.timeFilterSelected)} text={this.state.timeFilterSelected} selected={true}/>
@@ -248,11 +270,8 @@ class LeftScreen extends Component {
         </View>
         <View style={styles.verticalSeparator}/>
         <View style={styles.backdropExpandedFilterColumn}>
-          <TouchableOpacity style={styles.filterItem} onPress = { () => this.selectTimeFilter(TODAY_LABEL)}>
-            <LeaderboardFilter icon={TODAY_ICON_LABEL} text={TODAY_LABEL} selected={this.state.timeFilterSelected == TODAY_LABEL}/>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.filterItem} onPress = { () => this.selectTimeFilter(THISWEEK_LABEL)}>
-            <LeaderboardFilter icon={THISWEEK_ICON_LABEL} text={THISWEEK_LABEL} selected={this.state.timeFilterSelected == THISWEEK_LABEL}/>
+          <TouchableOpacity style={styles.filterItem} onPress = { () => this.selectTimeFilter(CURRENTDROP_LABEL)}>
+            <LeaderboardFilter icon={CURRENTDROP_ICON_LABEL} text={CURRENTDROP_LABEL} selected={this.state.timeFilterSelected == CURRENTDROP_LABEL}/>
           </TouchableOpacity>
           <TouchableOpacity onPress = { () => this.selectTimeFilter(ALLTIME_LABEL)}>
             <LeaderboardFilter icon={ALLTIME_ICON_LABEL} text={ALLTIME_LABEL} selected={this.state.timeFilterSelected == ALLTIME_LABEL}/>
