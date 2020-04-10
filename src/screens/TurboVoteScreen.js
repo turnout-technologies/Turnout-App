@@ -6,8 +6,13 @@ import Constants from 'expo-constants';
 
 import {GlobalStyles} from '../Globals';
 
+
+const isStandalone = Constants.appOwnership === 'standalone';
 //only use the referral parameter in standalone so we don't spam it during development
-const turboVoteURL = "https://turbovote.org/" + ((Constants.appOwnership === 'standalone') ? "?r=TurnoutApp" : "");
+const turboVoteURL = "https://turbovote.org/" + (isStandalone ? "?r=TurnoutApp" : "");
+const firstName = isStandalone ? global.user.firstName : "first";
+const lastName = isStandalone ? global.user.lastName : "last";
+const email = isStandalone ? global.user.email : "hey@domain.com";
 
 class TurboVoteScreen extends Component {
 
@@ -28,18 +33,16 @@ class TurboVoteScreen extends Component {
   }
 
   setInjectedJS() {
-    this.nameSplit = global.user.name.split(" ");
-
     this.INJECTED_JS = `
       //CONSTANTS
       var DELAY_MS = 200; //200 seems to work well
       var AUTO_ADVANCE = false;
 
       //DATA
-      var firstName = 'first'; //${this.nameSplit[0]}
-      var lastName = 'last'; //${this.nameSplit[1]}
+      var firstName = '${firstName}';
+      var lastName = '${lastName}';
       var mobileNumber = '';
-      var email = 'test@test.com'; //${global.user.email}
+      var email = '${email}';
       var street = '';
       var street2 = '';
       var city = '';
@@ -363,6 +366,21 @@ class TurboVoteScreen extends Component {
     );
   }
 
+  loadInExternalBrowser(url) {
+    if (this.currentURL.includes("turbovote.org/registration-methods")) {
+      Alert.alert(
+        "Online Voter Registration",
+        "After you register to vote on your state's site, return to the Turnout app to finish signing up!",
+        [
+          {text: "Got it", onPress: () => WebBrowser.openBrowserAsync(url)}
+        ],
+        { cancelable: false }
+      );
+    } else {
+      WebBrowser.openBrowserAsync(url);
+    }
+  }
+
 	render() {
 		return (
 			<View style={GlobalStyles.backLayerContainer}>
@@ -377,7 +395,8 @@ class TurboVoteScreen extends Component {
             injectedJavaScript={this.INJECTED_JS}
             onMessage={event => {
               console.log(event.nativeEvent.data);
-              if (event.nativeEvent.data.includes("turbovote.org/done")) {
+              this.currentURL = event.nativeEvent.url;
+              if (event.nativeEvent.url.includes("turbovote.org/done")) {
                 this.setState({doneReached: true});
               }
             }}
@@ -385,7 +404,7 @@ class TurboVoteScreen extends Component {
               let url = request.url;
               if (!url.includes('turbovote.org')) {
                 //open external sites like state.gov online registration in a separate window)
-                WebBrowser.openBrowserAsync(url);
+                this.loadInExternalBrowser(url);
                 return false
               } else {
                 return true
