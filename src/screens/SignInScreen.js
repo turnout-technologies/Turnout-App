@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View, TouchableOpacity, Text, Image, StyleSheet, SafeAreaView, YellowBox, Animated } from 'react-native';
+import { View, TouchableOpacity, Text, Image, StyleSheet, SafeAreaView, YellowBox, Animated, AppState } from 'react-native';
 import Constants from 'expo-constants';
 import * as Google from 'expo-google-app-auth';
 import * as firebase from 'firebase';
@@ -27,7 +27,7 @@ class SignInScreen extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {user: null, branchInfo: null, bottomContainerOpen: false};
+    this.state = {user: null, branchInfo: null, bottomContainerOpen: false, appState: AppState.currentState};
 
     this.bottomContainerHeightAnimationVal = new Animated.Value(0);
 
@@ -36,6 +36,18 @@ class SignInScreen extends Component {
 
   componentDidMount() {
     this.checkForBranchLink();
+    AppState.addEventListener('change', this._handleAppStateChange);
+  }
+
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this._handleAppStateChange);
+  }
+
+  _handleAppStateChange = (nextAppState) => {
+    if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
+      this.checkForBranchLink();
+    }
+    this.setState({appState: nextAppState});
   }
 
   async checkForBranchLink() {
@@ -164,7 +176,7 @@ class SignInScreen extends Component {
             </Text>
           </View>
         </SafeAreaView>
-        {!clickedBranchLink &&
+        {!clickedBranchLink && !this.state.bottomContainerOpen &&
           <View style={styles.noInviteContainer}>
             <Text style={[GlobalStyles.bodyText, styles.signInButtonText]}>If you have an invite link, go click it now on this device to claim your bonus.</Text>
             <TouchableOpacity onPress={() => {this.toggleBottomContainer(true, clickedBranchLink)}}>
@@ -172,7 +184,7 @@ class SignInScreen extends Component {
             </TouchableOpacity>
           </View>
         }
-        <Animated.View style={[styles.bottomContainer, {height: this.bottomContainerHeightAnimationVal}]}>
+        <Animated.ScrollView style={[styles.bottomContainer, {height: this.bottomContainerHeightAnimationVal}]}>
           {!clickedBranchLink &&
             <View style={[styles.bottomContainerTitleContainer, styles.inviteTextContainer]}>
               <TouchableOpacity style={{alignSelf: "center", paddingRight: 10}} onPress={() => {this.toggleBottomContainer(false, clickedBranchLink)}}>
@@ -209,7 +221,7 @@ class SignInScreen extends Component {
               <Text style={[GlobalStyles.bodyText, styles.signInButtonText]}>Sign in with Google</Text>
             </TouchableOpacity>
           </View>
-        </Animated.View>
+        </Animated.ScrollView>
       </View>
     );
   }

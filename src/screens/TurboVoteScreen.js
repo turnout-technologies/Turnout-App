@@ -6,14 +6,6 @@ import Constants from 'expo-constants';
 
 import {GlobalStyles} from '../Globals';
 
-
-const isStandalone = Constants.appOwnership === 'standalone';
-//only use the referral parameter in standalone so we don't spam it during development
-const turboVoteURL = "https://turbovote.org/" + (isStandalone ? "?r=TurnoutApp" : "");
-const firstName = isStandalone ? global.user.firstName : "first";
-const lastName = isStandalone ? global.user.lastName : "last";
-const email = isStandalone ? global.user.email : "hey@domain.com";
-
 class TurboVoteScreen extends Component {
 
 	constructor(props) {
@@ -21,7 +13,17 @@ class TurboVoteScreen extends Component {
     this.state = {doneReached: false};
     this.doneButtonHandler = this.doneButtonHandler.bind(this);
 
+    this.initConstants();
     this.setInjectedJS();
+  }
+
+  initConstants() {
+    const isStandalone = Constants.appOwnership === 'standalone';
+    //only use the referral parameter in standalone so we don't spam it during development
+    this.turboVoteURL = "https://turbovote.org/" + (isStandalone ? "?r=TurnoutApp" : "");
+    this.firstName = isStandalone ? global.user.firstName : "first";
+    this.lastName = isStandalone ? global.user.lastName : "last";
+    this.email = isStandalone ? global.user.email : "hey@domain.com";
   }
 
   static navigationOptions = ({navigation}) => {
@@ -39,10 +41,10 @@ class TurboVoteScreen extends Component {
       var AUTO_ADVANCE = false;
 
       //DATA
-      var firstName = '${firstName}';
-      var lastName = '${lastName}';
+      var firstName = '${this.firstName}';
+      var lastName = '${this.lastName}';
       var mobileNumber = '';
-      var email = '${email}';
+      var email = '${this.email}';
       var street = '';
       var street2 = '';
       var city = '';
@@ -389,7 +391,7 @@ class TurboVoteScreen extends Component {
             ref={ (ref) => { this.webview = ref; } }
             style={{ flex: 1, marginTop: -10 }}
             showsVerticalScrollIndicator={false}
-            source={{ uri: turboVoteURL }}
+            source={{ uri: this.turboVoteURL }}
             useWebKit={true}
             scalesPageToFit={false}
             injectedJavaScript={this.INJECTED_JS}
@@ -413,7 +415,7 @@ class TurboVoteScreen extends Component {
           />
           {this.state.doneReached &&
             <TouchableOpacity style={styles.doneButton} onPress={this.doneButtonHandler}>
-              <Text style={[GlobalStyles.bodyText,styles.doneButtonText]}>Finished ✔</Text>
+              <Text style={[GlobalStyles.bodyText,styles.doneButtonText]}>Finished</Text>
             </TouchableOpacity>
           }
         </View>
@@ -425,7 +427,7 @@ class TurboVoteScreen extends Component {
 const styles = StyleSheet.create({
   doneButton: {
     position: "absolute",
-    bottom: 10,
+    bottom: 15,
     alignSelf: 'center',
     minWidth: 325,
     padding: 15,

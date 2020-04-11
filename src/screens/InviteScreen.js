@@ -68,7 +68,7 @@ class InviteScreen extends Component {
       const ExpoBranch = await import('expo-branch');
       const Branch = ExpoBranch.default;
       this._branchUniversalObject = await Branch.createBranchUniversalObject(
-        'test',
+        'invites/'+global.user.id,
         {
           contentMetadata: {
             customMetadata: {
@@ -94,7 +94,9 @@ class InviteScreen extends Component {
       }
       //show branch sharesheet on ios
       let linkProperties = {
-        feature: 'ios_sharesheet',
+        feature: 'share_link',
+        campaign: 'invite_screen',
+        tags: [global.user.id]
       }
       await this._branchUniversalObject.showShareSheet(shareOptions, linkProperties);
     } else {
@@ -103,8 +105,10 @@ class InviteScreen extends Component {
         var url = "https://example.com"
       } else {
         let linkProperties = {
-          feature: 'android_sharesheet',
-          channel: 'android_sharesheet'
+          feature: 'share_link',
+          channel: 'android_sharesheet',
+          campaign: 'invite_screen',
+          tags: [global.user.id]
         }
         var {url} = await this._branchUniversalObject.generateShortUrl(linkProperties, {});
       }
@@ -315,7 +319,9 @@ class InviteScreen extends Component {
         //get branch link
         let linkProperties = {
           feature: 'contact_list',
-          channel: 'sms'
+          channel: 'sms',
+          campaign: 'invite_screen',
+          tags: [global.user.id]
         }
         var {url} = await this._branchUniversalObject.generateShortUrl(linkProperties, {});
       } else {

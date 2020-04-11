@@ -3,6 +3,7 @@ import { ActivityIndicator, View, StyleSheet, Alert } from 'react-native';
 import firebase from 'firebase';
 import * as Sentry from 'sentry-expo';
 import Constants from 'expo-constants';
+import * as Updates from 'expo-updates';
 
 import * as API from '../APIClient';
 import {getPushNotificationsTokenAsync, setupNotificationChannels} from '../Notifications';
@@ -15,9 +16,30 @@ class AuthLoadingScreen extends Component {
   }
 
   componentDidMount() {
-    this.checkIfLoggedIn();
+    this.setupUpdateListener();
     setupNotificationChannels();
+    this.checkIfLoggedIn();
   }
+
+  async setupUpdateListener() {
+    this.updateEventHandler = Updates.addListener(event => {
+      if (event.type === Updates.UpdateEventType.UPDATE_AVAILABLE) {
+        Alert.alert(
+          "Update Available",
+          "Reload the app to get the latest updates!",
+          [
+            { text: "Reload", onPress: () => { Updates.reloadAsync()}
+            },
+          ],
+          { cancelable: false }
+        );
+      }
+    });
+  }
+
+  componentWillUnmount() {
+  this.updateEventHandler && this.updateEventHandler.remove();
+}
 
   async checkForNewNote() {
     try {
