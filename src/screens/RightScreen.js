@@ -36,7 +36,7 @@ class RightScreen extends Component {
         headerStyle: GlobalStyles.headerStyle,
         headerTintColor: global.CURRENT_THEME.colors.accent,
         headerRight: __DEV__ ? () => (
-          <TouchableOpacity style={{marginRight: 20}} onPress={() => navigation.navigate('DebugOptions')}>
+          <TouchableOpacity style={{marginRight: 20}} onPress={() => navigation.navigate('DebugOptions', {previousScreen: navigation.state.routeName})}>
             <Ionicons name="md-bug" size={25} color={global.CURRENT_THEME.colors.accent} />
           </TouchableOpacity>
         ) : null

@@ -1,6 +1,8 @@
 import Constants from "expo-constants";
 import { Platform } from "react-native";
 
+import * as AsyncStorage from './AsyncStorage';
+
 const getEnvVars = (env = Constants.manifest.releaseChannel) => {
  	// What is __DEV__ ?
  	// This variable is set to true when react-native is running in Dev mode.
@@ -15,13 +17,23 @@ const getEnvVars = (env = Constants.manifest.releaseChannel) => {
 	}
 };
 
+const _isDevEnv = __DEV__ || Constants.manifest.releaseChannel === 'dev';
+
+export function isDevEnv() {
+	return _isDevEnv;
+}
+
 envConfig = getEnvVars();
 
 export function getFirebaseConfig() {
 	return envConfig.firebaseConfig;
 }
 
-export function getAPIUrl() {
+export async function getAPIHostname() {
+	if (isDevEnv) {
+		var savedHostname = await AsyncStorage.getServerHostname();
+		return !!savedHostname ? savedHostname : envConfig.apiUrl;
+	}
 	return envConfig.apiUrl;
 }
 

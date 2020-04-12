@@ -15,18 +15,28 @@ const errorHandler = (error) => {
   	return Promise.reject({ ...error })
 }
 
-turnoutAPIInstance.defaults.baseURL = Env.getAPIUrl();
-turnoutAPIInstance.interceptors.request.use(async config => {
-	config.headers["Authorization"] = "Bearer " + await firebase.auth().currentUser.getIdToken();
-	return config
-}, (error) => {
- return Promise.reject(error)
-})
+async function initAPI() {
+	setBaseURL(await Env.getAPIHostname());
+	turnoutAPIInstance.defaults.timeout = 5000;
+	turnoutAPIInstance.interceptors.request.use(async config => {
+		config.headers["Authorization"] = "Bearer " + await firebase.auth().currentUser.getIdToken();
+		return config
+	}, (error) => {
+	 return Promise.reject(error)
+	});
 
-turnoutAPIInstance.interceptors.response.use(
-  response => successHandler(response),
-  error => errorHandler(error)
-)
+	turnoutAPIInstance.interceptors.response.use(
+	  response => successHandler(response),
+	  error => errorHandler(error)
+	)
+}
+initAPI();
+
+export function setBaseURL(url) {
+	turnoutAPIInstance.defaults.baseURL = url + "/v1";
+	console.log("HERE");
+	console.log(turnoutAPIInstance.defaults.baseURL);
+}
 
 export function addUser(user) {
 	return turnoutAPIInstance.post("/users", user);

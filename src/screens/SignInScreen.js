@@ -163,6 +163,9 @@ class SignInScreen extends Component {
       <View style={styles.container}>
         <StatusBarBackground backgroundColor="white"/>
         <SafeAreaView style={styles.topContainer}>
+          <TouchableOpacity style={styles.debugButton} onPress={() => this.props.navigation.navigate('DebugOptions', {previousScreen: this.props.navigation.state.routeName})}>
+            <Ionicons name="md-bug" size={25} color={global.CURRENT_THEME.colors.primary} />
+          </TouchableOpacity>
           <Image source={require('../../assets/images/logo_text.png')} style={styles.logoText} />
           <View style={styles.welcomeContainer}>
             <Text>
@@ -317,6 +320,11 @@ const styles = StyleSheet.create({
     fontSize: 22,
     color: global.CURRENT_THEME.colors.primary,
     marginTop: 10
+  },
+  debugButton: {
+    position: "absolute",
+    top: 15,
+    right: 5
   }
 });
 

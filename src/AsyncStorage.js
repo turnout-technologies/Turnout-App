@@ -4,7 +4,8 @@ const USER_KEY = 'user';
 const LAST_REFRESH_USER_TIMESTAMP_KEY = 'lastRefreshUserTimestamp';
 const LAST_BALLOT_TIMESTAMP_KEY = 'lastBallotDate';
 const LAST_VERSION_OPENED_KEY = 'lastVersionOpened';
-const LAST_BALLOT_RESULTS_OPENED_ID = 'getLastBallotResultOpenedId';
+const LAST_BALLOT_RESULTS_OPENED_KEY = 'getLastBallotResultOpenedId';
+const SERVER_HOSTNAME_KEY = 'serverHostName';
 
 export async function getUser() {
   return AsyncStorage.getItem(USER_KEY);
@@ -63,13 +64,25 @@ export async function removeLastNoteVersionOpened() {
 }
 
 export async function getLastBallotResultOpenedId() {
-  return AsyncStorage.getItem(LAST_BALLOT_RESULTS_OPENED_ID);
+  return AsyncStorage.getItem(LAST_BALLOT_RESULTS_OPENED_KEY);
 }
 
 export async function setLastBallotResultOpenedId(id) {
   try {
-    await AsyncStorage.setItem(LAST_BALLOT_RESULTS_OPENED_ID, id.toString());
+    await AsyncStorage.setItem(LAST_BALLOT_RESULTS_OPENED_KEY, id.toString());
   } catch (error) {
     console.log(error);
   }
+}
+
+export async function setServerHostname(hostname) {
+  try {
+    await AsyncStorage.setItem(SERVER_HOSTNAME_KEY, hostname);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function getServerHostname() {
+  return AsyncStorage.getItem(SERVER_HOSTNAME_KEY);
 }

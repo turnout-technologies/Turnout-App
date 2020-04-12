@@ -7,6 +7,7 @@ import NoteScreen from '../screens/NoteScreen';
 import AuthStackNavigator from './AuthStackNavigator';
 import VoterInfoStackNavigator from './VoterInfoStackNavigator';
 import MainTabNavigator from './MainTabNavigator';
+import DebugOptionsScreen from '../screens/DebugOptionsScreen';
 
 export default createAppContainer(
   createSwitchNavigator({
@@ -17,5 +18,6 @@ export default createAppContainer(
     Auth: AuthStackNavigator,
     VoterInfo: VoterInfoStackNavigator,
     Main: MainTabNavigator,
+    DebugOptions: DebugOptionsScreen
   })
 );
