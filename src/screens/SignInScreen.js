@@ -9,6 +9,7 @@ var moment = require('moment-timezone');
 
 import {GlobalStyles, refreshUser} from '../Globals';
 import * as API from '../APIClient';
+import * as Env from '../Environment';
 import StatusBarBackground from '../components/StatusBarBackground';
 import {getPushNotificationsTokenAsync} from '../Notifications';
 import {setUser, setLastRefreshUserTimestamp, getLastNoteVersionOpened} from '../AsyncStorage';
@@ -163,9 +164,11 @@ class SignInScreen extends Component {
       <View style={styles.container}>
         <StatusBarBackground backgroundColor="white"/>
         <SafeAreaView style={styles.topContainer}>
-          <TouchableOpacity style={styles.debugButton} onPress={() => this.props.navigation.navigate('DebugOptions', {previousScreen: this.props.navigation.state.routeName})}>
-            <Ionicons name="md-bug" size={25} color={global.CURRENT_THEME.colors.primary} />
-          </TouchableOpacity>
+          { Env.isDevEnv() &&
+            <TouchableOpacity style={styles.debugButton} onPress={() => this.props.navigation.navigate('DebugOptions', {previousScreen: this.props.navigation.state.routeName})}>
+              <Ionicons name="md-bug" size={25} color={global.CURRENT_THEME.colors.primary} />
+            </TouchableOpacity>
+          }
           <Image source={require('../../assets/images/logo_text.png')} style={styles.logoText} />
           <View style={styles.welcomeContainer}>
             <Text>

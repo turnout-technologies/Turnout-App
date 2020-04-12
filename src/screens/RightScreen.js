@@ -3,7 +3,7 @@ import { View, Text, Image, Button, ScrollView, StyleSheet, TouchableHighlight, 
 import { Ionicons } from '@expo/vector-icons';
 import { Snackbar } from 'react-native-paper';
 
-import getEnvVars from '../Environment';
+import * as Env from '../Environment';
 import {GlobalStyles} from '../Globals';
 import {setNotificationsEnabled} from '../Notifications';
 import {setUser} from '../AsyncStorage';
@@ -35,7 +35,7 @@ class RightScreen extends Component {
         title: 'Profile',
         headerStyle: GlobalStyles.headerStyle,
         headerTintColor: global.CURRENT_THEME.colors.accent,
-        headerRight: __DEV__ ? () => (
+        headerRight: Env.isDevEnv() ? () => (
           <TouchableOpacity style={{marginRight: 20}} onPress={() => navigation.navigate('DebugOptions', {previousScreen: navigation.state.routeName})}>
             <Ionicons name="md-bug" size={25} color={global.CURRENT_THEME.colors.accent} />
           </TouchableOpacity>
