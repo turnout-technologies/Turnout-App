@@ -19,6 +19,11 @@ export async function setUser() {
   }
 }
 
+export async function removeUser() {
+  global.user = null;
+  return AsyncStorage.removeItem(USER_KEY);
+}
+
 export async function getLastRefreshUserTimestamp() {
   return AsyncStorage.getItem(LAST_REFRESH_USER_TIMESTAMP_KEY);
 }

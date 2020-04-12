@@ -40,6 +40,7 @@ export default class DebugOptionsScreen extends Component {
   }
 
   async signOut() {
+    AsyncStorage.removeUser();
     firebase.auth().signOut();
     this.props.navigation.navigate('Auth');
   };
