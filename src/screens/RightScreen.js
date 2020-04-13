@@ -2,11 +2,13 @@ import React, {Component} from 'react';
 import { View, Text, Image, Button, ScrollView, StyleSheet, TouchableHighlight, TouchableOpacity, Switch, DeviceEventEmitter } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Snackbar } from 'react-native-paper';
+import { SimpleLineIcons } from '@expo/vector-icons';
 
 import * as Env from '../Environment';
 import {GlobalStyles} from '../Globals';
 import {setNotificationsEnabled} from '../Notifications';
 import {setUser} from '../AsyncStorage';
+import InviteBar from '../components/InviteBar';
 
 
 class RightScreen extends Component {
@@ -65,82 +67,94 @@ class RightScreen extends Component {
 	render() {
 		return (
 			<View style={GlobalStyles.backLayerContainer}>
-	        <ScrollView style={GlobalStyles.frontLayerContainer} showsVerticalScrollIndicator={false}>
-        		<View style={styles.profileContainer}>
-              <Image
-                  style={styles.profileImage}
-                  source={{uri: global.user.avatarURL.replace("s96-c", "s384-c")}}
-              />
-              <View style={styles.profileInfoContainer}>
-          			<Text style={[GlobalStyles.headerText, styles.nameText]}>{global.user.name}</Text>
-          			<Text style={[GlobalStyles.bodyText, styles.emailText]}>{global.user.email}</Text>
-                <Text style={[GlobalStyles.titleText, styles.pointsText]}>{global.user.points.total} point{global.user.points.total != 1 ? "s" : null}</Text>
-          		</View>
+        <ScrollView style={GlobalStyles.frontLayerContainer} showsVerticalScrollIndicator={false}>
+      		<View style={styles.profileContainer}>
+            <Image
+              style={styles.profileImage}
+              source={{uri: global.user.avatarURL.replace("s96-c", "s384-c")}}
+            />
+            <View style={styles.profileInfoContainer}>
+        			<Text style={[GlobalStyles.headerText, styles.nameText]}>{global.user.name}</Text>
+        			<Text style={[GlobalStyles.bodyText, styles.emailText]}>{global.user.email}</Text>
+              <Text style={[GlobalStyles.titleText, styles.pointsText]}>{global.user.points.total} point{global.user.points.total != 1 ? "s" : null}</Text>
+        		</View>
+          </View>
+          <View style={styles.statsRowContainer}>
+            <View style={styles.statContainer}>
+              <Text style={[GlobalStyles.titleText, styles.statNumber]}>{global.user.referrals.valid}</Text>
+              <Text style={[GlobalStyles.bodyText, styles.statSubtitle]}>Invites Completed</Text>
             </View>
-            <View style={styles.settingsSeparator} />
-            <Text style={[GlobalStyles.titleText, styles.settingHeaderText]}>Feedback</Text>
-            <TouchableHighlight underlayColor={global.CURRENT_THEME.colors.text_opacity3} style={styles.touchableHighlight} onPress={ () => this.submitFeedback("bug")}>
-              <View style={styles.settingsItem}>
-                <Ionicons name="md-bug" size={25} color="red" style={styles.settingsItemIcon} />
-                <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>I found a bug</Text>
+            <View style={styles.statContainer}>
+              <Text style={[GlobalStyles.titleText, styles.statNumber]}>{global.user.powerups.hacks}</Text>
+              <Text style={[GlobalStyles.bodyText, styles.statSubtitle]}>Autocorrect Power-Ups</Text>
+            </View>
+            <View style={styles.statContainer}>
+              <Text style={[GlobalStyles.titleText, styles.statNumber]}>{global.user.points.total}</Text>
+              <Text style={[GlobalStyles.bodyText, styles.statSubtitle]}>Total Points</Text>
+            </View>
+          </View>
+          <InviteBar/>
+          <TouchableOpacity style={styles.inviteButton} onPress={() => this.props.navigation.navigate('Invite')}>
+            <Text style={[GlobalStyles.bodyText, styles.inviteButtonText]}>Invite Friends</Text>
+          </TouchableOpacity>
+          <View style={[styles.settingsSeparator, {marginTop: 25}]} />
+          <Text style={[GlobalStyles.titleText, styles.settingHeaderText]}>Feedback</Text>
+          <TouchableHighlight underlayColor={global.CURRENT_THEME.colors.text_opacity3} style={styles.touchableHighlight} onPress={ () => this.submitFeedback("bug")}>
+            <View style={styles.settingsItem}>
+              <Ionicons name="md-bug" size={25} color="red" style={styles.settingsItemIcon} />
+              <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>I found a bug</Text>
+            </View>
+          </TouchableHighlight>
+          <TouchableHighlight underlayColor={global.CURRENT_THEME.colors.text_opacity3} onPress={ () => this.submitFeedback("question_idea")}>
+            <View style={styles.settingsItem}>
+              <Ionicons name="md-chatbubbles" size={25} color={global.CURRENT_THEME.colors.primary} style={styles.settingsItemIcon} />
+              <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>I want to suggest a ballot question</Text>
+            </View>
+          </TouchableHighlight>
+          <TouchableHighlight underlayColor={global.CURRENT_THEME.colors.text_opacity3} onPress={ () => this.submitFeedback("happy")}>
+            <View style={styles.settingsItem}>
+              <Ionicons name="md-happy" size={25} color={global.CURRENT_THEME.colors.primary} style={styles.settingsItemIcon} />
+              <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>I like something</Text>
+            </View>
+          </TouchableHighlight>
+          <TouchableHighlight underlayColor={global.CURRENT_THEME.colors.text_opacity3} onPress={ () => this.submitFeedback("sad")}>
+            <View style={styles.settingsItem}>
+              <Ionicons name="md-sad" size={25} color={global.CURRENT_THEME.colors.primary} style={styles.settingsItemIcon} />
+              <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>I don't like something</Text>
+            </View>
+          </TouchableHighlight>
+          <TouchableHighlight underlayColor={global.CURRENT_THEME.colors.text_opacity3} onPress={ () => this.submitFeedback("suggestion")}>
+            <View style={styles.settingsItem}>
+              <Ionicons name="md-bulb" size={25} color={global.CURRENT_THEME.colors.primary} style={styles.settingsItemIcon} />
+              <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>I have an idea/suggestion</Text>
+            </View>
+          </TouchableHighlight>
+          <View style={styles.settingsSeparator} />
+          <Text style={[GlobalStyles.titleText, styles.settingHeaderText]}>Notifications</Text>
+          <TouchableHighlight underlayColor={global.CURRENT_THEME.colors.text_opacity3} disabled={this.state.notificationSwitchDisabled} onPress={ () => this.notificationSwitchHandler(!this.state.notificationsEnabled)}>
+            <View style={[styles.settingsItem, {justifyContent: "space-between"}]}>
+              <View style={{flexDirection: "row"}}>
+                <Ionicons name="md-notifications" size={25} color={global.CURRENT_THEME.colors.primary} style={styles.settingsItemIcon} />
+                <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>Enable notifications</Text>
               </View>
-            </TouchableHighlight>
-            <TouchableHighlight underlayColor={global.CURRENT_THEME.colors.text_opacity3} onPress={ () => this.submitFeedback("question_idea")}>
-              <View style={styles.settingsItem}>
-                <Ionicons name="md-chatbubbles" size={25} color={global.CURRENT_THEME.colors.primary} style={styles.settingsItemIcon} />
-                <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>I want to suggest a ballot question</Text>
-              </View>
-            </TouchableHighlight>
-            <TouchableHighlight underlayColor={global.CURRENT_THEME.colors.text_opacity3} onPress={ () => this.submitFeedback("happy")}>
-              <View style={styles.settingsItem}>
-                <Ionicons name="md-happy" size={25} color={global.CURRENT_THEME.colors.primary} style={styles.settingsItemIcon} />
-                <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>I like something</Text>
-              </View>
-            </TouchableHighlight>
-            <TouchableHighlight underlayColor={global.CURRENT_THEME.colors.text_opacity3} onPress={ () => this.submitFeedback("sad")}>
-              <View style={styles.settingsItem}>
-                <Ionicons name="md-sad" size={25} color={global.CURRENT_THEME.colors.primary} style={styles.settingsItemIcon} />
-                <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>I don't like something</Text>
-              </View>
-            </TouchableHighlight>
-            <TouchableHighlight underlayColor={global.CURRENT_THEME.colors.text_opacity3} onPress={ () => this.submitFeedback("suggestion")}>
-              <View style={styles.settingsItem}>
-                <Ionicons name="md-bulb" size={25} color={global.CURRENT_THEME.colors.primary} style={styles.settingsItemIcon} />
-                <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>I have an idea/suggestion</Text>
-              </View>
-            </TouchableHighlight>
-            <View style={styles.settingsSeparator} />
-            <Text style={[GlobalStyles.titleText, styles.settingHeaderText]}>Notifications</Text>
-            <TouchableHighlight underlayColor={global.CURRENT_THEME.colors.text_opacity3} disabled={this.state.notificationSwitchDisabled} onPress={ () => this.notificationSwitchHandler(!this.state.notificationsEnabled)}>
-              <View style={[styles.settingsItem, {justifyContent: "space-between"}]}>
-                <View style={{flexDirection: "row"}}>
-                  <Ionicons name="md-notifications" size={25} color={global.CURRENT_THEME.colors.primary} style={styles.settingsItemIcon} />
-                  <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>Enable notifications</Text>
-                </View>
-                <Switch
-                  value={this.state.notificationsEnabled}
-                  thumbColor={this.state.notificationsEnabled && Platform.OS == "android" ? global.CURRENT_THEME.colors.primary : "white"}
-                  trackColor={{true: Platform.OS == "android" ? global.CURRENT_THEME.colors.primary_75 : global.CURRENT_THEME.colors.primary}}
-                  style={styles.settingsSwitch}
-                  ios_backgroundColor="#F4F4F4"
-                  onValueChange={v => {this.notificationSwitchHandler(v)}}
-                  disabled={this.state.notificationSwitchDisabled} />
-              </View>
-            </TouchableHighlight>
-            <View style={styles.settingsSeparator} />
-            <TouchableHighlight underlayColor={global.CURRENT_THEME.colors.text_opacity3} onPress={() => this.props.navigation.navigate('About')}>
-              <View style={styles.settingsItem}>
-                <Ionicons name="md-information-circle" size={25} color={global.CURRENT_THEME.colors.primary} style={styles.settingsItemIcon} />
-                <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>About</Text>
-              </View>
-            </TouchableHighlight>
-            <TouchableHighlight underlayColor={global.CURRENT_THEME.colors.text_opacity3} onPress={() => this.props.navigation.navigate('Invite')}>
-              <View style={styles.settingsItem}>
-                <Ionicons name="md-information-circle" size={25} color={global.CURRENT_THEME.colors.primary} style={styles.settingsItemIcon} />
-                <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>Invite</Text>
-              </View>
-            </TouchableHighlight>
-	        </ScrollView>
+              <Switch
+                value={this.state.notificationsEnabled}
+                thumbColor={this.state.notificationsEnabled && Platform.OS == "android" ? global.CURRENT_THEME.colors.primary : "white"}
+                trackColor={{true: Platform.OS == "android" ? global.CURRENT_THEME.colors.primary_75 : global.CURRENT_THEME.colors.primary}}
+                style={styles.settingsSwitch}
+                ios_backgroundColor="#F4F4F4"
+                onValueChange={v => {this.notificationSwitchHandler(v)}}
+                disabled={this.state.notificationSwitchDisabled} />
+            </View>
+          </TouchableHighlight>
+          <View style={styles.settingsSeparator} />
+          <TouchableHighlight underlayColor={global.CURRENT_THEME.colors.text_opacity3} onPress={() => this.props.navigation.navigate('About')}>
+            <View style={styles.settingsItem}>
+              <Ionicons name="md-information-circle" size={25} color={global.CURRENT_THEME.colors.primary} style={styles.settingsItemIcon} />
+              <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>About</Text>
+            </View>
+          </TouchableHighlight>
+        </ScrollView>
           <Snackbar
             visible={this.state.snackbarVisible}
             style={styles.snackbar}
@@ -160,7 +174,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-evenly",
     maxWidth: 300,
     alignItems: "center",
-    margin: 25
+    marginTop: 25,
+    marginBottom: 15
   },
   profileInfoContainer: {
   	alignItems: "center",
@@ -209,7 +224,8 @@ const styles = StyleSheet.create({
   },
   statsRowContainer: {
   	alignSelf: "center",
-  	width: 300,
+    marginHorizontal: 25,
+    marginBottom: 15,
   	flexDirection: "row",
   	justifyContent: "space-between"
   },
@@ -218,7 +234,8 @@ const styles = StyleSheet.create({
   	width: "33%"
   },
   statNumber: {
-  	fontSize: 24
+  	fontSize: 24,
+    color: global.CURRENT_THEME.colors.primary
   },
   statSubtitle: {
   	fontSize: 16,
@@ -229,7 +246,21 @@ const styles = StyleSheet.create({
     borderRadius: 0,
     width: '100%',
     margin: 0,
-  }
+  },
+  inviteButton: {
+    marginTop: 10,
+    width:150,
+    height: 50,
+    justifyContent: "center",
+    alignSelf: "center",
+    backgroundColor: global.CURRENT_THEME.colors.primary,
+    borderRadius: global.CURRENT_THEME.roundness
+  },
+  inviteButtonText: {
+    color: global.CURRENT_THEME.colors.accent,
+    textAlign: "center",
+    fontSize: 20
+  },
 });
 
 module.exports= RightScreen

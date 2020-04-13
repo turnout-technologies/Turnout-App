@@ -34,8 +34,6 @@ initAPI();
 
 export function setBaseURL(url) {
 	turnoutAPIInstance.defaults.baseURL = url + "/v1";
-	console.log("HERE");
-	console.log(turnoutAPIInstance.defaults.baseURL);
 }
 
 export function addUser(user) {

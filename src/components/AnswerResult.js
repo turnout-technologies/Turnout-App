@@ -71,7 +71,13 @@ export default ({ answer, count, totalCount, isCorrectAnswer, isUserResponse }: 
   return (
     <View style={styles.container}>
       <View style={styles.answerContainer}>
-        {<LinearGradient colors={[color, color, 'rgba(0,0,0,0)']} start={[0, 0]} end={[1, 0]} locations={[0, percentageDecimal, percentageDecimal]} style={styles.answerColorContainer}/>}
+        <LinearGradient
+          colors={[color, color, 'rgba(0,0,0,0)']}
+          start={[0, 0]}
+          end={[1, 0]}
+          locations={[0, percentageDecimal, percentageDecimal]}
+          style={styles.answerColorContainer}
+        />
         <View style={styles.answerContentContainer}>
           <Text style={[GlobalStyles.titleText, styles.answerText]}>{answer.text}</Text>
           <View style={styles.answerResultRightContainer}>

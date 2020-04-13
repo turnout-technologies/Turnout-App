@@ -24,6 +24,7 @@ const THISWEEK_ICON_LABEL="view-week";
 const ALLTIME_ICON_LABEL="view-module";
 
 const LIST_ITEM_IMAGE_SIZE=50;
+const BACKDROP_BACK_LAYER_REVEALED_HEIGHT = 85; //125 for 3 options
 
 class LeftScreen extends Component {
 
@@ -153,7 +154,7 @@ class LeftScreen extends Component {
           backLayerStyle={{backgroundColor: global.CURRENT_THEME.colors.primary}}
           backLayerConcealed={this.renderBackLayerConcealed}
           backRevealedElementsConfig={[
-            {el: this.renderBackLayerRevealed, offset: 125}
+            {el: this.renderBackLayerRevealed, offset: BACKDROP_BACK_LAYER_REVEALED_HEIGHT}
           ]}
           frontLayerStyle={styles.frontLayerStyle}>
 
@@ -246,8 +247,8 @@ class LeftScreen extends Component {
           />
         </TouchableOpacity>*/}
         <TouchableOpacity style={styles.backdropHeader} onPress = { () => this.backdrop.toggleLayout()}>
-          <LeaderboardFilter icon={this.getIconName(this.state.peopleFilterSelected)} text={this.state.peopleFilterSelected} selected={true}/>
-          <View style={{marginHorizontal: 10, borderLeftColor:'white',borderLeftWidth:1,height:'50%'}}/>
+          {/*<LeaderboardFilter icon={this.getIconName(this.state.peopleFilterSelected)} text={this.state.peopleFilterSelected} selected={true}/>
+          <View style={{marginHorizontal: 10, borderLeftColor:'white',borderLeftWidth:1,height:'50%'}}/>*/}
           <LeaderboardFilter icon={this.getIconName(this.state.timeFilterSelected)} text={this.state.timeFilterSelected} selected={true}/>
         </TouchableOpacity>
       </View>
@@ -257,7 +258,7 @@ class LeftScreen extends Component {
   renderBackLayerRevealed = () => {
     return (
       <View style={styles.backdropExpandedContainer} >
-        <View style={styles.backdropExpandedFilterColumn}>
+        {/*<View style={styles.backdropExpandedFilterColumn}>
           <TouchableOpacity style={styles.filterItem} onPress = { () => this.selectPeopleFilter(FRIENDS_LABEL)}>
             <LeaderboardFilter icon={FRIENDS_ICON_LABEL} text={FRIENDS_LABEL} selected={this.state.peopleFilterSelected == FRIENDS_LABEL}/>
           </TouchableOpacity>
@@ -268,7 +269,7 @@ class LeftScreen extends Component {
             <LeaderboardFilter icon={ALL_ICON_LABEL} text={ALL_LABEL} selected={this.state.peopleFilterSelected == ALL_LABEL}/>
           </TouchableOpacity>
         </View>
-        <View style={styles.verticalSeparator}/>
+        <View style={styles.verticalSeparator}/>*/}
         <View style={styles.backdropExpandedFilterColumn}>
           <TouchableOpacity style={styles.filterItem} onPress = { () => this.selectTimeFilter(CURRENTDROP_LABEL)}>
             <LeaderboardFilter icon={CURRENTDROP_ICON_LABEL} text={CURRENTDROP_LABEL} selected={this.state.timeFilterSelected == CURRENTDROP_LABEL}/>
@@ -303,7 +304,7 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   backdropExpandedContainer: {
-    height: 125,
+    height: BACKDROP_BACK_LAYER_REVEALED_HEIGHT,
     flexDirection: "row",
     alignSelf: "center",
     alignItems: "center"

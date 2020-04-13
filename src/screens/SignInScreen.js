@@ -134,14 +134,13 @@ class SignInScreen extends Component {
     });
   }
 
-  async signInAsyncWeb() {
+async signInAsyncWeb() {
     try {
       const result = await Google.logInAsync(Constants.manifest.extra.googleLogInConfig);
 
       if (result.type === 'success') {
         /* `accessToken` is now valid and can be used to get data from the Google API with HTTP requests */
         this.onSignIn(result);
-        return result.accessToken;
       } else {
         Sentry.captureException(new Error(result));
       }

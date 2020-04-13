@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import { View, StyleSheet, Text, Button, Alert, ScrollView, TouchableOpacity, SafeAreaView, RefreshControl, AppState } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { SplashScreen, Linking } from 'expo';
+import { SimpleLineIcons } from '@expo/vector-icons';
 var moment = require('moment-timezone');
 
 import {GlobalStyles, refreshUser} from '../Globals';
@@ -33,16 +34,19 @@ class MiddleScreen extends Component {
     this.maybeRefreshUser();
   }
 
-
-
   updateHeader() {
     this.props.navigation.setParams({
       header: () => (
         <SafeAreaView style={styles.customHeaderContainer} >
-          <TouchableOpacity style={styles.headerPointsContainer} onPress={() => Alert.alert("Points", "This is the total number of points you have scored so far. They aren't good for anything besides bragging rights (yet 😅).")}>
+          <TouchableOpacity style={styles.headerPointsContainer} onPress={() => Alert.alert("Points", "This is the number of points you have scored so far during the current drop.")}>
             <MaterialCommunityIcons name="ticket" size={25} color={global.CURRENT_THEME.colors.accent} />
             <Text style={[GlobalStyles.bodyText, styles.headerPointsText]}>{global.user.points.total}</Text>
           </TouchableOpacity>
+          {/*<View style={{marginHorizontal: 10, borderLeftColor:'white',borderLeftWidth:1,height:'50%'}}/>
+          <TouchableOpacity style={styles.headerPointsContainer} onPress={() => Alert.alert("Autocorrect Power-Ups", "This is number of Autocorrect power-ups you have available. Using one corrects a question you got wrong and gives you the points. Invite friends to get more!")}>
+            <SimpleLineIcons name="magic-wand" size={25} color={global.CURRENT_THEME.colors.accent} />
+            <Text style={[GlobalStyles.bodyText, styles.headerPointsText]}>{global.user.points.total}</Text>
+          </TouchableOpacity>*/}
         </SafeAreaView>
       )
     });

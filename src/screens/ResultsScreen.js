@@ -93,7 +93,8 @@ export default class ResultsScreen extends Component {
                   questionIndex={index}
                   aggregate={this.state.ballotResult.aggregate[item.id]}
                   winningAnswers={this.state.ballotResult.winningAnswers[item.id]}
-                  response={this.state.ballotResult.response ? this.state.ballotResult.response[item.id] : null} />
+                  response={this.state.ballotResult.response ? this.state.ballotResult.response[item.id] : null}
+                  navigation={this.props.navigation} />
               ))}
             </SafeAreaView>
         </ScrollView>}
