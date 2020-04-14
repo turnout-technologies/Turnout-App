@@ -85,7 +85,7 @@ class RightScreen extends Component {
               <Text style={[GlobalStyles.bodyText, styles.statSubtitle]}>Invites Completed</Text>
             </View>
             <View style={styles.statContainer}>
-              <Text style={[GlobalStyles.titleText, styles.statNumber]}>{global.user.powerups.hacks}</Text>
+              <Text style={[GlobalStyles.titleText, styles.statNumber]}>{global.user.powerups.autocorrects}</Text>
               <Text style={[GlobalStyles.bodyText, styles.statSubtitle]}>Autocorrect Power-Ups</Text>
             </View>
             <View style={styles.statContainer}>

@@ -419,8 +419,10 @@ class InviteScreen extends Component {
             okLabel="Cancel"
             colorAccent={global.CURRENT_THEME.colors.primary}
             backgroundColor={global.CURRENT_THEME.colors.backgroundColor}>
-            <ActivityIndicator size="large" color={global.CURRENT_THEME.colors.primary}/>
-            <Text style={styles.preparingInviteText}>Preparing {this.state.preparingInviteName}'s Invite...</Text>
+            <View>
+              <ActivityIndicator size="large" color={global.CURRENT_THEME.colors.primary}/>
+              <Text style={styles.preparingInviteText}>Preparing {this.state.preparingInviteName}'s Invite...</Text>
+            </View>
           </MaterialDialog>
           <MaterialDialog
             visible={this.state.invitesSentDialogVisible}
@@ -430,16 +432,18 @@ class InviteScreen extends Component {
             cancelLabel="Close"
             colorAccent={global.CURRENT_THEME.colors.primary}
             backgroundColor={global.CURRENT_THEME.colors.backgroundColor}>
-            <Ionicons
-              name="md-checkmark-circle-outline"
-              size={100}
-              style={{ alignSelf: "center" }}
-              color={global.CURRENT_THEME.colors.primary}
-            />
-            <Text style={[GlobalStyles.headerText, styles.invitesSentDialogTitle]}>Invites Sent</Text>
-            <Text style={[GlobalStyles.bodyText, styles.invitesSentDialogText]}>
-              {this.state.invitesSent} invite{this.state.invitesSent > 1 ? "s" : ""} sent! Share your link on social media to reach even more people.
-            </Text>
+            <View>
+              <Ionicons
+                name="md-checkmark-circle-outline"
+                size={100}
+                style={{ alignSelf: "center" }}
+                color={global.CURRENT_THEME.colors.primary}
+              />
+              <Text style={[GlobalStyles.headerText, styles.invitesSentDialogTitle]}>Invites Sent</Text>
+              <Text style={[GlobalStyles.bodyText, styles.invitesSentDialogText]}>
+                {this.state.invitesSent} invite{this.state.invitesSent > 1 ? "s" : ""} sent! Share your link on social media to reach even more people.
+              </Text>
+            </View>
           </MaterialDialog>
         </View>
 	    </View>

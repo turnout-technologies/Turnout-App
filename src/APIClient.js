@@ -36,6 +36,7 @@ export function setBaseURL(url) {
 	turnoutAPIInstance.defaults.baseURL = url + "/v1";
 }
 
+//USERS
 export function addUser(user) {
 	return turnoutAPIInstance.post("/users", user);
 }
@@ -44,14 +45,19 @@ export function getUser() {
 	return turnoutAPIInstance.get("/users/self");
 }
 
-export function putPushToken(uid, token) {
-	return turnoutAPIInstance.put("/users/"+uid+"/push-token", {pushToken: token});
+export function putPushToken(token) {
+	return turnoutAPIInstance.put("/users/self/push-token", {pushToken: token});
 }
 
 export function getLeaderboard() {
 	return turnoutAPIInstance.get("/users/leaderboard");
 }
 
+export function turbovoteComplete() {
+	return turnoutAPIInstance.put("/users/self/turbovote");
+}
+
+//BALLOTS
 export function getBallotToday() {
 	return turnoutAPIInstance.get("/ballots/today");
 }
@@ -65,4 +71,8 @@ export function submitBallot(ballotId, userId, questionResponse) {
 
 export function getLatestBallotResults() {
 	return turnoutAPIInstance.get("/ballots/latest/results");
+}
+
+export function autocorrect(autocorrectInfo) {
+	return turnoutAPIInstance.put("/ballots/latest/results/self", autocorrectInfo);
 }

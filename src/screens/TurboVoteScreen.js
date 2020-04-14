@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { WebView } from 'react-native-webview';
 import * as WebBrowser from 'expo-web-browser';
 import Constants from 'expo-constants';
+import * as API from '../APIClient';
 
 import {GlobalStyles} from '../Globals';
 
@@ -356,13 +357,18 @@ class TurboVoteScreen extends Component {
     console.log(newNavState);
   }
 
+  completeTurboVote() {
+    API.turbovoteComplete();
+    this.props.navigation.navigate('Main');
+  }
+
   doneButtonHandler() {
     Alert.alert(
       "TuroVote Signup Complete!",
       "Did you read the info on this last page so you know what comes next? There's some important stuff here.",
       [
         {text: "Oops, I'll go read that real quick", style: "cancel"},
-        {text: "I read it and know what to do", onPress: () => this.props.navigation.navigate('Main')}
+        {text: "I read it and know what to do", onPress: () => this.completeTurboVote()}
       ],
       { cancelable: false }
     );

@@ -1,9 +1,12 @@
 import React, {Component} from 'react';
 import { ActivityIndicator, View, StyleSheet, ScrollView, Text, TouchableOpacity, Alert, SafeAreaView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { MaterialDialog } from 'react-native-material-dialog';
+import { SimpleLineIcons } from '@expo/vector-icons';
 
 import {GlobalStyles} from '../Globals';
 import QuestionResult from '../components/QuestionResult';
+import * as API from '../APIClient';
 
 const RESULTS_HELP_TITLE = "About Scoring";
 const RESULTS_HELP_MESSAGE = "Remember, you only get points for choosing the most popular answer! Point values increase by 1 for each question you get right. For example, if you get 3 questions right, you score 1+2+3 = 6 points."
@@ -11,17 +14,32 @@ const RESULTS_HELP_MESSAGE = "Remember, you only get points for choosing the mos
 export default class ResultsScreen extends Component {
 
   constructor (props) {
-     super(props);
-     this.state = {isLoading: true, ballotResult: null, numCorrect: 0, score: 0};
+    super(props);
+    this.state = {
+      isLoading: true,
+      ballotResult: null,
+      numCorrect: 0,
+      score: 0,
+      autocorrectDialogVisible: false,
+      noAutocorrectsDialogVisible: false,
+    };
+
+    this.inviteFriends = this.inviteFriends.bind(this);
+    this.autocorrectHandler = this.autocorrectHandler.bind(this);
+    this.useAutocorrect = this.useAutocorrect.bind(this);
   }
 
   componentDidMount() {
     var resultsResponse = this.props.navigation.state.params.resultsResponse;
     var dateStr = this.props.navigation.state.params.resultsDateStr;
-    var headerTitle = "Results for " + dateStr;
-    this.props.navigation.setParams({headerTitle: headerTitle});
-    const numCorrect = this.calculateNumCorrect(resultsResponse.response, resultsResponse.winningAnswers);
-    this.setState({isLoading: false, ballotResult: resultsResponse, numCorrect, score: resultsResponse.userPoints });
+    this.props.navigation.setParams({headerTitle: "Results for " + dateStr});
+
+    this.questionPoints = {};
+    this.calculateNumCorrect(resultsResponse);
+    this.setState({
+      isLoading: false,
+      ballotResult: resultsResponse,
+    });
     this.didVote = resultsResponse.response != null;
   }
 
@@ -47,17 +65,69 @@ export default class ResultsScreen extends Component {
     }
   };
 
-  calculateNumCorrect(responses, winningAnswers) {
+  calculateNumCorrect(resultsResponse) {
+    const questions = resultsResponse.questions;
+    const responses = resultsResponse.response;
+    const winningAnswers = resultsResponse.winningAnswers;
+
     if (responses == null) {
       return 0;
     }
     var numCorrect = 0;
-    for (var questionId in winningAnswers) {
+    var score = 0;
+    for (const question of questions) {
+      const questionId = question.id;
       if (winningAnswers[questionId].includes(responses[questionId])) {
         numCorrect += 1;
+        score += numCorrect;
+        //store number of points earned for this question
+        this.questionPoints[questionId] = numCorrect;
       }
     }
-    return numCorrect;
+    // add autocorrects
+    for (var questionId in responses.autocorrect.questionIds) {
+     if (Object.prototype.hasOwnProperty.call(responses.autocorrect.questionIds, questionId)) {
+        numCorrect += 1;
+        score += numCorrect;
+        this.questionPoints[questionId] = numCorrect;
+      }
+    }
+    this.setState({numCorrect, score});
+  }
+
+  inviteFriends() {
+    this.props.navigation.navigate('Invite');
+    this.setState({noAutocorrectsDialogVisible: false});
+  }
+
+  autocorrectHandler(questionId) {
+    this.curAutocorrectQuestionId = questionId;
+    const hasAutocorrects = true;// global.user.powerups.autocorrects > 0;
+    if (hasAutocorrects) {
+      this.setState({autocorrectDialogVisible: true});
+    } else {
+      this.setState({noAutocorrectsDialogVisible: true});
+    }
+  }
+
+  useAutocorrect() {
+    global.user.powerups.autocorrects -= 1;
+    this.setState(async prevState => {
+      const newNumCorrect = prevState.numCorrect + 1;
+      try {
+        const response = await API.autocorrect({
+          dropId: "4a6ff0c0-7dee-11ea-ac1c-6f1a5e961b82",
+          questionId: this.curAutocorrectQuestionId,
+          pointsToAdd: newNumCorrect
+        });
+        this.calculateNumCorrect(response.data);
+        this.setState({ballotResult: response.data});
+      } catch (error) {
+        console.log(error);
+        Alert.alert("Autocorrect Error", "There was a problem applying your autocorrect power-up. Please try again.");
+      }
+      this.setState({autocorrectDialogVisible: false});
+    });
   }
 
   render() {
@@ -94,10 +164,57 @@ export default class ResultsScreen extends Component {
                   aggregate={this.state.ballotResult.aggregate[item.id]}
                   winningAnswers={this.state.ballotResult.winningAnswers[item.id]}
                   response={this.state.ballotResult.response ? this.state.ballotResult.response[item.id] : null}
-                  navigation={this.props.navigation} />
+                  points={this.questionPoints[item.id]}
+                  autocorrectHandler={this.autocorrectHandler}
+                  isAutocorrected={this.state.ballotResult.response.autocorrect.questionIds[item.id]} />
               ))}
             </SafeAreaView>
         </ScrollView>}
+        <MaterialDialog
+          visible={this.state.autocorrectDialogVisible}
+          onOk={() => this.useAutocorrect()}
+          onCancel={() => this.setState({autocorrectDialogVisible: false})}
+          okLabel="Use It"
+          cancelLabel="Cancel"
+          colorAccent={global.CURRENT_THEME.colors.primary}
+          backgroundColor={global.CURRENT_THEME.colors.backgroundColor}>
+          <View>
+            <SimpleLineIcons
+              name="magic-wand"
+              size={75}
+              style={{ alignSelf: "center" }}
+              color={global.CURRENT_THEME.colors.primary}
+            />
+            <Text style={[GlobalStyles.headerText, styles.autocorrectDialogTitle]}>Autocorrect</Text>
+            <Text>
+              <Text style={[GlobalStyles.bodyText, styles.autocorrectDialogText]}>
+                The autocorrect power-up corrects a question you got wrong and gives you the points. You have</Text>
+              <Text style={[GlobalStyles.headerText, styles.autocorrectDialogText]}> {global.user.powerups.autocorrects}</Text>
+              <Text style={[GlobalStyles.bodyText, styles.autocorrectDialogText]}> remaining.</Text>
+            </Text>
+          </View>
+      </MaterialDialog>
+      <MaterialDialog
+        visible={this.state.noAutocorrectsDialogVisible}
+        onOk={() => this.inviteFriends()}
+        onCancel={() => this.setState({noAutocorrectsDialogVisible: false})}
+        okLabel="Invite Friends"
+        cancelLabel="Cancel"
+        colorAccent={global.CURRENT_THEME.colors.primary}
+        backgroundColor={global.CURRENT_THEME.colors.backgroundColor}>
+        <View>
+          <SimpleLineIcons
+            name="magic-wand"
+            size={75}
+            style={{ alignSelf: "center" }}
+            color={global.CURRENT_THEME.colors.text_opacity5}
+          />
+          <Text style={[GlobalStyles.headerText, styles.autocorrectDialogTitle]}>No autocorrect power-ups remaining</Text>
+          <Text style={[GlobalStyles.bodyText, styles.autocorrectDialogText]}>
+            You're out of autocorrect power-ups. Invite friends to get more.
+          </Text>
+        </View>
+      </MaterialDialog>
       </View>
     );
   }
@@ -125,4 +242,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center"
   },
+  autocorrectDialogText: {
+    marginTop: 10,
+    fontSize: 18,
+    textAlign: "left",
+    color: global.CURRENT_THEME.colors.text
+  },
+  autocorrectDialogTitle: {
+    marginTop: 10,
+    fontSize: 20,
+    textAlign: "left",
+    color: global.CURRENT_THEME.colors.text
+  }
 });

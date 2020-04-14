@@ -11,7 +11,7 @@ export default class InviteBar extends Component {
 
   render() {
     const invitesComplete = global.user.referrals.valid;
-    const nextLevel = 10;//global.user.referrals.nextLevel;
+    const nextLevel = global.user.referrals.nextLevel;
     const percentageDecimal = invitesComplete/nextLevel;
     return (
       <View style={styles.container}>
@@ -27,7 +27,7 @@ export default class InviteBar extends Component {
         <View style={styles.subtitleContainer}>
           <Text style={styles.subtitleText}>
             <Text style={GlobalStyles.headerText}>{nextLevel-invitesComplete}</Text>
-            <Text style={GlobalStyles.bodyText}> invites to next power-up</Text>
+            <Text style={GlobalStyles.bodyText}> invite{nextLevel != 1 ? s : null} to next power-up</Text>
           </Text>
         </View>
       </View>
