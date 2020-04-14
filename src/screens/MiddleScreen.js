@@ -8,7 +8,7 @@ var moment = require('moment-timezone');
 import {GlobalStyles, refreshUser} from '../Globals';
 import AnnouncementCard from '../components/AnnouncementCard';
 import PollStatusCountdown from '../components/PollStatusCountdown';
-import {getLastBallotResultOpenedId, setLastBallotResultOpenedId, getLastRefreshUserTimestamp} from '../AsyncStorage';
+import {getLastBallotResultOpenedId, setLastBallotResultOpenedId, getLastRefreshUserTimestamp, getBallotResult, setBallotResult} from '../AsyncStorage';
 import * as API from '../APIClient';
 
 class MiddleScreen extends Component {
@@ -22,14 +22,14 @@ class MiddleScreen extends Component {
 
     this.handleStartPressed = this.handleStartPressed.bind(this);
     this.handleResultsPressed = this.handleResultsPressed.bind(this);
-    this.fetchLatestResults = this.fetchLatestResults.bind(this);
+    this.maybeFetchLatestResults = this.maybeFetchLatestResults.bind(this);
     this.onRefresh = this.onRefresh.bind(this);
   }
 
   componentDidMount() {
     SplashScreen.hide();
     AppState.addEventListener('change', this._handleAppStateChange);
-    this.fetchLatestResults();
+    this.maybeFetchLatestResults();
     this.updateHeader();
     this.maybeRefreshUser();
   }
@@ -64,50 +64,59 @@ class MiddleScreen extends Component {
     this.setState({appState: nextAppState});
   }
 
-  setResultsCardContent() {
-    getLastBallotResultOpenedId()
-      .then(function(lastBallotResultOpenedId) {
-        var isNewResult = (!lastBallotResultOpenedId || lastBallotResultOpenedId != this.resultsResponse.id);
-        var resultAnnouncementTitleText = isNewResult ? "New Results! 🔴🎉" : "View Results";
-        var resultAnnouncementBodyText = (isNewResult ? ("Results from the " + this.resultsDateStr + " ballot are now available! 🗳") : ("Take a look at the results from the " + this.resultsDateStr + " ballot 🗳"));
-        this.setState({cardsLoading: false, showResultsCard: true, resultAnnouncementTitleText, resultAnnouncementBodyText});
-      }.bind(this))
-      .catch(function (error) {
-        console.log(error);
-      });
+  async setResultsCardContent() {
+    try {
+      var lastBallotResultOpenedId = await getLastBallotResultOpenedId();
+      var isNewResult = (!lastBallotResultOpenedId || lastBallotResultOpenedId != this.ballotResult.id);
+      var resultAnnouncementTitleText = isNewResult ? "New Results! 🔴🎉" : "View Results";
+      var resultAnnouncementBodyText = (isNewResult ?
+        ("Results from the " + this.resultsDateStr + " ballot are now available! 🗳") :
+        ("Take a look at the results from the " + this.resultsDateStr + " ballot 🗳"));
+      this.setState({cardsLoading: false, showResultsCard: true, resultAnnouncementTitleText, resultAnnouncementBodyText});
+    } catch (error) {
+      console.log(error);
+    }
   }
 
-  fetchLatestResults() {
-    API.getLatestBallotResults()
-      .then(function(response) {
-        this.resultsResponse = response.data;
-        if (response.data) {
-          this.resultsDateStr =  moment.unix(response.data.date).tz("America/New_York").format("MMMM Do");
-          this.setResultsCardContent();
-        } else {
-          this.setState({cardsLoading: false});
-        }
-      }.bind(this))
-      .catch(function (error) {
+  async maybeFetchLatestResults() {
+    try {
+      var savedBallotResult = await getBallotResult();
+      if (savedBallotResult) {
+        savedBallotResult = JSON.parse(savedBallotResult);
+      }
+      if (!savedBallotResult || !moment.unix(savedBallotResult.date).tz("America/New_York").isSame(moment().tz("America/New_York"), 'day')) {
+        //only refresh if ballot result date isn't today since ballots only happen once per day
+        var response = await API.getLatestBallotResults();
+        this.ballotResult = response.data;
+        setBallotResult(this.ballotResult);
+      } else {
+        this.ballotResult = savedBallotResult;
+      }
+      if (this.ballotResult) {
+        this.resultsDateStr = moment.unix(this.ballotResult.date).tz("America/New_York").format("MMMM Do");
+        this.setResultsCardContent();
+      } else {
         this.setState({cardsLoading: false});
-        console.log(error);
-      }.bind(this));
+      }
+    } catch(error) {
+      this.setState({cardsLoading: false});
+      console.log(error);
+    };
   }
 
-  maybeRefreshUser() {
-    getLastRefreshUserTimestamp()
-      .then(function(lastRefreshUserTimestamp) {
-        var shouldRefreshUser = !lastRefreshUserTimestamp || !moment.unix(lastRefreshUserTimestamp).tz("America/New_York").isSame(moment().tz("America/New_York"), 'day');
-        if (shouldRefreshUser) {
-          refreshUser()
-            .then(function() {
-              this.updateHeader();
-            }.bind(this));
-        }
-      }.bind(this))
-      .catch(function (error) {
-        console.log(error);
-      });
+  async maybeRefreshUser() {
+    var lastRefreshUserTimestamp = await getLastRefreshUserTimestamp();
+    try {
+      //switchwd to always refresh user
+      var shouldRefreshUser = true; //!lastRefreshUserTimestamp || !moment.unix(lastRefreshUserTimestamp).tz("America/New_York").isSame(moment().tz("America/New_York"), 'day');
+      if (shouldRefreshUser) {
+        await refreshUser();
+        this.updateHeader();
+      }
+    }
+    catch (error) {
+      console.log(error);
+    }
   }
 
   handleStartPressed() {
@@ -115,18 +124,16 @@ class MiddleScreen extends Component {
   }
 
   handleResultsPressed() {
-    setLastBallotResultOpenedId(this.resultsResponse.id);
+    setLastBallotResultOpenedId(this.ballotResult.id);
     this.setResultsCardContent();
-    this.props.navigation.navigate('Results', {resultsResponse: this.resultsResponse, resultsDateStr: this.resultsDateStr})
+    this.props.navigation.navigate('Results', {resultsResponse: this.ballotResult, resultsDateStr: this.resultsDateStr});
   }
 
-  onRefresh() {
+  async onRefresh() {
     this.setState({userRefreshing: true});
-    refreshUser()
-      .then(function(user) {
-        this.updateHeader();
-        this.setState({userRefreshing: false});
-      }.bind(this));
+    await refreshUser();
+    this.updateHeader();
+    this.setState({userRefreshing: false});
   }
 
   static navigationOptions = ({navigation}) => {

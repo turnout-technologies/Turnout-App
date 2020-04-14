@@ -4,7 +4,8 @@ const USER_KEY = 'user';
 const LAST_REFRESH_USER_TIMESTAMP_KEY = 'lastRefreshUserTimestamp';
 const LAST_BALLOT_TIMESTAMP_KEY = 'lastBallotDate';
 const LAST_VERSION_OPENED_KEY = 'lastVersionOpened';
-const LAST_BALLOT_RESULTS_OPENED_KEY = 'getLastBallotResultOpenedId';
+const LAST_BALLOT_RESULTS_OPENED_KEY = 'lastBallotResultOpenedId';
+const BALLOT_RESULT_KEY = 'ballotResult';
 const SERVER_HOSTNAME_KEY = 'serverHostName';
 
 export async function getUser() {
@@ -75,6 +76,18 @@ export async function getLastBallotResultOpenedId() {
 export async function setLastBallotResultOpenedId(id) {
   try {
     await AsyncStorage.setItem(LAST_BALLOT_RESULTS_OPENED_KEY, id.toString());
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function getBallotResult() {
+  return AsyncStorage.getItem(BALLOT_RESULT_KEY);
+}
+
+export async function setBallotResult(ballotResult) {
+  try {
+    await AsyncStorage.setItem(BALLOT_RESULT_KEY, JSON.stringify(ballotResult));
   } catch (error) {
     console.log(error);
   }

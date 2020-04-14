@@ -58,52 +58,51 @@ global.CURRENT_THEME = MainTheme;
 //STYLES
 const GlobalStyles = StyleSheet.create({
 
-    headerStyle: {
+  headerStyle: {
 		backgroundColor: global.CURRENT_THEME.colors.primary,
 		elevation: 0
 	},
 	backLayerContainer: {
-    	flex: 1,
-    	backgroundColor: global.CURRENT_THEME.colors.primary
-  	},
+  	flex: 1,
+  	backgroundColor: global.CURRENT_THEME.colors.primary
+	},
 
-  	frontLayerContainer: {
-	    flex: 1,
-	    backgroundColor: global.CURRENT_THEME.colors.background,
-	    borderTopLeftRadius: global.CURRENT_THEME.roundness,
-	    borderTopRightRadius: global.CURRENT_THEME.roundness,
-  	},
-  	bodyText: {
-  		fontFamily: 'circularstd-book',
-  		color: global.CURRENT_THEME.colors.text
-  	},
-  	titleText: {
-  		fontFamily: 'circularstd-medium',
-  		color: global.CURRENT_THEME.colors.text
-  	},
-  	headerText: {
-  		fontFamily: 'circularstd-bold',
-  		color: global.CURRENT_THEME.colors.text
-  	}
-
+	frontLayerContainer: {
+    flex: 1,
+    backgroundColor: global.CURRENT_THEME.colors.background,
+    borderTopLeftRadius: global.CURRENT_THEME.roundness,
+    borderTopRightRadius: global.CURRENT_THEME.roundness,
+	},
+	bodyText: {
+		fontFamily: 'circularstd-book',
+		color: global.CURRENT_THEME.colors.text
+	},
+	titleText: {
+		fontFamily: 'circularstd-medium',
+		color: global.CURRENT_THEME.colors.text
+	},
+	headerText: {
+		fontFamily: 'circularstd-bold',
+		color: global.CURRENT_THEME.colors.text
+	}
 });
 export {GlobalStyles}
 
 export async function refreshUser() {
-    try {
-        var response = await API.getUser();
-        if (response.data) {
-            response.data.name = response.data.firstName + " " + response.data.lastName;
-            global.user = response.data;
-            console.log(global.user)
-            setUser();
-            setLastRefreshUserTimestamp(moment().unix());
-        }
-    } catch(error) {
-        firebase.auth().signOut();
-        Alert.alert("Error Getting User Data", "You've been signed out. Please sign in again.");
-        console.log(error);
+  try {
+    var response = await API.getUser();
+    if (response.data) {
+      response.data.name = response.data.firstName + " " + response.data.lastName;
+      global.user = response.data;
+      console.log(global.user)
+      setUser();
+      setLastRefreshUserTimestamp(moment().unix());
     }
+  } catch(error) {
+      firebase.auth().signOut();
+      Alert.alert("Error Getting User Data", "You've been signed out. Please sign in again.");
+      console.log(error);
+  }
 }
 
 
