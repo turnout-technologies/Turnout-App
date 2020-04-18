@@ -76,3 +76,8 @@ export function getLatestBallotResults() {
 export function autocorrect(autocorrectInfo) {
 	return turnoutAPIInstance.put("/ballots/latest/results/self", autocorrectInfo);
 }
+
+//DROPS
+export function getLiveDrop() {
+	return turnoutAPIInstance.get("/drops/live");
+}

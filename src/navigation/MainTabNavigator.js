@@ -13,6 +13,7 @@ import FeedbackScreen from '../screens/FeedbackScreen';
 import AboutScreen from '../screens/AboutScreen';
 import InviteScreen from '../screens/InviteScreen';
 import LicensesScreen from '../screens/LicensesScreen';
+import DropScreen from '../screens/DropScreen';
 
 const LeftStack = createStackNavigator(
   {
@@ -56,7 +57,8 @@ const RightStack = createStackNavigator(
     Feedback: FeedbackScreen,
     About: AboutScreen,
     Invite: InviteScreen,
-    Licenses: LicensesScreen
+    Licenses: LicensesScreen,
+    Drop: DropScreen
   }
 );
 

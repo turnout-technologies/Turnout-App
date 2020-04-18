@@ -36,6 +36,7 @@ class InviteScreen extends Component {
     this.contactSelectedHandler = this.contactSelectedHandler.bind(this);
     this.sendInvitesHandler = this.sendInvitesHandler.bind(this);
     this.searchFilterFunction = this.searchFilterFunction.bind(this);
+    this.onInvitesSentDialogButtonPressed = this.onInvitesSentDialogButtonPressed.bind(this);
   }
 
   componentDidMount() {

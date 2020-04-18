@@ -67,7 +67,6 @@ class AuthLoadingScreen extends Component {
             throw "Retrieved user was null";
           }
           global.user = JSON.parse(user);
-          console.log(global.user);
           this.props.navigation.navigate('Main');
         } catch (error) {
           firebase.auth().signOut();

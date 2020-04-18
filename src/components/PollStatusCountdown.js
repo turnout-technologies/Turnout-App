@@ -134,7 +134,6 @@ export default class PollStatusCountdown extends Component {
     } else {
       const { onPressStart } = this.props;
       const {days, hours, minutes, seconds} = this.getTimeLeft();
-      //const newTime = sprintf('%02d:%02d:%02d:%02d', days, hours, minutes, seconds);
       const daysText = sprintf('%02d', days);
       const hoursText = sprintf('%02d', hours);
       const minutesText = sprintf('%02d', minutes);
