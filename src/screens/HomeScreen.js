@@ -172,7 +172,7 @@ class HomeScreen extends Component {
             }
             <AnnouncementCard
               titleText="Support Turnout!"
-              bodyText="Please chip in if you can to help us reach as many college students as possible in the fall! We appreciate you ♥"
+              bodyText="Please chip in if you can to help us reach as many students as possible! We appreciate you ♥"
               buttonText="Donate"
               buttonOnPress={ () => Linking.openURL('https://donorbox.org/campus-impact-turnout-2020')}
               isLoading={this.state.cardsLoading}

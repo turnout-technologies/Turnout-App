@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import {GlobalStyles} from '../Globals';
 import Countdown from '../components/Countdown';
 import * as API from '../APIClient';
+import StatusBarBackground from '../components/StatusBarBackground';
 
 const user = {
   avatarURL: "https://lh3.googleusercontent.com/a-/AOh14GgKoK7FWivUY7WitcHya58hNsJ_gRgY4ZbmMtSMG8A=s96-c",
@@ -49,7 +50,7 @@ const DEAD_DROP = {
   winners: [user, user, user2]
 };
 
-const LIST_ITEM_IMAGE_SIZE = 65;
+const LIST_ITEM_IMAGE_SIZE = 60;
 const INACTIVE_COLOR = "#C0C0C0";
 
 class DropScreen extends Component {
@@ -58,7 +59,7 @@ class DropScreen extends Component {
     super(props);
     this.state = {
       isLoading: false,
-      drop: null//this.processWinnersList(LIVE_DROP)
+      drop: null//this.processWinnersList(DEAD_DROP)
     };
 
     this.fetchDrop = this.fetchDrop.bind(this);
@@ -108,10 +109,7 @@ class DropScreen extends Component {
   }
 
   onTimerExpired() {
-    console.log("EXPIRED")
-    //this.fetchDrop();
-    this.setState({drop: DEAD_DROP});
-    this.updateHeader(false);
+    this.fetchDrop();
   }
 
   getCircleBackgroundColor(position) {
@@ -130,7 +128,6 @@ class DropScreen extends Component {
   }
 
   processWinnersList(drop) {
-    console.log(drop);
     if (drop.active || drop.winners.length == 0) {
       return drop;
     }
@@ -194,6 +191,7 @@ class DropScreen extends Component {
       //active drop
   		return (
   			<View style={GlobalStyles.backLayerContainer}>
+          <StatusBarBackground/>
           <View style={styles.countdownContainer}>
             <Text style={[GlobalStyles.bodyText,styles.dropEndsInText]}>Drop ends in:</Text>
             <Countdown endTime={this.state.drop.endDate} color="white" onTimerExpired={this.onTimerExpired}/>
@@ -231,6 +229,7 @@ class DropScreen extends Component {
       //dead drop
       return (
         <View style={[GlobalStyles.backLayerContainer, {backgroundColor: INACTIVE_COLOR}]}>
+          <StatusBarBackground/>
           <View style={styles.countdownContainer}>
             <Text style={[GlobalStyles.bodyText,styles.dropStartsInText]}>Stay tuned for{"\n"}the next drop...</Text>
           </View>
@@ -269,6 +268,7 @@ const styles = StyleSheet.create({
   countdownContainer: {
     height: 150,
     marginHorizontal: 25,
+    justifyContent: "center",
   },
   currentDropTitle: {
     marginTop: 20,
@@ -332,11 +332,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 30,
     color: global.CURRENT_THEME.colors.accent,
-    marginTop: 15
   },
   listItemContainer: {
     paddingHorizontal: 25,
-    height: 85,
+    height: 80,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between"

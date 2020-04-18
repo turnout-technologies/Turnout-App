@@ -91,29 +91,27 @@ export default class Countdown extends Component {
     const minutesText = sprintf('%02d', minutes);
     const secondsText = sprintf('%02d', seconds);
     return (
-      <View style={styles.container}>
-        <View style={styles.pollCountdownContainer}>
-          { days > 0 &&
-            <View>
-              <Text style={[GlobalStyles.headerText,styles.pollCountdownText, {color: color}]}>{daysText}</Text>
-              <Text style={[GlobalStyles.bodyText,styles.pollCountdownLabelText, {color: color}]}>days</Text>
-            </View>
-          }
-          { days > 0 && <Text style={[GlobalStyles.headerText,styles.pollCountdownText, {color: color}]}>:</Text>}
+      <View style={styles.pollCountdownContainer}>
+        { days > 0 &&
           <View>
-            <Text style={[GlobalStyles.headerText,styles.pollCountdownText, {color: color}]}>{hoursText}</Text>
-            <Text style={[GlobalStyles.bodyText,styles.pollCountdownLabelText, {color: color}]}>hours</Text>
+            <Text style={[GlobalStyles.headerText,styles.pollCountdownText, {color: color}]}>{daysText}</Text>
+            <Text style={[GlobalStyles.bodyText,styles.pollCountdownLabelText, {color: color}]}>days</Text>
           </View>
-          <Text style={[GlobalStyles.headerText,styles.pollCountdownText, {color: color}]}>:</Text>
-          <View>
-            <Text style={[GlobalStyles.headerText,styles.pollCountdownText, {color: color}]}>{minutesText}</Text>
-            <Text style={[GlobalStyles.bodyText,styles.pollCountdownLabelText, {color: color}]}>minutes</Text>
-          </View>
-          <Text style={[GlobalStyles.headerText,styles.pollCountdownText, {color: color}]}>:</Text>
-          <View>
-            <Text style={[GlobalStyles.headerText,styles.pollCountdownText, {color: color}]}>{secondsText}</Text>
-            <Text style={[GlobalStyles.bodyText,styles.pollCountdownLabelText, {color: color}]}>seconds</Text>
-          </View>
+        }
+        { days > 0 && <Text style={[GlobalStyles.headerText,styles.pollCountdownText, {color: color}]}>:</Text>}
+        <View>
+          <Text style={[GlobalStyles.headerText,styles.pollCountdownText, {color: color}]}>{hoursText}</Text>
+          <Text style={[GlobalStyles.bodyText,styles.pollCountdownLabelText, {color: color}]}>hours</Text>
+        </View>
+        <Text style={[GlobalStyles.headerText,styles.pollCountdownText, {color: color}]}>:</Text>
+        <View>
+          <Text style={[GlobalStyles.headerText,styles.pollCountdownText, {color: color}]}>{minutesText}</Text>
+          <Text style={[GlobalStyles.bodyText,styles.pollCountdownLabelText, {color: color}]}>minutes</Text>
+        </View>
+        <Text style={[GlobalStyles.headerText,styles.pollCountdownText, {color: color}]}>:</Text>
+        <View>
+          <Text style={[GlobalStyles.headerText,styles.pollCountdownText, {color: color}]}>{secondsText}</Text>
+          <Text style={[GlobalStyles.bodyText,styles.pollCountdownLabelText, {color: color}]}>seconds</Text>
         </View>
       </View>
     );
@@ -121,9 +119,6 @@ export default class Countdown extends Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-  	flex: 1
-  },
   pollCountdownContainer: {
     flexDirection: "row",
     justifyContent: "center",

@@ -31,6 +31,22 @@ LeaderboardStack.navigationOptions = {
   )
 };
 
+const DropStack = createStackNavigator(
+  {
+    Drop: DropScreen
+  },
+  {
+    headerMode: 'none',
+  }
+);
+
+DropStack.navigationOptions = {
+  tabBarLabel: 'Drop',
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon focused={focused} name={'parachute-box'} />
+  ),
+};
+
 const HomeStack = createStackNavigator(
   {
     Home: HomeScreen,
@@ -44,11 +60,24 @@ HomeStack.navigationOptions = ({ navigation }) => {
   return ({
     tabBarLabel: 'Home',
     tabBarIcon: ({ focused }) => (
-      <TabBarIcon focused={focused} name={'md-checkbox'} />
+      <TabBarIcon focused={focused} name={'turnout'} />
     ),
     tabBarVisible
   });
 
+};
+
+const InviteStack = createStackNavigator(
+  {
+    Invite: InviteScreen
+  }
+);
+
+InviteStack.navigationOptions = {
+  tabBarLabel: 'Invite',
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon focused={focused} name={'md-contacts'} />
+  ),
 };
 
 const ProfileStack = createStackNavigator(
@@ -56,9 +85,9 @@ const ProfileStack = createStackNavigator(
     Right: ProfileScreen,
     Feedback: FeedbackScreen,
     About: AboutScreen,
-    Invite: InviteScreen,
+    //Invite: InviteScreen,
     Licenses: LicensesScreen,
-    Drop: DropScreen
+    //Drop: DropScreen
   }
 );
 
@@ -72,7 +101,9 @@ ProfileStack.navigationOptions = {
 const tabNavigator = createBottomTabNavigator(
   {
     LeaderboardStack,
+    DropStack,
     HomeStack,
+    InviteStack,
     ProfileStack,
   },
   {
