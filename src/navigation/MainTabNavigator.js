@@ -4,9 +4,9 @@ import { createStackNavigator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 
 import TabBarIcon from '../components/TabBarIcon';
-import LeftScreen from '../screens/LeftScreen';
-import MiddleScreen from '../screens/MiddleScreen';
-import RightScreen from '../screens/RightScreen';
+import LeaderboardScreen from '../screens/LeaderboardScreen';
+import HomeScreen from '../screens/HomeScreen';
+import ProfileScreen from '../screens/ProfileScreen';
 import QuestionScreen from '../screens/QuestionScreen';
 import ResultsScreen from '../screens/ResultsScreen';
 import FeedbackScreen from '../screens/FeedbackScreen';
@@ -15,31 +15,31 @@ import InviteScreen from '../screens/InviteScreen';
 import LicensesScreen from '../screens/LicensesScreen';
 import DropScreen from '../screens/DropScreen';
 
-const LeftStack = createStackNavigator(
+const LeaderboardStack = createStackNavigator(
   {
-    Left: LeftScreen,
+    Left: LeaderboardScreen,
   },
   {
     headerMode: 'none',
   }
 );
 
-LeftStack.navigationOptions = {
+LeaderboardStack.navigationOptions = {
   tabBarLabel: 'Leaderboard',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon focused={focused} name={'md-trophy'} />
   )
 };
 
-const MiddleStack = createStackNavigator(
+const HomeStack = createStackNavigator(
   {
-    Home: MiddleScreen,
+    Home: HomeScreen,
     Question: QuestionScreen,
     Results: ResultsScreen
   }
 );
 
-MiddleStack.navigationOptions = ({ navigation }) => {
+HomeStack.navigationOptions = ({ navigation }) => {
   let tabBarVisible = navigation.state.index == 0;
   return ({
     tabBarLabel: 'Home',
@@ -51,9 +51,9 @@ MiddleStack.navigationOptions = ({ navigation }) => {
 
 };
 
-const RightStack = createStackNavigator(
+const ProfileStack = createStackNavigator(
   {
-    Right: RightScreen,
+    Right: ProfileScreen,
     Feedback: FeedbackScreen,
     About: AboutScreen,
     Invite: InviteScreen,
@@ -62,7 +62,7 @@ const RightStack = createStackNavigator(
   }
 );
 
-RightStack.navigationOptions = {
+ProfileStack.navigationOptions = {
   tabBarLabel: 'Profile',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon focused={focused} name={'md-contact'} />
@@ -71,12 +71,12 @@ RightStack.navigationOptions = {
 
 const tabNavigator = createBottomTabNavigator(
   {
-    LeftStack,
-    MiddleStack,
-    RightStack,
+    LeaderboardStack,
+    HomeStack,
+    ProfileStack,
   },
   {
-    initialRouteName: "MiddleStack",
+    initialRouteName: "HomeStack",
     tabBarOptions: {
       activeTintColor: global.CURRENT_THEME.colors.primary
     }

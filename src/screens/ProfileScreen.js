@@ -11,7 +11,7 @@ import {setUser} from '../AsyncStorage';
 import InviteBar from '../components/InviteBar';
 
 
-class RightScreen extends Component {
+class ProfileScreen extends Component {
 
 	constructor(props) {
     super(props);
@@ -269,4 +269,4 @@ const styles = StyleSheet.create({
   },
 });
 
-module.exports= RightScreen
+module.exports= ProfileScreen

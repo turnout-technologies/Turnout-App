@@ -11,7 +11,7 @@ import PollStatusCountdown from '../components/PollStatusCountdown';
 import {getLastBallotResultOpenedId, setLastBallotResultOpenedId, getLastRefreshUserTimestamp, getBallotResult, setBallotResult} from '../AsyncStorage';
 import * as API from '../APIClient';
 
-class MiddleScreen extends Component {
+class HomeScreen extends Component {
 
   constructor (props) {
     super(props);
@@ -226,4 +226,4 @@ const styles = StyleSheet.create({
   }
 });
 
-module.exports= MiddleScreen
+module.exports= HomeScreen

@@ -26,7 +26,7 @@ const ALLTIME_ICON_LABEL="view-module";
 const LIST_ITEM_IMAGE_SIZE=50;
 const BACKDROP_BACK_LAYER_REVEALED_HEIGHT = 85; //125 for 3 options
 
-class LeftScreen extends Component {
+class LeaderboardScreen extends Component {
 
   constructor(props) {
     super(props);
@@ -283,7 +283,7 @@ class LeftScreen extends Component {
   }
 }
 
-LeftScreen.navigationOptions = {
+LeaderboardScreen.navigationOptions = {
   headerStyle: GlobalStyles.headerStyle
 };
 
@@ -369,4 +369,4 @@ const styles = StyleSheet.create({
   },
 });
 
-module.exports= LeftScreen
+module.exports= LeaderboardScreen
