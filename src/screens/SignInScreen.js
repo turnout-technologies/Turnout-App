@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View, TouchableOpacity, Text, Image, StyleSheet, SafeAreaView, YellowBox, Animated, AppState } from 'react-native';
+import { View, TouchableOpacity, Text, Image, StyleSheet, SafeAreaView, YellowBox, Animated, AppState, Alert } from 'react-native';
 import Constants from 'expo-constants';
 import * as Google from 'expo-google-app-auth';
 import * as firebase from 'firebase';
@@ -134,18 +134,26 @@ class SignInScreen extends Component {
     });
   }
 
+checkForValidDomain(email) {
+  const domain = email.split("@")[1];
+  console.log(domain);
+  return domain === "brown.edu" || domain === "alumni.brown.edu";
+}
+
 async signInAsyncWeb() {
     try {
       const result = await Google.logInAsync(Constants.manifest.extra.googleLogInConfig);
-
+      if (!Env.isDevEnv() && !this.checkForValidDomain(result.user.email)) {
+        Alert.alert("Invalid Account", "Turnout is currently only available at Brown University. If you're a Brown student, make sure to choose your Brown email!");
+        return;
+      }
       if (result.type === 'success') {
-        /* `accessToken` is now valid and can be used to get data from the Google API with HTTP requests */
         this.onSignIn(result);
       } else {
         Sentry.captureException(new Error(result));
       }
     } catch ({ message }) {
-      alert('login: Error:' + message);
+      console.log('login: Error:' + message);
     }
   };
 
@@ -165,18 +173,18 @@ async signInAsyncWeb() {
         <SafeAreaView style={styles.topContainer}>
           { Env.isDevEnv() &&
             <TouchableOpacity style={styles.debugButton} onPress={() => this.props.navigation.navigate('DebugOptions', {previousScreen: this.props.navigation.state.routeName})}>
-              <Ionicons name="md-bug" size={25} color={global.CURRENT_THEME.colors.primary} />
+              <Ionicons name="md-bug" size={25} color={global.LOGO_BLUE} />
             </TouchableOpacity>
           }
           <Image source={require('../../assets/images/logo_text.png')} style={styles.logoText} />
           <View style={styles.welcomeContainer}>
             <Text>
               <Text style={[GlobalStyles.titleText, styles.welcomeText]}>It takes a </Text>
-              <Text style={[GlobalStyles.titleText, styles.welcomeText, {color: global.CURRENT_THEME.colors.primary}]}>friend</Text>
+              <Text style={[GlobalStyles.titleText, styles.welcomeText, {color: global.LOGO_BLUE}]}>friend</Text>
               <Text style={[GlobalStyles.titleText, styles.welcomeText]}> to get a </Text>
               <Text style={[GlobalStyles.titleText, styles.welcomeText, {color: "#EE3738"}]}>friend</Text>
               <Text style={[GlobalStyles.titleText, styles.welcomeText]}> to </Text>
-              <Text style={[GlobalStyles.titleText, styles.welcomeText, {color: global.CURRENT_THEME.colors.primary}]}>vote</Text>
+              <Text style={[GlobalStyles.titleText, styles.welcomeText, {color: global.LOGO_BLUE}]}>vote</Text>
               <Text style={[GlobalStyles.titleText, styles.welcomeText]}>.</Text>
             </Text>
           </View>
@@ -249,7 +257,7 @@ const styles = StyleSheet.create({
     marginBottom: 225,
   },
   bottomContainer: {
-    backgroundColor: global.CURRENT_THEME.colors.primary,
+    backgroundColor: global.LOGO_BLUE,
     borderTopLeftRadius: global.CURRENT_THEME.roundness,
     borderTopRightRadius: global.CURRENT_THEME.roundness,
     position: "absolute",
@@ -320,7 +328,7 @@ const styles = StyleSheet.create({
   },
   noInviteButtonText: {
     fontSize: 22,
-    color: global.CURRENT_THEME.colors.primary,
+    color: global.LOGO_BLUE,
     marginTop: 10
   },
   debugButton: {

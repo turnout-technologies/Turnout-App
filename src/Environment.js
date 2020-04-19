@@ -9,11 +9,8 @@ const getEnvVars = (env = Constants.manifest.releaseChannel) => {
  	// __DEV__ is true when run locally, but false when published.
 	if (__DEV__ || env === 'dev') {
    		return Constants.manifest.extra.dev;
- 	} else if (env === 'alpha') {
+ 	} else {
    		return Constants.manifest.extra.prod;
-	} else {
-		console.log("ERROR: Unrecognized Environment");
-		return Constants.manifest.extra.dev;
 	}
 };
 
