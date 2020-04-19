@@ -6,14 +6,15 @@ import {sprintf} from 'sprintf-js';
 var moment = require('moment-timezone');
 
 import {GlobalStyles} from '../Globals';
-import {getLastBallotTimestamp, removeLastBallotTimestamp} from '../AsyncStorage';
+import {getLastBallotTimestamp} from '../AsyncStorage';
 import {setNotificationsEnabled} from '../Notifications';
 
 export default class PollStatusCountdown extends Component {
 
   static propTypes = {
     onPressStart: PropTypes.func,
-    appState:  PropTypes.string
+    appState:  PropTypes.string,
+    onPollStateChanged: PropTypes.func
   }
 
   constructor(props) {
@@ -33,7 +34,6 @@ export default class PollStatusCountdown extends Component {
     var _this = this;
     this.onPollStatusCountdownShown();
     setTimeout(function(){_this.onPollStatusCountdownShown()}, 1000);
-    //removeLastBallotTimestamp()
   }
 
   componentWillUnmount() {
@@ -67,6 +67,7 @@ export default class PollStatusCountdown extends Component {
   }
 
   setPollState() {
+    var pollsOpen = false;
     var curMoment = moment();
     //var curMoment = moment.tz("2020-03-18 18:59:50", "America/New_York");
     var pollsOpenTimeEastern = moment.tz({y:curMoment.year(), M:curMoment.month(), date:curMoment.date(), h:18, m:0}, "America/New_York");
@@ -77,6 +78,7 @@ export default class PollStatusCountdown extends Component {
       this.setState({timer: pollsOpenTimeEastern.diff(curMoment, 'seconds'), pollStatusText: "Polls open at " + pollsOpenTimeLocalLabel + " in", pollsOpen: false});
     } else if (curMoment > pollsOpenTimeEastern && curMoment < pollsCloseTimeEastern) {
       //console.log("POLLS OPEN!");
+      pollsOpen = true;
       var pollsCloseTimeLocalLabel = pollsCloseTimeEastern.local().format("h A");
       this.setState({timer: pollsCloseTimeEastern.diff(curMoment, 'seconds'), pollStatusText: "Polls close at " + pollsCloseTimeLocalLabel + " in", pollsOpen: true});
       getLastBallotTimestamp()
@@ -92,6 +94,7 @@ export default class PollStatusCountdown extends Component {
       var pollsOpenTimeLocalLabel = pollsOpenTimeEastern.local().format("h A");
       this.setState({timer: pollsOpenTimeEastern.add(1,'d').diff(curMoment, 'seconds'), pollStatusText: "Polls open tomorrow at " + pollsOpenTimeLocalLabel + " in", pollsOpen: false});
     }
+    this.props.onPollStateChanged(pollsOpen);
   }
 
   decrementClock = () => {

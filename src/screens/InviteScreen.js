@@ -365,7 +365,7 @@ class InviteScreen extends Component {
 			<View style={GlobalStyles.backLayerContainer}>
         <View style={[GlobalStyles.frontLayerContainer]}>
           <View style={styles.shareLinkContainer}>
-            <Text style={[GlobalStyles.bodyText, styles.inviteText]}>Earn a bonus when you sign friends up!</Text>
+            <Text style={[GlobalStyles.bodyText, styles.inviteText]}>Earn power-ups by getting friends to play!</Text>
             <TouchableOpacity style={styles.shareLinkButton} onPress={this.onShareLinkPress}>
               <Text style={[GlobalStyles.bodyText,styles.shareLinkButtonText]}>Share Link</Text>
             </TouchableOpacity>

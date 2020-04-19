@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, ActivityIndicator, TouchableOpacity, FlatList} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, ActivityIndicator, TouchableOpacity, FlatList, AppState} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import {GlobalStyles} from '../Globals';
@@ -59,7 +59,8 @@ class DropScreen extends Component {
     super(props);
     this.state = {
       isLoading: false,
-      drop: null//this.processWinnersList(DEAD_DROP)
+      drop: null,
+      appState: AppState.currentState,
     };
 
     this.fetchDrop = this.fetchDrop.bind(this);
@@ -67,7 +68,18 @@ class DropScreen extends Component {
   }
 
   componentDidMount() {
+    AppState.addEventListener('change', this._handleAppStateChange);
     this.fetchDrop();
+  }
+
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this._handleAppStateChange);
+  }
+
+  _handleAppStateChange = (nextAppState) => {
+    //if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
+    //}
+    this.setState({appState: nextAppState});
   }
 
   async fetchDrop() {
@@ -194,7 +206,7 @@ class DropScreen extends Component {
           <StatusBarBackground/>
           <View style={styles.countdownContainer}>
             <Text style={[GlobalStyles.bodyText,styles.dropEndsInText]}>Drop ends in:</Text>
-            <Countdown endTime={this.state.drop.endDate} color="white" onTimerExpired={this.onTimerExpired}/>
+            <Countdown endTime={this.state.drop.endDate} color="white" onTimerExpired={this.onTimerExpired} appState={this.state.appState}/>
           </View>
           <ScrollView style={GlobalStyles.frontLayerContainer} showsVerticalScrollIndicator={false}>
             <Text style={[GlobalStyles.bodyText, styles.currentDropTitle]}>Current Drop</Text>

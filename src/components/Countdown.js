@@ -12,7 +12,8 @@ export default class Countdown extends Component {
     appState:  PropTypes.string,
     endTime: PropTypes.number,
     onTimerExpired: PropTypes.func,
-    color: PropTypes.string
+    color: PropTypes.string,
+    appState:  PropTypes.string
   }
 
   constructor(props) {
@@ -24,8 +25,8 @@ export default class Countdown extends Component {
 
   componentDidMount() {
     var _this = this;
-    this.onPollStatusCountdownShown();
-    setTimeout(function(){_this.onPollStatusCountdownShown()}, 1000);
+    this.onCountdownShown();
+    setTimeout(function(){_this.onCountdownShown()}, 1000);
   }
 
   componentWillUnmount() {
@@ -33,17 +34,28 @@ export default class Countdown extends Component {
   }
 
   componentDidUpdate(oldProps) {
+    const newProps = this.props
+    if(oldProps.appState !== newProps.appState) {
+     if (newProps.appState === 'active') {
+       this.onCountdownShown();
+     } else {
+       this.onCountdownHidden();
+     }
+    }
+  }
+
+  componentDidUpdate(oldProps) {
     const newProps = this.props;
     if (oldProps.appState !== newProps.appState) {
       if (newProps.appState === 'active') {
-        this.onPollStatusCountdownShown();
+        this.onCountdownShown();
       } else {
 	     this.onCountdownHidden();
       }
   	}
   }
 
-  onPollStatusCountdownShown() {
+  onCountdownShown() {
     this.setEndTime();
     if (!this.clockCall) {
       this.clockCall = setInterval(() => {

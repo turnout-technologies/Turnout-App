@@ -3,6 +3,7 @@ import { View, StyleSheet, Text, Button, Alert, ScrollView, TouchableOpacity, Sa
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { SplashScreen, Linking } from 'expo';
 import { SimpleLineIcons } from '@expo/vector-icons';
+import { Notifications } from 'expo';
 var moment = require('moment-timezone');
 
 import {GlobalStyles, refreshUser} from '../Globals';
@@ -16,14 +17,24 @@ class HomeScreen extends Component {
   constructor (props) {
     super(props);
 
-    this.state = {userRefreshing: false, cardsLoading: true, showResultsCard: false, resultAnnouncementTitleText: "", resultAnnouncementBodyText: "", appState: AppState.currentState};
+    this.state = {
+      userRefreshing: false,
+      cardsLoading: true,
+      showResultsCard: false,
+      resultAnnouncementTitleText: "",
+      resultAnnouncementBodyText: "",
+      appState: AppState.currentState
+    };
 
     this.resultsDateStr = "";
+    this.pollsOpen = false;
 
     this.handleStartPressed = this.handleStartPressed.bind(this);
     this.handleResultsPressed = this.handleResultsPressed.bind(this);
     this.maybeFetchLatestResults = this.maybeFetchLatestResults.bind(this);
     this.onRefresh = this.onRefresh.bind(this);
+    this._handleNotification = this._handleNotification.bind(this);
+    this.onPollStateChange = this.onPollStateChange.bind(this);
   }
 
   componentDidMount() {
@@ -32,6 +43,20 @@ class HomeScreen extends Component {
     this.maybeFetchLatestResults();
     this.updateHeader();
     this.maybeRefreshUser();
+    this.notificationEventHandler = Notifications.addListener(this._handleNotification);
+  }
+
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this._handleAppStateChange);
+    this.notificationEventHandler && this.notificationEventHandler.remove();
+  }
+
+  _handleAppStateChange = (nextAppState) => {
+    if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
+      //when app is brought to foreground, check if it's time to refresh the user
+      this.maybeRefreshUser();
+    }
+    this.setState({appState: nextAppState});
   }
 
   updateHeader() {
@@ -52,16 +77,20 @@ class HomeScreen extends Component {
     });
   }
 
-  componentWillUnmount() {
-    AppState.removeEventListener('change', this._handleAppStateChange);
-  }
-
-  _handleAppStateChange = (nextAppState) => {
-    if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
-      //when app is brought to foreground, check if it's time to refresh the user
-      this.maybeRefreshUser();
+  async _handleNotification(notification) {
+    //handle the notification when pressed
+    console.log(notification);
+    if (notification.origin == "selected" && notification.data) {
+      switch(notification.data.type) {
+        case "poll-notification":
+          if (this.pollsOpen) {
+            this.props.navigation.navigate('Question');
+          }
+          break;
+        case "results-notification":
+          this.props.navigation.navigate('Results')
+      }
     }
-    this.setState({appState: nextAppState});
   }
 
   async setResultsCardContent() {
@@ -126,7 +155,7 @@ class HomeScreen extends Component {
   handleResultsPressed() {
     setLastBallotResultOpenedId(this.ballotResult.id);
     this.setResultsCardContent();
-    this.props.navigation.navigate('Results', {resultsResponse: this.ballotResult, resultsDateStr: this.resultsDateStr});
+    this.props.navigation.navigate('Results', {resultsResponse: this.ballotResult});
   }
 
   async onRefresh() {
@@ -145,6 +174,12 @@ class HomeScreen extends Component {
     }
   };
 
+  onPollStateChange(pollsOpen) {
+    console.log("POLL STATE CHANGED");
+    console.log(pollsOpen);
+    this.pollsOpen = pollsOpen;
+  }
+
   render() {
     return (
       <View style={GlobalStyles.backLayerContainer}>
@@ -159,7 +194,7 @@ class HomeScreen extends Component {
 
           <View style={{paddingBottom:20}}>
             <View style={styles.pollStatusContainer}>
-              <PollStatusCountdown ref={(pollStatusCountdown) => {this.pollStatusCountdown=pollStatusCountdown}} onPressStart={this.handleStartPressed} appState={this.state.appState}/>
+              <PollStatusCountdown onPressStart={this.handleStartPressed} appState={this.state.appState} onPollStateChanged={this.onPollStateChange}/>
             </View>
             { (this.state.cardsLoading || this.state.showResultsCard) &&
               <AnnouncementCard

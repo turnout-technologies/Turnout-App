@@ -3,6 +3,7 @@ import { ActivityIndicator, View, StyleSheet, ScrollView, Text, TouchableOpacity
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialDialog } from 'react-native-material-dialog';
 import { SimpleLineIcons } from '@expo/vector-icons';
+var moment = require('moment-timezone');
 
 import {GlobalStyles} from '../Globals';
 import QuestionResult from '../components/QuestionResult';
@@ -30,10 +31,17 @@ export default class ResultsScreen extends Component {
   }
 
   componentDidMount() {
-    var resultsResponse = this.props.navigation.state.params.resultsResponse;
-    var dateStr = this.props.navigation.state.params.resultsDateStr;
-    this.props.navigation.setParams({headerTitle: "Results for " + dateStr});
+    this.retrieveResults();
+  }
 
+  async retrieveResults() {
+    if (this.props.navigation.state.params && this.props.navigation.state.params.resultsResponse) {
+      var resultsResponse = this.props.navigation.state.params.resultsResponse;
+    } else {
+      var resultsResponse = (await API.getLatestBallotResults()).data;
+    }
+    var dateStr = moment.unix(resultsResponse.date).tz("America/New_York").format("MMMM Do");
+    this.props.navigation.setParams({headerTitle: "Results for " + dateStr});
     this.questionPoints = {};
     this.calculateNumCorrect(resultsResponse);
     this.setState({
@@ -166,7 +174,7 @@ export default class ResultsScreen extends Component {
                   response={this.state.ballotResult.response ? this.state.ballotResult.response[item.id] : null}
                   points={this.questionPoints[item.id]}
                   autocorrectHandler={this.autocorrectHandler}
-                  isAutocorrected={this.state.ballotResult.response.autocorrect.questionIds[item.id]} />
+                  isAutocorrected={this.state.ballotResult.response && this.state.ballotResult.response.autocorrect.questionIds[item.id]} />
               ))}
             </SafeAreaView>
         </ScrollView>}

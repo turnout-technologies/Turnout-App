@@ -154,12 +154,6 @@ class ProfileScreen extends Component {
               <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>About</Text>
             </View>
           </TouchableHighlight>
-          <TouchableHighlight underlayColor={global.CURRENT_THEME.colors.text_opacity3} onPress={() => this.props.navigation.navigate('Drop')}>
-            <View style={styles.settingsItem}>
-              <Ionicons name="md-information-circle" size={25} color={global.CURRENT_THEME.colors.primary} style={styles.settingsItemIcon} />
-              <Text style={[GlobalStyles.bodyText, styles.settingsItemText]}>Drop</Text>
-            </View>
-          </TouchableHighlight>
         </ScrollView>
           <Snackbar
             visible={this.state.snackbarVisible}
@@ -185,7 +179,7 @@ const styles = StyleSheet.create({
   },
   profileInfoContainer: {
   	alignItems: "center",
-    marginLeft: 20
+    marginLeft: 30
   },
   profileImage: {
   	width: 125,
@@ -218,7 +212,9 @@ const styles = StyleSheet.create({
     minHeight: 60
   },
   settingsItemIcon: {
-    marginHorizontal: 25
+    marginHorizontal: 25,
+    width: 25,
+    textAlign: "center"
   },
   settingsItemText: {
     fontSize: 18,
