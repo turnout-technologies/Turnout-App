@@ -42,12 +42,14 @@ class AuthLoadingScreen extends Component {
 }
 
   async checkForNewNote() {
-    try {
+    /*try {
       var lastVersionOpened = await getLastNoteVersionOpened();
       return !lastVersionOpened || lastVersionOpened != Constants.manifest.extra.noteVersion;
     } catch (error) {
       return false;
-    }
+    }*/
+    //NOTE TURNED OFF FOR BETA
+    return false;
   }
 
   alreadySignedIn = true;

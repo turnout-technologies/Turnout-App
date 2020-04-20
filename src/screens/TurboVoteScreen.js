@@ -359,7 +359,7 @@ class TurboVoteScreen extends Component {
 
   completeTurboVote() {
     API.turbovoteComplete();
-    this.props.navigation.navigate('Main');
+    this.props.navigation.navigate('Home', this.props.navigation.state.params);
   }
 
   doneButtonHandler() {
@@ -433,7 +433,7 @@ class TurboVoteScreen extends Component {
 const styles = StyleSheet.create({
   doneButton: {
     position: "absolute",
-    bottom: 15,
+    bottom: 25,
     alignSelf: 'center',
     minWidth: 325,
     padding: 15,

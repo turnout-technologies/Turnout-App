@@ -19,7 +19,8 @@ export default class Podium extends Component {
 
   static propTypes = {
     leaders: PropTypes.array,
-    timeFilterSelected: PropTypes.string
+    timeFilterSelected: PropTypes.string,
+    dropId: PropTypes.string
   }
 
   getCircleBackgroundColor(position) {
@@ -39,7 +40,7 @@ export default class Podium extends Component {
 
   getPoints(user) {
     if (this.props.timeFilterSelected == CURRENTDROP_LABEL) {
-      return user.points.live;
+      return user.points[this.props.dropId];
     } else {
       return user.points.total;
     }

@@ -1,54 +1,13 @@
 import React, {Component} from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, ActivityIndicator, TouchableOpacity, FlatList, AppState} from 'react-native';
+import { View, SafeAreaView, Text, StyleSheet, ScrollView, Image, ActivityIndicator, TouchableOpacity, FlatList, AppState} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+var moment = require('moment-timezone');
 
 import {GlobalStyles} from '../Globals';
 import Countdown from '../components/Countdown';
 import * as API from '../APIClient';
 import StatusBarBackground from '../components/StatusBarBackground';
-
-const user = {
-  avatarURL: "https://lh3.googleusercontent.com/a-/AOh14GgKoK7FWivUY7WitcHya58hNsJ_gRgY4ZbmMtSMG8A=s96-c",
-  name: "Tyler Fox",
-  points: {
-    "1234": 21,
-    "total": 21,
-  },
-  prize: "$100",
-  "firstName": "Tyler",
-  "id": "VwtwJeBXWKbTtKCobQzMMAMECg72a",
-  "lastName": "Fox"
-};
-const user2 = {
-  avatarURL: "https://lh3.googleusercontent.com/a-/AOh14GgKoK7FWivUY7WitcHya58hNsJ_gRgY4ZbmMtSMG8A=s96-c",
-  name: "Tyler Fox",
-  points: {
-    "1234": 20,
-    "total": 21,
-  },
-  prize: "$50",
-  "firstName": "Ben",
-  "id": "VwtwJeBXWKbTtKCobQzMMAMECg72",
-  "lastName": "Dover"
-}
-
-const LIVE_DROP = {
-  active: true,
-  createdAt: 1586827299,
-  endDate: 1587190340,
-  id: "1234",
-  startDate: 1586827299,
-  winners: []
-};
-
-const DEAD_DROP = {
-  active: false,
-  createdAt: 1586827299,
-  endDate: 1587182400,
-  id: "1234",
-  startDate: 1586827299,
-  winners: [user, user, user2]
-};
+import {getDrop, setDrop} from '../AsyncStorage';
 
 const LIST_ITEM_IMAGE_SIZE = 60;
 const INACTIVE_COLOR = "#C0C0C0";
@@ -61,6 +20,7 @@ class DropScreen extends Component {
       isLoading: false,
       drop: null,
       appState: AppState.currentState,
+      dropActive: false
     };
 
     this.fetchDrop = this.fetchDrop.bind(this);
@@ -77,17 +37,21 @@ class DropScreen extends Component {
   }
 
   _handleAppStateChange = (nextAppState) => {
-    //if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
-    //}
     this.setState({appState: nextAppState});
   }
 
   async fetchDrop() {
     this.setState({isLoading: true});
     try {
-      var response = await API.getLiveDrop();
-      const drop = this.processWinnersList(response.data.drop);
-      this.setState({drop: drop, isLoading: false});
+      var drop = JSON.parse(await getDrop());
+      if (!drop || moment() >= moment.unix(drop.endDate)) {
+        drop = (await API.getLiveDrop()).data.drop;
+        setDrop(drop);
+      }
+      drop = this.processWinnersList(drop);
+      global.drop = drop;
+      const dropActive = (moment() <= moment.unix(drop.endDate)) || drop.active;
+      this.setState({drop: drop, isLoading: false, dropActive});
       this.updateHeader(drop.active)
     } catch (error) {
       this.setState({isLoading: false});
@@ -149,7 +113,7 @@ class DropScreen extends Component {
     var curPosition = 1;
     for (var i = 1; i < drop.winners.length; i++) {
       drop.winners[i].name = this.getFullName(drop.winners[i]);
-      if (drop.winners[i].points[drop.id] == drop.winners[i-1].points[drop.id]) {
+      if (drop.winners[i].points == drop.winners[i-1].points) {
         drop.winners[i].position = curPosition;
       } else {
         drop.winners[i].position = i+1;
@@ -199,10 +163,10 @@ class DropScreen extends Component {
           </TouchableOpacity>
         </View>
       );
-    } else if (this.state.drop.active) {
+    } else if (this.state.dropActive) {
       //active drop
   		return (
-  			<View style={GlobalStyles.backLayerContainer}>
+  			<SafeAreaView style={GlobalStyles.backLayerContainer}>
           <StatusBarBackground/>
           <View style={styles.countdownContainer}>
             <Text style={[GlobalStyles.bodyText,styles.dropEndsInText]}>Drop ends in:</Text>
@@ -235,12 +199,12 @@ class DropScreen extends Component {
               <Text style={[GlobalStyles.bodyText,styles.prizeTitleText]}>$25 Gift Card</Text>
             </View>
           </ScrollView>
-        </View>
+        </SafeAreaView>
   		);
-    } else if (!this.state.drop.active) {
+    } else if (!this.state.dropActive) {
       //dead drop
       return (
-        <View style={[GlobalStyles.backLayerContainer, {backgroundColor: INACTIVE_COLOR}]}>
+        <SafeAreaView style={[GlobalStyles.backLayerContainer, {backgroundColor: INACTIVE_COLOR}]}>
           <StatusBarBackground/>
           <View style={styles.countdownContainer}>
             <Text style={[GlobalStyles.bodyText,styles.dropStartsInText]}>Stay tuned for{"\n"}the next drop...</Text>
@@ -270,7 +234,7 @@ class DropScreen extends Component {
               ItemSeparatorComponent={this.renderSeparator}
             />
           </View>
-        </View>
+        </SafeAreaView>
       );
     }
 	}

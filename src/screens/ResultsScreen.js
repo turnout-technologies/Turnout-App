@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { ActivityIndicator, View, StyleSheet, ScrollView, Text, TouchableOpacity, Alert, SafeAreaView } from 'react-native';
+import { ActivityIndicator, View, StyleSheet, ScrollView, Text, TouchableOpacity, Alert, SafeAreaView, YellowBox } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialDialog } from 'react-native-material-dialog';
 import { SimpleLineIcons } from '@expo/vector-icons';
@@ -12,6 +12,14 @@ import * as API from '../APIClient';
 const RESULTS_HELP_TITLE = "About Scoring";
 const RESULTS_HELP_MESSAGE = "Remember, you only get points for choosing the most popular answer! Point values increase by 1 for each question you get right. For example, if you get 3 questions right, you score 1+2+3 = 6 points."
 
+YellowBox.ignoreWarnings(['Warning: Failed prop type: The prop `onCancel`']);
+const _console = { ...console };
+console.warn = message => {
+  if (message.indexOf('Warning: Failed prop type: The prop `onCancel`') <= -1) {
+    _console.warn(message);
+  }
+};
+
 export default class ResultsScreen extends Component {
 
   constructor (props) {
@@ -22,6 +30,7 @@ export default class ResultsScreen extends Component {
       numCorrect: 0,
       score: 0,
       autocorrectDialogVisible: false,
+      autocorrectLoading: false,
       noAutocorrectsDialogVisible: false,
     };
 
@@ -83,6 +92,7 @@ export default class ResultsScreen extends Component {
     }
     var numCorrect = 0;
     var score = 0;
+
     for (const question of questions) {
       const questionId = question.id;
       if (winningAnswers[questionId].includes(responses[questionId])) {
@@ -92,9 +102,10 @@ export default class ResultsScreen extends Component {
         this.questionPoints[questionId] = numCorrect;
       }
     }
-    // add autocorrects
-    for (var questionId in responses.autocorrect.questionIds) {
-     if (Object.prototype.hasOwnProperty.call(responses.autocorrect.questionIds, questionId)) {
+
+    if (!!responses.autocorrect) {
+      // add autocorrects
+      for (const questionId of responses.autocorrect.questionIds) {
         numCorrect += 1;
         score += numCorrect;
         this.questionPoints[questionId] = numCorrect;
@@ -110,7 +121,7 @@ export default class ResultsScreen extends Component {
 
   autocorrectHandler(questionId) {
     this.curAutocorrectQuestionId = questionId;
-    const hasAutocorrects = true;// global.user.powerups.autocorrects > 0;
+    const hasAutocorrects = global.user.powerups.autocorrects > 0;
     if (hasAutocorrects) {
       this.setState({autocorrectDialogVisible: true});
     } else {
@@ -119,22 +130,22 @@ export default class ResultsScreen extends Component {
   }
 
   useAutocorrect() {
-    global.user.powerups.autocorrects -= 1;
+    this.setState({autocorrectDialogVisible: false, autocorrectLoading: true});
     this.setState(async prevState => {
       const newNumCorrect = prevState.numCorrect + 1;
       try {
         const response = await API.autocorrect({
-          dropId: "4a6ff0c0-7dee-11ea-ac1c-6f1a5e961b82",
           questionId: this.curAutocorrectQuestionId,
           pointsToAdd: newNumCorrect
         });
         this.calculateNumCorrect(response.data);
         this.setState({ballotResult: response.data});
+        global.user.powerups.autocorrects -= 1;
       } catch (error) {
         console.log(error);
         Alert.alert("Autocorrect Error", "There was a problem applying your autocorrect power-up. Please try again.");
       }
-      this.setState({autocorrectDialogVisible: false});
+      this.setState({autocorrectLoading: false});
     });
   }
 
@@ -174,7 +185,7 @@ export default class ResultsScreen extends Component {
                   response={this.state.ballotResult.response ? this.state.ballotResult.response[item.id] : null}
                   points={this.questionPoints[item.id]}
                   autocorrectHandler={this.autocorrectHandler}
-                  isAutocorrected={this.state.ballotResult.response && this.state.ballotResult.response.autocorrect.questionIds[item.id]} />
+                  isAutocorrected={!!this.state.ballotResult.response && !!this.state.ballotResult.response.autocorrect && this.state.ballotResult.response.autocorrect.questionIds.indexOf(item.id) > -1} />
               ))}
             </SafeAreaView>
         </ScrollView>}
@@ -200,6 +211,15 @@ export default class ResultsScreen extends Component {
               <Text style={[GlobalStyles.headerText, styles.autocorrectDialogText]}> {global.user.powerups.autocorrects}</Text>
               <Text style={[GlobalStyles.bodyText, styles.autocorrectDialogText]}> remaining.</Text>
             </Text>
+          </View>
+      </MaterialDialog>
+      <MaterialDialog
+        visible={this.state.autocorrectLoading}
+        colorAccent={global.CURRENT_THEME.colors.primary}
+        backgroundColor={global.CURRENT_THEME.colors.backgroundColor}>
+          <View>
+            <ActivityIndicator size={60} color={global.CURRENT_THEME.colors.primary} />
+            <Text style={[GlobalStyles.bodyText, styles.autocorrectDialogTitle, {textAlign: "center"}]}>Applying Autocorrect</Text>
           </View>
       </MaterialDialog>
       <MaterialDialog

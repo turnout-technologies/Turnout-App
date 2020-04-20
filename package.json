@@ -30,6 +30,7 @@
     "expo-image-picker": "~8.1.0",
     "expo-intent-launcher": "~8.1.0",
     "expo-sms": "~8.1.0",
+    "expo-updates": "~0.1.0",
     "expo-web-browser": "~8.1.0",
     "firebase": "7.9.0",
     "moment-timezone": "^0.5.28",
@@ -42,6 +43,7 @@
     "react-native-gesture-handler": "~1.6.0",
     "react-native-material-dialog": "^0.7.7",
     "react-native-material-textfield": "^0.16.1",
+    "react-native-onboarding-swiper": "^1.1.1",
     "react-native-paper": "^3.6.0",
     "react-native-reanimated": "~1.7.0",
     "react-native-redash": "^9.6.0",
@@ -53,8 +55,7 @@
     "react-navigation": "^4.2.2",
     "react-navigation-stack": "^2.2.3",
     "react-navigation-tabs": "^2.8.2",
-    "sentry-expo": "^2.0.1",
-    "expo-updates": "~0.1.0"
+    "sentry-expo": "^2.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.8.6",

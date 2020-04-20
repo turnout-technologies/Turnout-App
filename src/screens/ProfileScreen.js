@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View, Text, Image, Button, ScrollView, StyleSheet, TouchableHighlight, TouchableOpacity, Switch, DeviceEventEmitter } from 'react-native';
+import { View, Text, Image, Button, ScrollView, StyleSheet, TouchableHighlight, TouchableOpacity, Switch, DeviceEventEmitter, AppState } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Snackbar } from 'react-native-paper';
 import { SimpleLineIcons } from '@expo/vector-icons';
@@ -10,7 +10,6 @@ import {setNotificationsEnabled} from '../Notifications';
 import {setUser} from '../AsyncStorage';
 import InviteBar from '../components/InviteBar';
 
-
 class ProfileScreen extends Component {
 
 	constructor(props) {
@@ -18,7 +17,9 @@ class ProfileScreen extends Component {
     this.state = {
       notificationsEnabled: !!global.user.pushToken,
       snackbarVisible: false,
-      notificationSwitchDisabled: false
+      notificationSwitchDisabled: false,
+      user: global.user,
+      appState: AppState.currentState
     };
 
     this.notificationSwitchHandler = this.notificationSwitchHandler.bind(this);
@@ -26,10 +27,20 @@ class ProfileScreen extends Component {
 
   componentDidMount() {
     this.notificationsEnabledChangedListener = DeviceEventEmitter.addListener('notificationsEnabledChangedListener', (e)=>{this.setState({notificationsEnabled: e.enabled})});
+    AppState.addEventListener('change', this._handleAppStateChange);
   }
 
   componentWillUnmount() {
     this.notificationsEnabledChangedListener.remove();
+    AppState.removeEventListener('change', this._handleAppStateChange);
+  }
+
+  _handleAppStateChange = (nextAppState) => {
+    if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
+        let _this = this;
+        setTimeout(function(){_this.setState({user: global.user})}, 500);
+    }
+    this.setState({appState: nextAppState});
   }
 
   static navigationOptions = ({navigation}) => {
@@ -71,26 +82,26 @@ class ProfileScreen extends Component {
       		<View style={styles.profileContainer}>
             <Image
               style={styles.profileImage}
-              source={{uri: global.user.avatarURL.replace("s96-c", "s384-c")}}
+              source={{uri: this.state.user.avatarURL.replace("s96-c", "s384-c")}}
             />
             <View style={styles.profileInfoContainer}>
-        			<Text style={[GlobalStyles.headerText, styles.nameText]}>{global.user.name}</Text>
-        			<Text style={[GlobalStyles.bodyText, styles.emailText]}>{global.user.email}</Text>
-              <Text style={[GlobalStyles.titleText, styles.pointsText]}>{global.user.points.total} point{global.user.points.total != 1 ? "s" : null}</Text>
+        			<Text style={[GlobalStyles.headerText, styles.nameText]}>{this.state.user.name}</Text>
+        			<Text style={[GlobalStyles.bodyText, styles.emailText]}>{this.state.user.email}</Text>
+              <Text style={[GlobalStyles.titleText, styles.pointsText]}>{!!this.state.user.points[global.drop.id] ? this.state.user.points[global.drop.id] : 0} point{global.user.points.total != 1 ? "s" : null}</Text>
         		</View>
           </View>
           <View style={styles.statsRowContainer}>
             <View style={styles.statContainer}>
-              <Text style={[GlobalStyles.titleText, styles.statNumber]}>{global.user.referrals.valid}</Text>
+              <Text style={[GlobalStyles.titleText, styles.statNumber]}>{this.state.user.referrals.valid}</Text>
               <Text style={[GlobalStyles.bodyText, styles.statSubtitle]}>Invites Completed</Text>
             </View>
             <View style={styles.statContainer}>
-              <Text style={[GlobalStyles.titleText, styles.statNumber]}>{global.user.powerups.autocorrects}</Text>
+              <Text style={[GlobalStyles.titleText, styles.statNumber]}>{this.state.user.powerups.autocorrects}</Text>
               <Text style={[GlobalStyles.bodyText, styles.statSubtitle]}>Autocorrect Power-Ups</Text>
             </View>
             <View style={styles.statContainer}>
-              <Text style={[GlobalStyles.titleText, styles.statNumber]}>{global.user.points.total}</Text>
-              <Text style={[GlobalStyles.bodyText, styles.statSubtitle]}>Total Points</Text>
+              <Text style={[GlobalStyles.titleText, styles.statNumber]}>{this.state.user.points.total}</Text>
+              <Text style={[GlobalStyles.bodyText, styles.statSubtitle]}>All-Time{"\n"}Points</Text>
             </View>
           </View>
           <InviteBar/>
@@ -251,7 +262,7 @@ const styles = StyleSheet.create({
   },
   inviteButton: {
     marginTop: 10,
-    width:150,
+    width:175,
     height: 50,
     justifyContent: "center",
     alignSelf: "center",

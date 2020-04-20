@@ -6,8 +6,10 @@ const LAST_BALLOT_TIMESTAMP_KEY = 'lastBallotDate';
 const LAST_VERSION_OPENED_KEY = 'lastVersionOpened';
 const LAST_BALLOT_RESULTS_OPENED_KEY = 'lastBallotResultOpenedId';
 const BALLOT_RESULT_KEY = 'ballotResult';
+const DROP_KEY = 'drop';
 const SERVER_HOSTNAME_KEY = 'serverHostName';
 
+//USER
 export async function getUser() {
   return AsyncStorage.getItem(USER_KEY);
 }
@@ -37,6 +39,7 @@ export async function setLastRefreshUserTimestamp(timestamp) {
   }
 }
 
+//BALLOT
 export async function setLastBallotTimestamp(date) {
   try {
     await AsyncStorage.setItem(LAST_BALLOT_TIMESTAMP_KEY, date);
@@ -51,22 +54,6 @@ export async function getLastBallotTimestamp() {
 
 export async function removeLastBallotTimestamp() {
   return AsyncStorage.removeItem(LAST_BALLOT_TIMESTAMP_KEY);
-}
-
-export async function getLastNoteVersionOpened() {
-  return AsyncStorage.getItem(LAST_VERSION_OPENED_KEY);
-}
-
-export async function setLastNoteVersionOpened(noteVersion) {
-  try {
-    await AsyncStorage.setItem(LAST_VERSION_OPENED_KEY, noteVersion.toString());
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-export async function removeLastNoteVersionOpened() {
-  return AsyncStorage.removeItem(LAST_VERSION_OPENED_KEY);
 }
 
 export async function getLastBallotResultOpenedId() {
@@ -91,6 +78,36 @@ export async function setBallotResult(ballotResult) {
   } catch (error) {
     console.log(error);
   }
+}
+
+//DROP
+export async function getDrop() {
+  return AsyncStorage.getItem(DROP_KEY);
+}
+
+export async function setDrop(drop) {
+  try {
+    await AsyncStorage.setItem(DROP_KEY, JSON.stringify(drop));
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+//MISC
+export async function getLastNoteVersionOpened() {
+  return AsyncStorage.getItem(LAST_VERSION_OPENED_KEY);
+}
+
+export async function setLastNoteVersionOpened(noteVersion) {
+  try {
+    await AsyncStorage.setItem(LAST_VERSION_OPENED_KEY, noteVersion.toString());
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function removeLastNoteVersionOpened() {
+  return AsyncStorage.removeItem(LAST_VERSION_OPENED_KEY);
 }
 
 export async function setServerHostname(hostname) {

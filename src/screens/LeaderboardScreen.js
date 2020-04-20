@@ -55,6 +55,7 @@ class LeaderboardScreen extends Component {
     try {
       var leaderboardResponse = await API.getLeaderboard();
       this.leaderboardDataFull = leaderboardResponse.data.leaderboard;
+      this.dropId = leaderboardResponse.data.dropId;
       this.processLeaderboardData();
       this.setState({isLoading: false});
     } catch (error) {
@@ -81,15 +82,16 @@ class LeaderboardScreen extends Component {
 
   checkPointsEquality(a, b) {
     if (this.state.timeFilterSelected == CURRENTDROP_LABEL) {
-      return (!!a.points.live ? a.points.live : 0) == (!!b.points.live ? b.points.live : 0);
+      return (!!a.points[this.dropId] ? a.points[this.dropId] : 0) == (!!b.points[this.dropId] ? b.points[this.dropId] : 0);
     } else {
       return (!!a.points.total ? a.points.total : 0) == (!!b.points.total ? b.points.total : 0);
     }
   }
 
   sortLeaderboard() {
+    var dropId = this.dropId;
     if (this.state.timeFilterSelected == CURRENTDROP_LABEL) {
-      return this.leaderboardDataFull.sort(function(a,b) {return (a.points.live > b.points.live) ? -1 : ((b.points.live > a.points.live) ? 1 : 0);} );
+      return this.leaderboardDataFull.sort(function(a,b) {return (a.points[dropId] > b.points[dropId]) ? -1 : ((b.points[dropId] > a.points[dropId]) ? 1 : 0);} );
     } else {
       return this.leaderboardDataFull.sort(function(a,b) {return (a.points.total > b.points.total) ? -1 : ((b.points.total > a.points.total) ? 1 : 0);} );
     }
@@ -115,7 +117,7 @@ class LeaderboardScreen extends Component {
 
   getPoints(user) {
     if (this.state.timeFilterSelected == CURRENTDROP_LABEL) {
-      return !!user.points.live ? user.points.live : 0;
+      return !!user.points[this.dropId] ? user.points[this.dropId] : 0;
     } else {
       return !!user.points.total ? user.points.total : 0;
     }
@@ -133,7 +135,7 @@ class LeaderboardScreen extends Component {
   FlatListHeader = () => {
     return (
       <View>
-        <Podium timeFilterSelected={this.state.timeFilterSelected} leaders={this.state.leaderboardData.slice(0,this.state.podiumSize)}/>
+        <Podium timeFilterSelected={this.state.timeFilterSelected} leaders={this.state.leaderboardData.slice(0,this.state.podiumSize)} dropId={this.dropId}/>
         {this.renderSeparator()}
       </View>
     );

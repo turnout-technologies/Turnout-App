@@ -4,12 +4,13 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { SplashScreen, Linking } from 'expo';
 import { SimpleLineIcons } from '@expo/vector-icons';
 import { Notifications } from 'expo';
+import { MaterialDialog } from 'react-native-material-dialog';
 var moment = require('moment-timezone');
 
 import {GlobalStyles, refreshUser} from '../Globals';
 import AnnouncementCard from '../components/AnnouncementCard';
 import PollStatusCountdown from '../components/PollStatusCountdown';
-import {getLastBallotResultOpenedId, setLastBallotResultOpenedId, getLastRefreshUserTimestamp, getBallotResult, setBallotResult} from '../AsyncStorage';
+import {getLastBallotResultOpenedId, setLastBallotResultOpenedId, getLastRefreshUserTimestamp, getBallotResult, setBallotResult, getDrop, setDrop} from '../AsyncStorage';
 import * as API from '../APIClient';
 
 class HomeScreen extends Component {
@@ -23,6 +24,8 @@ class HomeScreen extends Component {
       showResultsCard: false,
       resultAnnouncementTitleText: "",
       resultAnnouncementBodyText: "",
+      inviteBonusDialogVisible: false,
+      dropPoints: 0,
       appState: AppState.currentState
     };
 
@@ -40,10 +43,21 @@ class HomeScreen extends Component {
   componentDidMount() {
     SplashScreen.hide();
     AppState.addEventListener('change', this._handleAppStateChange);
-    this.maybeFetchLatestResults();
-    this.updateHeader();
-    this.maybeRefreshUser();
+    this.initHome();
     this.notificationEventHandler = Notifications.addListener(this._handleNotification);
+    this.showBonusDialogIfHasInvite();
+  }
+
+  async initHome() {
+    await this.fetchDrop();
+    this.maybeRefreshUser();
+    this.maybeFetchLatestResults();
+  }
+
+  showBonusDialogIfHasInvite() {
+    if (this.props.navigation.state.params && this.props.navigation.state.params.hasInvite) {
+      this.setState({inviteBonusDialogVisible: true});
+    }
   }
 
   componentWillUnmount() {
@@ -65,7 +79,7 @@ class HomeScreen extends Component {
         <SafeAreaView style={styles.customHeaderContainer} >
           <TouchableOpacity style={styles.headerPointsContainer} onPress={() => Alert.alert("Points", "This is the number of points you have scored so far during the current drop.")}>
             <MaterialCommunityIcons name="ticket" size={25} color={global.CURRENT_THEME.colors.accent} />
-            <Text style={[GlobalStyles.bodyText, styles.headerPointsText]}>{global.user.points.total}</Text>
+            <Text style={[GlobalStyles.bodyText, styles.headerPointsText]}>{!!this.state.dropPoints ? this.state.dropPoints : 0}</Text>
           </TouchableOpacity>
           {/*<View style={{marginHorizontal: 10, borderLeftColor:'white',borderLeftWidth:1,height:'50%'}}/>
           <TouchableOpacity style={styles.headerPointsContainer} onPress={() => Alert.alert("Autocorrect Power-Ups", "This is number of Autocorrect power-ups you have available. Using one corrects a question you got wrong and gives you the points. Invite friends to get more!")}>
@@ -90,6 +104,20 @@ class HomeScreen extends Component {
         case "results-notification":
           this.props.navigation.navigate('Results')
       }
+    }
+  }
+
+  async fetchDrop() {
+    try {
+      var drop = JSON.parse(await getDrop());
+      if (!drop || moment() >= moment.unix(drop.endDate)) {
+        drop = (await API.getLiveDrop()).data.drop;
+        setDrop(drop);
+      }
+      global.drop = drop;
+      this.setState({dropPoints: global.user.points[drop.id]});
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -140,7 +168,9 @@ class HomeScreen extends Component {
       var shouldRefreshUser = true; //!lastRefreshUserTimestamp || !moment.unix(lastRefreshUserTimestamp).tz("America/New_York").isSame(moment().tz("America/New_York"), 'day');
       if (shouldRefreshUser) {
         await refreshUser();
-        this.updateHeader();
+        if (global.drop) {
+          this.setState({dropPoints: global.user.points[global.drop.id]}, () => {this.updateHeader()});
+        }
       }
     }
     catch (error) {
@@ -171,12 +201,16 @@ class HomeScreen extends Component {
       return {
         header: navigation.state.params.header
       }
+    } else {
+      return {
+        title: '',
+        headerStyle: GlobalStyles.headerStyle,
+        headerTintColor: global.CURRENT_THEME.colors.accent,
+      }
     }
   };
 
   onPollStateChange(pollsOpen) {
-    console.log("POLL STATE CHANGED");
-    console.log(pollsOpen);
     this.pollsOpen = pollsOpen;
   }
 
@@ -214,6 +248,29 @@ class HomeScreen extends Component {
             />
           </View>
         </ScrollView>
+        { this.props.navigation.state.params && this.props.navigation.state.params.hasInvite &&
+          <MaterialDialog
+            visible={this.state.inviteBonusDialogVisible}
+            onCancel={() => this.setState({inviteBonusDialogVisible: false})}
+            onOk={() => this.setState({inviteBonusDialogVisible: false})}
+            cancelLabel=""
+            okLabel="Let's Go"
+            colorAccent={global.CURRENT_THEME.colors.primary}
+            backgroundColor={global.CURRENT_THEME.colors.backgroundColor}>
+            <View>
+              <SimpleLineIcons
+                name="magic-wand"
+                size={75}
+                style={{ alignSelf: "center" }}
+                color={global.CURRENT_THEME.colors.primary}
+              />
+              <Text style={[GlobalStyles.headerText, styles.inviteBonusDialogTitle]}>Invite Bonus</Text>
+              <Text style={[GlobalStyles.bodyText, styles.inviteBonusDialogText]}>
+                The invite from {this.props.navigation.state.params.referringUserName} got you an Autocorrect power-up 🙌! You can use Autocorrect to correct a question you got wrong and get the points.
+              </Text>
+            </View>
+          </MaterialDialog>
+        }
       </View>
     );
   }
@@ -253,11 +310,22 @@ const styles = StyleSheet.create({
     borderColor: global.CURRENT_THEME.colors.primary,
     borderWidth: 1
   },
-
   announcementButtonText: {
     color: global.CURRENT_THEME.colors.primary,
     textAlign: "center",
     fontSize: 16
+  },
+  inviteBonusDialogText: {
+    marginTop: 10,
+    fontSize: 18,
+    textAlign: "left",
+    color: global.CURRENT_THEME.colors.text
+  },
+  inviteBonusDialogTitle: {
+    marginTop: 10,
+    fontSize: 20,
+    textAlign: "left",
+    color: global.CURRENT_THEME.colors.text
   }
 });
 

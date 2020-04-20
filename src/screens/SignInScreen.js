@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View, TouchableOpacity, Text, Image, StyleSheet, SafeAreaView, YellowBox, Animated, AppState, Alert } from 'react-native';
+import { View, TouchableOpacity, Text, Image, StyleSheet, SafeAreaView, YellowBox, Animated, AppState, Alert, ActivityIndicator } from 'react-native';
 import Constants from 'expo-constants';
 import * as Google from 'expo-google-app-auth';
 import * as firebase from 'firebase';
@@ -28,7 +28,13 @@ class SignInScreen extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {user: null, branchInfo: null, bottomContainerOpen: false, appState: AppState.currentState};
+    this.state = {
+      user: null,
+      branchInfo: null,
+      bottomContainerOpen: false,
+      signInLoading: false,
+      appState: AppState.currentState
+    };
 
     this.bottomContainerHeightAnimationVal = new Animated.Value(0);
 
@@ -100,35 +106,42 @@ class SignInScreen extends Component {
       unsubscribe();
       // Check if we are already signed-in Firebase with the correct user.
       if (!this.isUserEqual(googleUser, firebaseUser)) {
-        // Build Firebase credential with the Google ID token.
-        var credential = firebase.auth.GoogleAuthProvider.credential(googleUser.idToken, googleUser.accessToken);
-        // Sign in with credential from the Google user.
-        var firebaseResult = await firebase.auth().signInWithCredential(credential);
-        console.log('signed to firebase');
-        var pushToken = await getPushNotificationsTokenAsync();
-        if (firebaseResult.additionalUserInfo.isNewUser) {
-          console.log("NEW USER! Adding to DB...")
-          var addUserResponse = await API.addUser({
-            firstName: firebaseResult.additionalUserInfo.profile.given_name,
-            lastName: firebaseResult.additionalUserInfo.profile.family_name,
-            email: firebaseResult.user.email,
-            avatarURL: firebaseResult.user.photoURL,
-            pushToken: !!pushToken ? pushToken : "",
-            referringUserId: (!!this.state.branchInfo && !!this.state.branchInfo.referringUserId) ? this.state.branchInfo.referringUserId : ""
-          });
-          if (addUserResponse.data) {
-            addUserResponse.data.name = addUserResponse.data.firstName + " " + addUserResponse.data.lastName;
-            global.user = addUserResponse.data;
-            console.log(global.user);
-            setUser();
-            setLastRefreshUserTimestamp(moment().unix());
-            this.props.navigation.navigate('TurboVote');
+        try {
+          // Build Firebase credential with the Google ID token.
+          var credential = firebase.auth.GoogleAuthProvider.credential(googleUser.idToken, googleUser.accessToken);
+          // Sign in with credential from the Google user.
+          var firebaseResult = await firebase.auth().signInWithCredential(credential);
+          console.log('signed to firebase');
+          var pushToken = await getPushNotificationsTokenAsync();
+          if (firebaseResult.additionalUserInfo.isNewUser) {
+            console.log("NEW USER! Adding to DB...")
+            var addUserResponse = await API.addUser({
+              firstName: firebaseResult.additionalUserInfo.profile.given_name,
+              lastName: firebaseResult.additionalUserInfo.profile.family_name,
+              email: firebaseResult.user.email,
+              avatarURL: firebaseResult.user.photoURL,
+              pushToken: !!pushToken ? pushToken : "",
+              referringUserId: (!!this.state.branchInfo && !!this.state.branchInfo.referringUserId) ? this.state.branchInfo.referringUserId : ""
+            });
+            if (addUserResponse.data) {
+              addUserResponse.data.name = addUserResponse.data.firstName + " " + addUserResponse.data.lastName;
+              global.user = addUserResponse.data;
+              console.log(global.user);
+              setUser();
+              setLastRefreshUserTimestamp(moment().unix());
+              this.props.navigation.navigate('TurboVote', this.getInviteInfo());
+            }
+          } else {
+            await refreshUser();
+            this.props.navigation.navigate('Main');
           }
-        } else {
-          await refreshUser();
-          this.props.navigation.navigate('Main');
+        } catch (error) {
+          this.setState({signInLoading: false});
+          Alert.alert("Error Signing In", "Couldn't sign you in. Please try again.");
+          console.log(error);
         }
       } else {
+        this.setState({signInLoading: false});
         console.log('User already signed-in Firebase.');
       }
     });
@@ -141,10 +154,12 @@ checkForValidDomain(email) {
 }
 
 async signInAsyncWeb() {
+    this.setState({signInLoading: true});
     try {
       const result = await Google.logInAsync(Constants.manifest.extra.googleLogInConfig);
       if (!Env.isDevEnv() && !this.checkForValidDomain(result.user.email)) {
         Alert.alert("Invalid Account", "Turnout is currently only available at Brown University. If you're a Brown student, make sure to choose your Brown email!");
+        this.setState({signInLoading: false});
         return;
       }
       if (result.type === 'success') {
@@ -153,6 +168,7 @@ async signInAsyncWeb() {
         Sentry.captureException(new Error(result));
       }
     } catch ({ message }) {
+      this.setState({signInLoading: false});
       console.log('login: Error:' + message);
     }
   };
@@ -163,6 +179,20 @@ async signInAsyncWeb() {
       duration: 300
     }).start();
     this.setState({bottomContainerOpen: open});
+  }
+
+  getInviteInfo() {
+    const hasInvite = this.state.branchInfo ? this.state.branchInfo["+clicked_branch_link"] : false;
+    if (hasInvite) {
+      return {
+        hasInvite,
+        //referringUserAvatarURL: this.state.branchInfo.referringUserAvatarURL,
+        referringUserName: this.state.branchInfo.referringUserName
+      };
+    } else {
+      //no invite so return null
+      return {hasInvite};
+    }
   }
 
   render() {
@@ -229,10 +259,17 @@ async signInAsyncWeb() {
             </View>
           }
           <View style={styles.signInButtonContainer}>
-            <TouchableOpacity style={[styles.signInButton, {height: this.bottomContainerHeightAnimationVal == 0 ? 0 : 55}]} onPress={this.signInAsyncWeb}>
-              <Image source={require('../../assets/images/google_logo.png')} style={styles.signInButtonLogo} />
-              <Text style={[GlobalStyles.bodyText, styles.signInButtonText]}>Sign in with Google</Text>
-            </TouchableOpacity>
+            { !this.state.signInLoading &&
+              <TouchableOpacity style={[styles.signInButton, {height: this.bottomContainerHeightAnimationVal == 0 ? 0 : 55}]} onPress={this.signInAsyncWeb}>
+                <Image source={require('../../assets/images/google_logo.png')} style={styles.signInButtonLogo} />
+                <Text style={[GlobalStyles.bodyText, styles.signInButtonText]}>Sign in with Google</Text>
+              </TouchableOpacity>
+            }
+            { this.state.signInLoading &&
+              <View style={[styles.signInButton, {height: this.bottomContainerHeightAnimationVal == 0 ? 0 : 55}]}>
+                <ActivityIndicator size={35} color={global.CURRENT_THEME.colors.primary}/>
+              </View>
+            }
           </View>
         </Animated.ScrollView>
       </View>
