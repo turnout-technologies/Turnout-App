@@ -40,7 +40,7 @@ export async function getPushNotificationsTokenAsync() {
 
   async function sendPushToken(enable, token) {
     try {
-      var response = await API.putPushToken(global.user.id, token);
+      var response = await API.putPushToken(token);
       global.user.pushToken=token;
       setUser();
       DeviceEventEmitter.emit('notificationsEnabledChangedListener',  {enabled: enable});
