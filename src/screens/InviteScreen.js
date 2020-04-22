@@ -85,8 +85,8 @@ class InviteScreen extends Component {
 
   async onShareLinkPress() {
     const shareOptions = {
-      messageHeader: 'testtitle',
-      messageBody: `Checkout my new article!`,
+      messageHeader: 'Join Turnout',
+      messageBody: `Join Turnout using my link: `,
     };
     if (Platform.OS == "ios") {
       if (Constants.appOwnership !== 'standalone') {
@@ -279,20 +279,23 @@ class InviteScreen extends Component {
     //send the messages via SMS
     var invitesSent = 0;
     for (var i = 0; i < this.selectedContacts.length; i++) {
-      console.log(this.selectedContacts[i]);
       this.setState({preparingInviteDialogVisible: true, preparingInviteName: this.selectedContacts[i].firstName});
       var smsResult = "";
       while (smsResult != "sent" && smsResult != "unknown" & smsResult != "skipped") {
-        await this.sleep(500);
+        await this.sleep(100);
         this.setState({preparingInviteDialogVisible: false});
         if (this.preparingInviteCancelled) {
           return;
         }
-        const {result} = await SMS.sendSMSAsync(
-          this.selectedContacts[i].phoneNumber,
-          'Join Turnout using my link: ' + url
-        );
-        smsResult = result;
+        try {
+          const {result} = await SMS.sendSMSAsync(
+            this.selectedContacts[i].phoneNumber,
+            'Join Turnout using my link: ' + url
+          );
+          smsResult = result;
+        } catch (error) {
+          console.log(error);
+        }
         if (smsResult == "cancelled") {
           smsResult = await this.checkForSMSRetry(this.selectedContacts[i].name);
         }
@@ -301,13 +304,16 @@ class InviteScreen extends Component {
         }
       }
     }
-    this.setState({invitesSent, preparingInviteDialogVisible: false}, () => this.setState({invitesSentDialogVisible: true}));
+    this.setState({invitesSent, preparingInviteDialogVisible: false}, () => this.state.invitesSent > -1 ? this.setState({invitesSentDialogVisible: true}) : null);
   }
 
   clearContactsListAfterInvitesSent() {
     //clear list now that invites are sent
     for (let i = 0; i < this.selectedContacts.length; i++) {
-      this[this.selectedContacts[i].id].setState({checked: false});
+      let curContactRef = this[this.selectedContacts[i].id];
+      if (curContactRef) {
+        curContactRef.setState({checked: false});
+      }
     }
     this.selectedContacts = [];
     this.setState({contactsData: this.contactsDataFull, numContactsSelected: 0, invitesSent: 0});
