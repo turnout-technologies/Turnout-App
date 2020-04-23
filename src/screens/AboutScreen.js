@@ -56,9 +56,9 @@ class AboutScreen extends Component {
               <View style={{paddingTop:20}}>
                 <View style={styles.aboutSeparator} />
                 <Text style={[GlobalStyles.titleText, styles.aboutHeaderText]}>Legal</Text>
-                  <TouchableHighlight underlayColor={global.CURRENT_THEME.colors.text_opacity3} onPress={ () => Linking.openURL('https://turnout.us/privacy-policy')}>
+                  <TouchableHighlight underlayColor={global.CURRENT_THEME.colors.text_opacity3} onPress={ () => Linking.openURL('https://turnout.us/policies')}>
                     <View style={styles.aboutItem}>
-                      <Text style={[GlobalStyles.bodyText, styles.aboutItemText]}>Privacy Policy</Text>
+                      <Text style={[GlobalStyles.bodyText, styles.aboutItemText]}>Policies</Text>
                     </View>
                   </TouchableHighlight>
                   <TouchableHighlight underlayColor={global.CURRENT_THEME.colors.text_opacity3} onPress={ () => this.props.navigation.navigate('Licenses')}>
@@ -111,7 +111,6 @@ const styles = StyleSheet.create({
     fontSize: 25
   },
   aboutHeaderText: {
-    marginLeft: 20,
     fontSize: 16,
     marginBottom: 10
   },

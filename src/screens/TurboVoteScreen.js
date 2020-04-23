@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { WebView } from 'react-native-webview';
 import * as WebBrowser from 'expo-web-browser';
 import Constants from 'expo-constants';
@@ -11,7 +11,7 @@ class TurboVoteScreen extends Component {
 
 	constructor(props) {
     super(props);
-    this.state = {doneReached: false};
+    this.state = {isLoading: true, finishedVisible: false};
     this.doneButtonHandler = this.doneButtonHandler.bind(this);
 
     this.initConstants();
@@ -25,6 +25,7 @@ class TurboVoteScreen extends Component {
     this.firstName = isStandalone ? global.user.firstName : "first";
     this.lastName = isStandalone ? global.user.lastName : "last";
     this.email = isStandalone ? global.user.email : "hey@domain.com";
+    this.currentURL = this.turboVoteURL;
   }
 
   static navigationOptions = ({navigation}) => {
@@ -301,7 +302,9 @@ class TurboVoteScreen extends Component {
           case '/party-selection':
             pollWithRetry(getPartySelectionElements).then(function(elementsObject){
               const {partySelect} = elementsObject;
-              selectValue(partySelect, party);
+              if (!!party) {
+                selectValue(partySelect, party);
+              }
               if (AUTO_ADVANCE) {
                 setTimeout(function(){
                   pollWithRetry(getContinueButton).then(function(elementsObject){
@@ -327,6 +330,9 @@ class TurboVoteScreen extends Component {
           case '/dob':
             pollWithRetry(getDobElements).then(function(elementsObject){
                 const {dobMonthInput, dobDayInput, dobYearInput} = elementsObject;
+                dobMonthInput.setAttribute("inputmode", "numeric");
+                dobDayInput.setAttribute("inputmode", "numeric");
+                dobYearInput.setAttribute("inputmode", "numeric");
                 changeValue(dobMonthInput, dobMonth);
                 changeValue(dobDayInput, dobDay);
                 changeValue(dobYearInput, dobYear);
@@ -343,6 +349,11 @@ class TurboVoteScreen extends Component {
             break;
 
           case '/done':
+            window.onscroll=function(){
+              if (window.scrollY > 125) {
+                window.ReactNativeWebView.postMessage('show_finished_button');
+              }
+            };
             break;
         }
       }
@@ -393,19 +404,28 @@ class TurboVoteScreen extends Component {
 		return (
 			<View style={GlobalStyles.backLayerContainer}>
         <View style={[GlobalStyles.frontLayerContainer, {overflow: 'hidden'}]}>
+          { this.state.isLoading &&
+            <ActivityIndicator
+              style={styles.loadingSpinner}
+              size="large"
+            />
+          }
           <WebView
             ref={ (ref) => { this.webview = ref; } }
-            style={{ flex: 1, marginTop: -10 }}
+            onLoad={() => this.setState({ isLoading: false })}
+            style={styles.webview}
             showsVerticalScrollIndicator={false}
             source={{ uri: this.turboVoteURL }}
             useWebKit={true}
             scalesPageToFit={false}
             injectedJavaScript={this.INJECTED_JS}
             onMessage={event => {
-              console.log(event.nativeEvent.data);
-              this.currentURL = event.nativeEvent.url;
-              if (event.nativeEvent.url.includes("turbovote.org/done")) {
-                this.setState({doneReached: true});
+              let message = event.nativeEvent.data;
+              if (message === "show_finished_button") {
+                this.setState({finishedVisible: true})
+              } else {
+                console.log(message);
+                this.currentURL = event.nativeEvent.url;
               }
             }}
             onShouldStartLoadWithRequest={request => {
@@ -419,7 +439,8 @@ class TurboVoteScreen extends Component {
               }
             }}
           />
-          {this.state.doneReached &&
+
+          {this.state.finishedVisible &&
             <TouchableOpacity style={styles.doneButton} onPress={this.doneButtonHandler}>
               <Text style={[GlobalStyles.bodyText,styles.doneButtonText]}>Finished</Text>
             </TouchableOpacity>
@@ -445,6 +466,18 @@ const styles = StyleSheet.create({
     color: global.CURRENT_THEME.colors.accent,
     textAlign: "center",
     fontSize: 25
+  },
+  webview: {
+    flex: 1,
+    marginTop: -10
+  },
+  loadingSpinner: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    zIndex: 99
   }
 });
 

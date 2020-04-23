@@ -93,7 +93,6 @@ class HomeScreen extends Component {
 
   async _handleNotification(notification) {
     //handle the notification when pressed
-    console.log(notification);
     if (notification.origin == "selected" && notification.data) {
       switch(notification.data.type) {
         case "poll-notification":
@@ -102,7 +101,7 @@ class HomeScreen extends Component {
           }
           break;
         case "results-notification":
-          this.props.navigation.navigate('Results')
+          this.props.navigation.navigate('Results', {forceRefresh: true})
       }
     }
   }
@@ -164,7 +163,7 @@ class HomeScreen extends Component {
   async maybeRefreshUser() {
     var lastRefreshUserTimestamp = await getLastRefreshUserTimestamp();
     try {
-      //switchwd to always refresh user
+      //switched to always refresh user
       var shouldRefreshUser = true; //!lastRefreshUserTimestamp || !moment.unix(lastRefreshUserTimestamp).tz("America/New_York").isSame(moment().tz("America/New_York"), 'day');
       if (shouldRefreshUser) {
         await refreshUser();
@@ -185,7 +184,7 @@ class HomeScreen extends Component {
   handleResultsPressed() {
     setLastBallotResultOpenedId(this.ballotResult.id);
     this.setResultsCardContent();
-    this.props.navigation.navigate('Results', {resultsResponse: this.ballotResult});
+    this.props.navigation.navigate('Results', {forceRefresh: true});
   }
 
   async onRefresh() {

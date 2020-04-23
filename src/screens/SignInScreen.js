@@ -5,6 +5,7 @@ import * as Google from 'expo-google-app-auth';
 import * as firebase from 'firebase';
 import { SplashScreen } from 'expo';
 import { Ionicons } from '@expo/vector-icons';
+import * as Sentry from 'sentry-expo';
 var moment = require('moment-timezone');
 
 import {GlobalStyles, refreshUser} from '../Globals';
@@ -112,6 +113,7 @@ class SignInScreen extends Component {
           // Sign in with credential from the Google user.
           var firebaseResult = await firebase.auth().signInWithCredential(credential);
           console.log('signed to firebase');
+          Sentry.setUser({"id": firebaseResult.user.uid, "email": firebaseResult.user.email});
           var pushToken = await getPushNotificationsTokenAsync();
           if (firebaseResult.additionalUserInfo.isNewUser) {
             console.log("NEW USER! Adding to DB...")

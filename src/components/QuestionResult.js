@@ -18,10 +18,14 @@ const styles = StyleSheet.create({
     borderTopRightRadius: global.CURRENT_THEME.roundness,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
   },
   questionHeader: {
     fontSize: 25,
+  },
+  questionHeaderLeft: {
+    flex: 1,
+    paddingRight: 5
   },
   questionTitle: {
     fontSize: 20,
@@ -47,7 +51,7 @@ export default ({ question, questionIndex, aggregate, winningAnswers, response, 
   return (
     <>
       <View style={styles.container}>
-        <Text>
+        <Text style={styles.questionHeaderLeft}>
           <Text style={[GlobalStyles.headerText, styles.questionHeader]}>Q{questionIndex+1} </Text>
           <Text style={[GlobalStyles.titleText, styles.questionTitle]}>{question.title}</Text>
         </Text>

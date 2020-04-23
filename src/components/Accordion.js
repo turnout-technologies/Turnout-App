@@ -59,7 +59,6 @@ export default class Accordion extends Component {
   ballotHandleAnswerPressed(questionId, questionIndex, answerId) {
     this.questionResponses[questionIndex] = true;
     this.questionResponseObject[questionId] = answerId;
-    console.log(this.questionResponseObject);
     var nextOpenQuestion = questionIndex+1;
     var allQuestionsAnswered = true;
     for (var i = 0; i < this.numQuestions && allQuestionsAnswered; i++) {

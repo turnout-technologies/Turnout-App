@@ -8,13 +8,14 @@ var moment = require('moment-timezone');
 import {GlobalStyles} from '../Globals';
 import QuestionResult from '../components/QuestionResult';
 import * as API from '../APIClient';
+import {getBallotResult, setBallotResult} from '../AsyncStorage';
 
 const RESULTS_HELP_TITLE = "About Scoring";
 const RESULTS_HELP_MESSAGE = "Remember, you only get points for choosing the most popular answer! Point values increase by 1 for each question you get right. For example, if you get 3 questions right, you score 1+2+3 = 6 points."
 
 YellowBox.ignoreWarnings(['Warning: Failed prop type: The prop `onCancel`']);
 const _console = { ...console };
-console.warn = message => {
+console.error = message => {
   if (message.indexOf('Warning: Failed prop type: The prop `onCancel`') <= -1) {
     _console.warn(message);
   }
@@ -27,6 +28,7 @@ export default class ResultsScreen extends Component {
     this.state = {
       isLoading: true,
       ballotResult: null,
+      didVote: false,
       numCorrect: 0,
       score: 0,
       autocorrectDialogVisible: false,
@@ -44,20 +46,26 @@ export default class ResultsScreen extends Component {
   }
 
   async retrieveResults() {
-    if (this.props.navigation.state.params && this.props.navigation.state.params.resultsResponse) {
-      var resultsResponse = this.props.navigation.state.params.resultsResponse;
-    } else {
-      var resultsResponse = (await API.getLatestBallotResults()).data;
+    try {
+      var savedBallotResult = await getBallotResult();
+      if (savedBallotResult && !(this.props.navigation.state.params && this.props.navigation.state.params.forceRefresh)) {
+        var resultsResponse = JSON.parse(savedBallotResult);;
+      } else {
+        var resultsResponse = (await API.getLatestBallotResults()).data;
+        setBallotResult(this.ballotResult);
+      }
+      var dateStr = moment.unix(resultsResponse.date).tz("America/New_York").format("MMMM Do");
+      this.props.navigation.setParams({headerTitle: "Results for " + dateStr});
+      this.questionPoints = {};
+      this.calculateNumCorrect(resultsResponse);
+      this.setState({
+        didVote: !!resultsResponse.response,
+        ballotResult: resultsResponse,
+        isLoading: false
+      });
+    } catch (error) {
+      console.log(error);
     }
-    var dateStr = moment.unix(resultsResponse.date).tz("America/New_York").format("MMMM Do");
-    this.props.navigation.setParams({headerTitle: "Results for " + dateStr});
-    this.questionPoints = {};
-    this.calculateNumCorrect(resultsResponse);
-    this.setState({
-      isLoading: false,
-      ballotResult: resultsResponse,
-    });
-    this.didVote = resultsResponse.response != null;
   }
 
   static navigationOptions = ({navigation}) => {
@@ -167,10 +175,10 @@ export default class ResultsScreen extends Component {
           <ScrollView style={styles.scrollviewStyle} contentContainerStyle={{flexGrow: 1}} showsVerticalScrollIndicator={false}>
             <Text style={styles.helloTitleContainer}>
               <Text style={[GlobalStyles.bodyText, styles.helloTitleText]}>Hey {global.user.name.split(" ")[0]}, </Text>
-              { this.didVote &&
+              { this.state.didVote &&
                 <Text style={[GlobalStyles.bodyText, styles.helloTitleText]}>you were in the majority for {this.state.numCorrect} question{this.state.numCorrect != 1 ? "s" : null}, earning you {this.state.score} point{this.state.score != 1 ? "s" : null}.</Text>
               }
-              { !this.didVote &&
+              { !this.state.didVote &&
                 <Text style={[GlobalStyles.bodyText, styles.helloTitleText]}>you didn't participate in the last poll. Make sure you turn out next time to earn points!</Text>
               }
             </Text>

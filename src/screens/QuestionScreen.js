@@ -23,18 +23,18 @@ export default class QuestionScreen extends Component {
   shuffle(arr) {
     var j, x, i;
     for (i = arr.length - 1; i > 0; i--) {
-        j = Math.floor(Math.random() * (i + 1));
-        x = arr[i];
-        arr[i] = arr[j];
-        arr[j] = x;
+      j = Math.floor(Math.random() * (i + 1));
+      x = arr[i];
+      arr[i] = arr[j];
+      arr[j] = x;
     }
     return arr;
   }
 
   constructor (props) {
-     super(props);
-     this.state = {isLoading: true, ballot: null, ballotError: false};
-     this.submitResponsesHandler = this.submitResponsesHandler.bind(this);
+    super(props);
+    this.state = {isLoading: true, ballot: null, ballotError: false};
+    this.submitResponsesHandler = this.submitResponsesHandler.bind(this);
   }
 
   componentDidMount() {
@@ -66,8 +66,6 @@ export default class QuestionScreen extends Component {
   }
 
   async submitResponsesHandler(questionResponseObject) {
-    console.log("Received responses submission");
-    console.log(questionResponseObject);
     try {
       var response = await API.submitBallot(this.state.ballot.id, global.user.id, questionResponseObject);
       this.updateLastBallotTimestamp();
