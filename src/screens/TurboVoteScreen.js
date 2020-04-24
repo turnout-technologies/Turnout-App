@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ActivityIndicator, StatusBar } from 'react-native';
 import { WebView } from 'react-native-webview';
 import * as WebBrowser from 'expo-web-browser';
 import Constants from 'expo-constants';
@@ -16,6 +16,16 @@ class TurboVoteScreen extends Component {
 
     this.initConstants();
     this.setInjectedJS();
+  }
+
+  componentDidMount() {
+    Alert.alert(
+      "Welcome To TurboVote!",
+      "Sign up here first to start playing Turnout! TurboVote helps you register, request absentee ballots, and get reminders about registration deadlines, upcoming elections, and where to vote.",
+      [
+        {text: "Let's do it"}
+      ]
+    )
   }
 
   initConstants() {
@@ -403,6 +413,7 @@ class TurboVoteScreen extends Component {
 	render() {
 		return (
 			<View style={GlobalStyles.backLayerContainer}>
+      <StatusBar barStyle="light-content"/>
         <View style={[GlobalStyles.frontLayerContainer, {overflow: 'hidden'}]}>
           { this.state.isLoading &&
             <ActivityIndicator

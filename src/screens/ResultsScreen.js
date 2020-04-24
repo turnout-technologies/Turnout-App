@@ -52,7 +52,7 @@ export default class ResultsScreen extends Component {
         var resultsResponse = JSON.parse(savedBallotResult);;
       } else {
         var resultsResponse = (await API.getLatestBallotResults()).data;
-        setBallotResult(this.ballotResult);
+        setBallotResult(resultsResponse);
       }
       var dateStr = moment.unix(resultsResponse.date).tz("America/New_York").format("MMMM Do");
       this.props.navigation.setParams({headerTitle: "Results for " + dateStr});
