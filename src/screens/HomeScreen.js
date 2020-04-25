@@ -239,10 +239,10 @@ class HomeScreen extends Component {
               />
             }
             <AnnouncementCard
-              titleText="Support Turnout!"
-              bodyText="Please chip in if you can to help us reach as many students as possible! We appreciate you ♥"
-              buttonText="Donate"
-              buttonOnPress={ () => Linking.openURL('https://donorbox.org/campus-impact-turnout-2020')}
+              titleText="Invite Your Friends"
+              bodyText="Earn power-ups by inviting friends to climb the leaderboard and get the drop!"
+              buttonText="Invite"
+              buttonOnPress={ () => this.props.navigation.navigate('Invite')}
               isLoading={this.state.cardsLoading}
             />
           </View>

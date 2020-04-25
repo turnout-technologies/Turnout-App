@@ -20,7 +20,8 @@ class DropScreen extends Component {
       isLoading: false,
       drop: null,
       appState: AppState.currentState,
-      dropActive: false
+      dropActive: false,
+      gameStarted: false
     };
 
     this.fetchDrop = this.fetchDrop.bind(this);
@@ -29,6 +30,7 @@ class DropScreen extends Component {
 
   componentDidMount() {
     AppState.addEventListener('change', this._handleAppStateChange);
+    this.checkIfGameStarted();
     this.fetchDrop();
   }
 
@@ -37,7 +39,12 @@ class DropScreen extends Component {
   }
 
   _handleAppStateChange = (nextAppState) => {
+    this.checkIfGameStarted();
     this.setState({appState: nextAppState});
+  }
+
+  checkIfGameStarted() {
+   this.setState({gameStarted: moment() > global.GAME_START_DATE});
   }
 
   async fetchDrop() {
@@ -147,10 +154,31 @@ class DropScreen extends Component {
   }
 
 	render() {
-    if (this.state.isLoading) {
+    if (!this.state.gameStarted) {
+      return (
+        <SafeAreaView style={[GlobalStyles.backLayerContainer, {backgroundColor: INACTIVE_COLOR}]}>
+          <StatusBarBackground/>
+          <View style={styles.countdownContainer}>
+            <Text style={[GlobalStyles.bodyText,styles.dropStartsInText]}>Stay tuned for{"\n"}the first drop...</Text>
+          </View>
+          <View style={GlobalStyles.frontLayerContainer}>
+            <View style={styles.loadingSpinnerContainer}>
+              <Text style={[GlobalStyles.titleText,styles.pollStatusText]}>Game starts on {global.GAME_START_DATE.format("M/D")}</Text>
+              <Ionicons
+                name="md-stopwatch"
+                size={100}
+                style={{ alignSelf: "center", marginVertical: 10 }}
+                color={global.CURRENT_THEME.colors.primary}
+              />
+              <Text style={[GlobalStyles.bodyText,styles.pollStatusText]}>In the meantime, invite your friends to start earning power-ups!</Text>
+            </View>
+          </View>
+        </SafeAreaView>
+      );
+    } else if (this.state.isLoading) {
       return (
         <View style={styles.loadingSpinnerContainer}>
-          <ActivityIndicator size={60} color={global.CURRENT_THEME.colors.accent}/>
+          <ActivityIndicator size={60} color={global.CURRENT_THEME.colors.primary}/>
         </View>
       );
     } else if (!this.state.drop) {
@@ -209,7 +237,7 @@ class DropScreen extends Component {
           <View style={styles.countdownContainer}>
             <Text style={[GlobalStyles.bodyText,styles.dropStartsInText]}>Stay tuned for{"\n"}the next drop...</Text>
           </View>
-          <View style={GlobalStyles.frontLayerContainer} showsVerticalScrollIndicator={false}>
+          <View style={GlobalStyles.frontLayerContainer}>
             <FlatList
               showsVerticalScrollIndicator={false}
               ListHeaderComponent = { this.FlatListHeader }
@@ -287,7 +315,7 @@ const styles = StyleSheet.create({
   loadingSpinnerContainer: {
     flex: 1,
     justifyContent: "center",
-    backgroundColor: global.CURRENT_THEME.colors.primary
+    backgroundColor: global.CURRENT_THEME.colors.backgroundColor
   },
   errorContainer: {
     flex: 1,
@@ -342,6 +370,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     fontSize: 16
   },
+  pollStatusText: {
+    textAlign: "center",
+    fontSize: 20,
+    marginHorizontal: 25
+  }
 });
 
 module.exports= DropScreen

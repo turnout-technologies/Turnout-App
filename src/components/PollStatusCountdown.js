@@ -24,7 +24,8 @@ export default class PollStatusCountdown extends Component {
       pollStatusText: "",
       pollsOpen: false,
       ballotSubmittedToday: false,
-      getNotifiedDisabled: false
+      getNotifiedDisabled: false,
+      gameStarted: false
     };
     this.getNotifiedHandler = this.getNotifiedHandler.bind(this);
   }
@@ -70,6 +71,7 @@ export default class PollStatusCountdown extends Component {
     var pollsOpen = false;
     var curMoment = moment();
     //var curMoment = moment.tz("2020-04-23 18:59:50", "America/New_York");
+    this.setState({gameStarted: curMoment > global.GAME_START_DATE});
     var pollsOpenTimeEastern = moment.tz({y:curMoment.year(), M:curMoment.month(), date:curMoment.date(), h:18, m:0}, "America/New_York");
     var pollsCloseTimeEastern = moment.tz({y:curMoment.year(), M:curMoment.month(), date:curMoment.date(), h:22, m:0}, "America/New_York");
     if (curMoment <= pollsOpenTimeEastern) {
@@ -121,7 +123,20 @@ export default class PollStatusCountdown extends Component {
   }
 
   render() {
-    if (this.state.pollsOpen && this.state.ballotSubmittedToday) {
+    if (!this.state.gameStarted) {
+      return (
+        <View style={styles.container}>
+          <Text style={[GlobalStyles.titleText,styles.pollStatusText]}>Game starts on {global.GAME_START_DATE.format("M/D")}</Text>
+          <Ionicons
+            name="md-stopwatch"
+            size={100}
+            style={{ alignSelf: "center", marginVertical: 10 }}
+            color={global.CURRENT_THEME.colors.primary}
+          />
+          <Text style={[GlobalStyles.bodyText,styles.pollStatusText]}>In the meantime, invite your friends to start earning power-ups!</Text>
+        </View>
+      );
+    } else if (this.state.pollsOpen && this.state.ballotSubmittedToday) {
       return (
         <View style={styles.container}>
           <Ionicons
@@ -184,14 +199,14 @@ export default class PollStatusCountdown extends Component {
             </TouchableOpacity>
           }
           { !this.state.pollsOpen && !!global.user.pushToken &&
-            <TouchableOpacity style={styles.getNotifiedButton} onPress={this.getNotifiedHandler}>
+            <View style={styles.getNotifiedButton}>
               <Ionicons
                 name="md-checkmark"
                 size={18}
                 style={{ alignSelf: "center" }}
                 color={global.CURRENT_THEME.colors.text} />
               <Text style={[GlobalStyles.bodyText,styles.notifyYouText]}>We'll notify you when polls open</Text>
-            </TouchableOpacity>
+            </View>
           }
         </View>
       );
@@ -207,6 +222,7 @@ const styles = StyleSheet.create({
   pollStatusText: {
     textAlign: "center",
     fontSize: 20,
+    marginHorizontal: 25
   },
   pollCountdownContainer: {
     flexDirection: "row",
