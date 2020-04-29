@@ -167,7 +167,7 @@ async signInAsyncWeb() {
       if (result.type === 'success') {
         this.onSignIn(result);
       } else {
-        Sentry.captureException(new Error(result));
+        this.setState({signInLoading: false});
       }
     } catch ({ message }) {
       this.setState({signInLoading: false});
@@ -264,7 +264,7 @@ async signInAsyncWeb() {
             { !this.state.signInLoading &&
               <TouchableOpacity style={[styles.signInButton, {height: this.bottomContainerHeightAnimationVal == 0 ? 0 : 55}]} onPress={this.signInAsyncWeb}>
                 <Image source={require('../../assets/images/google_logo.png')} style={styles.signInButtonLogo} />
-                <Text style={[GlobalStyles.bodyText, styles.signInButtonText]}>Sign in with Google</Text>
+                <Text style={[GlobalStyles.bodyText, styles.signInButtonText]}>Sign in with your .edu email</Text>
               </TouchableOpacity>
             }
             { this.state.signInLoading &&
@@ -318,24 +318,25 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-end",
     marginBottom: 35,
-    minHeight: 75
+    minHeight: 75,
+    marginHorizontal: 10
   },
   signInButton: {
-    width:275,
+    minWidth: 275,
     justifyContent: "space-evenly",
     backgroundColor: global.CURRENT_THEME.colors.accent,
     borderRadius: global.CURRENT_THEME.roundness,
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal:20,
+    paddingHorizontal:15,
   },
   signInButtonText: {
     color: global.CURRENT_THEME.colors.text,
     textAlign: "center",
-    fontSize: 18
+    fontSize: 16
   },
   signInButtonLogo: {
-    height: '45%',
+    height: '40%',
     resizeMode: 'contain',
   },
   welcomeContainer: {

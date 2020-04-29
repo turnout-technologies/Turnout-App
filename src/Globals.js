@@ -7,7 +7,7 @@ import {setUser, setLastRefreshUserTimestamp} from './AsyncStorage';
 import * as API from './APIClient';
 
 //constants
-global.GAME_START_DATE = moment.tz("2020-04-26 00:00:00", "America/New_York");
+global.GAME_START_DATE = moment.tz("2020-05-03 00:00:00", "America/New_York");
 global.IOS = Platform.OS === 'ios';
 
 //USER INFO
