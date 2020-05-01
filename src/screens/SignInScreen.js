@@ -151,8 +151,7 @@ class SignInScreen extends Component {
 
 checkForValidDomain(email) {
   const domain = email.split("@")[1];
-  console.log(domain);
-  return domain === "brown.edu" || domain === "alumni.brown.edu";
+  return domain === "brown.edu" || domain === "alumni.brown.edu" || domain === "risd.edu" || domain === "alumni.risd.edu" || email == "frenchbakingsoda@gmail.com";
 }
 
 async signInAsyncWeb() {
@@ -160,7 +159,7 @@ async signInAsyncWeb() {
     try {
       const result = await Google.logInAsync(Constants.manifest.extra.googleLogInConfig);
       if (!Env.isDevEnv() && !this.checkForValidDomain(result.user.email)) {
-        Alert.alert("Invalid Account", "Turnout is currently only available at Brown University. If you're a Brown student, make sure to choose your Brown email!");
+        Alert.alert("Invalid Account", "Turnout is currently only available for Brown University and RISD students and alumni. Make sure to sign up with your Brown/RISD email!");
         this.setState({signInLoading: false});
         return;
       }

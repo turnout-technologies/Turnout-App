@@ -360,7 +360,7 @@ class TurboVoteScreen extends Component {
 
           case '/done':
             window.onscroll=function(){
-              if (window.scrollY > 125) {
+              if (window.scrollY > 25) {
                 window.ReactNativeWebView.postMessage('show_finished_button');
               }
             };
