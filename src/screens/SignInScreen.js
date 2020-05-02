@@ -199,9 +199,9 @@ async signInAsyncWeb() {
   render() {
     var clickedBranchLink = this.state.branchInfo ? this.state.branchInfo["+clicked_branch_link"] : false;
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <StatusBarBackground backgroundColor="white"/>
-        <SafeAreaView style={styles.topContainer}>
+        <View style={styles.topContainer}>
           { Env.isDevEnv() &&
             <TouchableOpacity style={styles.debugButton} onPress={() => this.props.navigation.navigate('DebugOptions', {previousScreen: this.props.navigation.state.routeName})}>
               <Ionicons name="md-bug" size={25} color={global.LOGO_BLUE} />
@@ -219,7 +219,7 @@ async signInAsyncWeb() {
               <Text style={[GlobalStyles.titleText, styles.welcomeText]}>.</Text>
             </Text>
           </View>
-        </SafeAreaView>
+        </View>
         {!clickedBranchLink && !this.state.bottomContainerOpen &&
           <View style={styles.noInviteContainer}>
             <Text style={[GlobalStyles.bodyText, styles.signInButtonText]}>If you have an invite link, go click it now on this device to claim your bonus.</Text>
@@ -273,7 +273,7 @@ async signInAsyncWeb() {
             }
           </View>
         </Animated.ScrollView>
-      </View>
+      </SafeAreaView>
     );
   }
 }

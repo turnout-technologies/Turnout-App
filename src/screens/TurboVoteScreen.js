@@ -395,18 +395,29 @@ class TurboVoteScreen extends Component {
     );
   }
 
+  async openExternalBrowser(url) {
+    try {
+      await WebBrowser.openBrowserAsync(url);
+    } catch (error) {
+      if (error.message == 'Another WebBrowser is already being presented.') {
+        await WebBrowser.dismissBrowser();
+        WebBrowser.openBrowserAsync(url);
+      }
+    }
+  }
+
   loadInExternalBrowser(url) {
     if (this.currentURL.includes("turbovote.org/registration-methods")) {
       Alert.alert(
         "Online Voter Registration",
         "After you register to vote on your state's site, return to the Turnout app to finish signing up!",
         [
-          {text: "Got it", onPress: () => WebBrowser.openBrowserAsync(url)}
+          {text: "Got it", onPress: () => this.openExternalBrowser(url)}
         ],
         { cancelable: false }
       );
     } else {
-      WebBrowser.openBrowserAsync(url);
+      this.openExternalBrowser(url);
     }
   }
 
