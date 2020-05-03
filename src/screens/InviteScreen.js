@@ -15,7 +15,7 @@ import {GlobalStyles} from '../Globals';
 
 const LIST_ITEM_IMAGE_SIZE=50;
 const SHARE_MESSAGE_TITLE="Join Turnout @ Brown";
-const SHARE_MESSAGE_BODY="Join Turnout @ Brown with this link to receive a bonus: ";
+const SHARE_MESSAGE_BODY="Start playing Turnout @ Brown using this link to get an instant bonus: ";
 
 class InviteScreen extends Component {
 
