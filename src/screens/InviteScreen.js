@@ -14,6 +14,8 @@ import { Ionicons } from '@expo/vector-icons';
 import {GlobalStyles} from '../Globals';
 
 const LIST_ITEM_IMAGE_SIZE=50;
+const SHARE_MESSAGE_TITLE="Join Turnout @ Brown";
+const SHARE_MESSAGE_BODY="Join Turnout @ Brown with this link to receive a bonus: ";
 
 class InviteScreen extends Component {
 
@@ -85,8 +87,8 @@ class InviteScreen extends Component {
 
   async onShareLinkPress() {
     const shareOptions = {
-      messageHeader: 'Join Turnout',
-      messageBody: `Join Turnout using my link: `,
+      messageHeader: SHARE_MESSAGE_TITLE,
+      messageBody: SHARE_MESSAGE_BODY,
     };
     if (Platform.OS == "ios") {
       if (Constants.appOwnership !== 'standalone') {
@@ -115,8 +117,8 @@ class InviteScreen extends Component {
       }
       try {
         await Share.share({
-          title: "Join Turnout",
-          message: "Join Turnout using my link: " + url,
+          title: SHARE_MESSAGE_TITLE,
+          message: SHARE_MESSAGE_BODY + url,
         });
       } catch (error) {
         console.log(error);
@@ -290,7 +292,7 @@ class InviteScreen extends Component {
         try {
           const {result} = await SMS.sendSMSAsync(
             this.selectedContacts[i].phoneNumber,
-            'Join Turnout using my link: ' + url
+            SHARE_MESSAGE_BODY + url
           );
           smsResult = result;
         } catch (error) {

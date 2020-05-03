@@ -146,7 +146,7 @@ export default class PollStatusCountdown extends Component {
             color={global.CURRENT_THEME.colors.primary}
           />
           <Text style={[GlobalStyles.bodyText,styles.pollStatusText]}>Ballot submitted!</Text>
-          <Text style={[GlobalStyles.bodyText,styles.pollStatusText]}>Check back tomorrow for results.</Text>
+          <Text style={[GlobalStyles.bodyText,styles.pollStatusText]}>Check back later for results.</Text>
         </View>
       );
     } else {
