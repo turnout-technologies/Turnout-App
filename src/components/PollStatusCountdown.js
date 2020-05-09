@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, DeviceEventEmitter, ActivityIndicator } from 'react-native';
 import PropTypes from 'prop-types';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {sprintf} from 'sprintf-js';
 var moment = require('moment-timezone');
 
@@ -123,95 +123,18 @@ export default class PollStatusCountdown extends Component {
   }
 
   render() {
-    if (!this.state.gameStarted) {
-      return (
-        <View style={styles.container}>
-          <Text style={[GlobalStyles.titleText,styles.pollStatusText]}>Game starts on {global.GAME_START_DATE.format("M/D")}</Text>
-          <Ionicons
-            name="md-stopwatch"
-            size={100}
-            style={{ alignSelf: "center", marginVertical: 10 }}
-            color={global.CURRENT_THEME.colors.primary}
-          />
-          <Text style={[GlobalStyles.bodyText,styles.pollStatusText]}>In the meantime, invite your friends to start earning power-ups!</Text>
-        </View>
-      );
-    } else if (this.state.pollsOpen && this.state.ballotSubmittedToday) {
-      return (
-        <View style={styles.container}>
-          <Ionicons
-            name="md-checkmark-circle-outline"
-            size={125}
-            style={{ alignSelf: "center" }}
-            color={global.CURRENT_THEME.colors.primary}
-          />
-          <Text style={[GlobalStyles.bodyText,styles.pollStatusText]}>Ballot submitted!</Text>
-          <Text style={[GlobalStyles.bodyText,styles.pollStatusText]}>Check back later for results.</Text>
-        </View>
-      );
-    } else {
-      const { onPressStart } = this.props;
-      const {days, hours, minutes, seconds} = this.getTimeLeft();
-      const daysText = sprintf('%02d', days);
-      const hoursText = sprintf('%02d', hours);
-      const minutesText = sprintf('%02d', minutes);
-      const secondsText = sprintf('%02d', seconds);
-      return (
-        <View style={styles.container}>
-          <Text style={[GlobalStyles.bodyText,styles.pollStatusText]}>{this.state.pollStatusText}</Text>
-          <View style={styles.pollCountdownContainer}>
-            { days > 0 &&
-              <View>
-                <Text style={[GlobalStyles.headerText,styles.pollCountdownText]}>{daysText}</Text>
-                <Text style={[GlobalStyles.bodyText,styles.pollCountdownLabelText]}>days</Text>
-              </View>
-            }
-            { days > 0 && <Text style={[GlobalStyles.headerText,styles.pollCountdownText]}>:</Text>}
-            <View>
-              <Text style={[GlobalStyles.headerText,styles.pollCountdownText]}>{hoursText}</Text>
-              <Text style={[GlobalStyles.bodyText,styles.pollCountdownLabelText]}>hours</Text>
-            </View>
-            <Text style={[GlobalStyles.headerText,styles.pollCountdownText]}>:</Text>
-            <View>
-              <Text style={[GlobalStyles.headerText,styles.pollCountdownText]}>{minutesText}</Text>
-              <Text style={[GlobalStyles.bodyText,styles.pollCountdownLabelText]}>minutes</Text>
-            </View>
-            <Text style={[GlobalStyles.headerText,styles.pollCountdownText]}>:</Text>
-            <View>
-              <Text style={[GlobalStyles.headerText,styles.pollCountdownText]}>{secondsText}</Text>
-              <Text style={[GlobalStyles.bodyText,styles.pollCountdownLabelText]}>seconds</Text>
-            </View>
-          </View>
-          { this.state.pollsOpen &&
-            <TouchableOpacity style={styles.startButton} onPress={onPressStart}>
-              <Text style={[GlobalStyles.bodyText,styles.startButtonText]}>Start</Text>
-            </TouchableOpacity>
-          }
-          {this.state.getNotifiedDisabled && <ActivityIndicator color={global.CURRENT_THEME.colors.primary} animating={this.state.getNotifiedDisabled} />}
-          { !this.state.pollsOpen && !global.user.pushToken && !this.state.getNotifiedDisabled &&
-            <TouchableOpacity style={styles.getNotifiedButton} disabled={this.state.getNotifiedDisabled} onPress={this.getNotifiedHandler}>
-              <Ionicons
-                name="md-notifications"
-                size={18}
-                style={{ alignSelf: "center" }}
-                color={global.CURRENT_THEME.colors.primary} />
-              <Text style={[GlobalStyles.bodyText,styles.getNotifiedButtonText]}>Get notified</Text>
-            </TouchableOpacity>
-          }
-          { !this.state.pollsOpen && !!global.user.pushToken &&
-            <View style={styles.getNotifiedButton}>
-              <Ionicons
-                name="md-checkmark"
-                size={18}
-                style={{ alignSelf: "center" }}
-                color={global.CURRENT_THEME.colors.text} />
-              <Text style={[GlobalStyles.bodyText,styles.notifyYouText]}>We'll notify you when polls open</Text>
-            </View>
-          }
-        </View>
-      );
-    }
-
+    return (
+      <View style={styles.container}>
+        <Text style={[GlobalStyles.titleText,styles.pollStatusText]}>Thanks For Playing!</Text>
+        <MaterialCommunityIcons
+          name="hand-peace"
+          size={100}
+          style={{ alignSelf: "center", marginVertical: 10 }}
+          color={global.CURRENT_THEME.colors.primary}
+        />
+        <Text style={[GlobalStyles.bodyText,styles.pollStatusText]}>Hope this was a fun little thing during finals in lockdown. Don't forget to vote in the next election! 🗳</Text>
+      </View>
+    );
   }
 }
 

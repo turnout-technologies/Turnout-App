@@ -235,7 +235,7 @@ class DropScreen extends Component {
         <SafeAreaView style={[GlobalStyles.backLayerContainer, {backgroundColor: INACTIVE_COLOR}]}>
           <StatusBarBackground/>
           <View style={styles.countdownContainer}>
-            <Text style={[GlobalStyles.bodyText,styles.dropStartsInText]}>Stay tuned for{"\n"}the next drop...</Text>
+            <Text style={[GlobalStyles.bodyText,styles.dropStartsInText]}>Thanks for playing!</Text>
           </View>
           <View style={GlobalStyles.frontLayerContainer}>
             <FlatList
